@@ -27,7 +27,7 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
     SlickDatabaseContainer.getOrElseUpdate {
       (for {
         ds <- createDataSource
-        db <- Future(driver.backend.Database.forSource(ds))
+        db <- Future(driver.backend.Database.forDataSource(ds, None))
       } yield db) andThen {
         case Success(_) => logger.info("Created a new data souce. dsn=%s".format(dsn.toString))
         case Failure(_) => logger.info("Failed to create a data souce. dsn=%s".format(dsn.toString))
@@ -35,7 +35,7 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
     }
 
   /** Create a JdbcDataSource from DSN (Database Souce Name) */
-  def createDataSource(implicit dsn: DataSourceName): Future[HikariCPDataSource] =
+  def createDataSource(implicit dsn: DataSourceName): Future[HikariDataSource] =
     Future.fromTry {
       for {
         driver <- getDriverClassName
@@ -55,7 +55,8 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
         getHostSpecMaxPoolSize       map hconf.setMaximumPoolSize
         getHostSpecConnectionTimeout map hconf.setConnectionTimeout
         getHostSpecIdleTimeout       map hconf.setIdleTimeout
-        HikariCPDataSource(new HikariDataSource(hconf), hconf)
+        //HikariCPDataSource(new HikariDataSource(hconf), hconf)
+        new HikariDataSource(hconf)
       }
     }
 
