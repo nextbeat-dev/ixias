@@ -19,14 +19,14 @@ trait BasicDatabaseConfig {
   protected val CF_SECTION_HOSTSPEC  = """hostspec.%s"""
 
   /** The keys of configuration */
-  protected val CF_USERNAME           = "username"
-  protected val CF_PASSWORD           = "password"
-  protected val CF_DRIVER_CLASS_NAME  = "driver_class_name"
-  protected val CF_HOSTSPEC_HOSTS     = "hosts"
-  protected val CF_HOSTSPEC_DATABASE  = "database"
-  protected val CF_HOSTSPEC_SCHEMA    = "schema"
-  protected val CF_HOSTSPEC_READONLY  = "readonly"
-  protected val CF_CONNECTION_INI_SQL = "connection_ini_sql"
+  protected val CF_USERNAME            = "username"
+  protected val CF_PASSWORD            = "password"
+  protected val CF_DRIVER_CLASS_NAME   = "driver_class_name"
+  protected val CF_HOSTSPEC_HOSTS      = "hosts"
+  protected val CF_HOSTSPEC_DATABASE   = "database"
+  protected val CF_HOSTSPEC_SCHEMA     = "schema"
+  protected val CF_HOSTSPEC_READONLY   = "readonly"
+  protected val CF_CONNECTION_INIT_SQL = "connection_init_sql"
 
   /** The configuration */
   protected val config = Configuration()
@@ -87,5 +87,5 @@ trait BasicDatabaseConfig {
 
   /** Get the connection init sql used for DataSource */
   protected def getConnectionInitSQL(implicit dsn: DataSourceName): Option[String] =
-    readValue(_.get[Option[String]](CF_CONNECTION_INI_SQL))
+    readValue(_.get[Option[String]](CF_CONNECTION_INIT_SQL))
 }
