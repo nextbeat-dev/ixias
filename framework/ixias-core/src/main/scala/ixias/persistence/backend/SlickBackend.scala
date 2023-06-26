@@ -48,13 +48,14 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
         hconf.addDataSourceProperty("useSSL", false)
 
         // Optional properties.
-        getUserName                  map hconf.setUsername
-        getPassword                  map hconf.setPassword
-        getHostSpecReadOnly          map hconf.setReadOnly
-        getHostSpecMinIdle           map hconf.setMinimumIdle
-        getHostSpecMaxPoolSize       map hconf.setMaximumPoolSize
-        getHostSpecConnectionTimeout map hconf.setConnectionTimeout
-        getHostSpecIdleTimeout       map hconf.setIdleTimeout
+        getUserName                  foreach hconf.setUsername
+        getPassword                  foreach hconf.setPassword
+        getHostSpecReadOnly          foreach hconf.setReadOnly
+        getHostSpecMinIdle           foreach hconf.setMinimumIdle
+        getHostSpecMaxPoolSize       foreach hconf.setMaximumPoolSize
+        getHostSpecConnectionTimeout foreach hconf.setConnectionTimeout
+        getHostSpecIdleTimeout       foreach hconf.setIdleTimeout
+        getConnectionInitSQL         foreach hconf.setConnectionInitSql
         HikariCPDataSource(new HikariDataSource(hconf), hconf)
       }
     }
