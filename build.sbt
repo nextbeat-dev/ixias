@@ -5,8 +5,13 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
+import ScalaVersions._
+import JavaVersions._
 import Dependencies._
 import BuildSettings._
+
+ThisBuild / crossScalaVersions         := Seq(scala212)
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8))
 
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,7 +27,7 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     uapScala,
     commonsCodec,
     slf4jApi
-  ) ++ cats)
+  ) ++ cats ++ specs2)
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   .settings(libraryDependencies ++= Seq(
