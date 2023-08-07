@@ -36,7 +36,7 @@ object BuildSettings {
   /** These settings are used by all projects. */
   private val commonSettings = Seq(
     organization := "net.ixias",
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.12.18",
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),

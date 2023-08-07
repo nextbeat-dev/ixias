@@ -22,7 +22,7 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     uapScala,
     commonsCodec,
     slf4jApi
-  ) ++ cats)
+  ) ++ cats ++ specs2)
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   .settings(libraryDependencies ++= Seq(
