@@ -28,8 +28,6 @@ object Dependencies {
 
   val uapScala = "org.uaparser" %% "uap-scala" % "0.1.0"
 
-  val jodaTime = "joda-time" % "joda-time" % "2.9.4"
-
   val commonsCodec = "commons-codec" % "commons-codec" % "1.10"
 
   val slf4jApi = "org.slf4j" % "slf4j-api" % "1.7.21"
@@ -62,9 +60,7 @@ object Dependencies {
   val qldb = "software.amazon.qldb" % "amazon-qldb-driver-java" % "1.0.1"
 
   val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion"  % "2.10.0"
-  val jacksonDatatype = "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.10.0"
   val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.10.0"
 
-  def scalaCompiler(version: String): ModuleID = "org.scala-lang" % "scala-compiler" % version
   val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.8.0"
 }
