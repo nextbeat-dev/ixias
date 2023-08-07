@@ -40,7 +40,7 @@ object BuildSettings {
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),
-    fork in Test := true,
+    fork in Test := true
   )
 
   private val publisherSettings = Seq(
@@ -70,5 +70,6 @@ object BuildSettings {
       Project(name, file(dir))
         .settings(commonSettings: _*)
         .settings(publisherSettings: _*)
+        .settings(scalacOptions ++= baseScalaSettings)
   }
 }
