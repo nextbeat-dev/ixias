@@ -16,7 +16,7 @@ object Dependencies {
 
   val shapeless = "com.chuusai" %% "shapeless" % "2.3.3"
 
-  val config = "com.typesafe" % "config" % "1.3.0"
+  val typesafeConfig = "com.typesafe" % "config" % "1.3.0"
 
   val slick = "com.typesafe.slick" %% "slick" % "3.2.1"
 
@@ -62,8 +62,8 @@ object Dependencies {
   val qldb = "software.amazon.qldb" % "amazon-qldb-driver-java" % "1.0.1"
 
   val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion"  % "2.10.0"
-  val jacksonDatatype = "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"  % "2.10.0"
-  val jacksonModule = "com.fasterxml.jackson.module" % "jackson-module-scala"  % "2.10.0"
+  val jacksonDatatype = "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % "2.10.0"
+  val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.10.0"
 
   def scalaCompiler(version: String): ModuleID = "org.scala-lang" % "scala-compiler" % version
   val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.8.0"
