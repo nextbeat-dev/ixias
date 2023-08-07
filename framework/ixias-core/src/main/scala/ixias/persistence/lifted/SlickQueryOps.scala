@@ -9,7 +9,7 @@
 package ixias.persistence.lifted
 
 import slick.ast.{ TypedType, Library }
-import slick.lifted.{ Rep, Query, FunctionSymbolExtensionMethods, CanBeQueryCondition }
+import slick.lifted.{ Rep, Query, FunctionSymbolExtensionMethods }
 import ixias.persistence.model.Cursor
 
 import scala.language.higherKinds
