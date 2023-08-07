@@ -1,6 +1,6 @@
 package ixias.persistence.jdbc
 
-import java.time.LocalDateTime
+import java.time._
 
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration.Duration
@@ -17,38 +17,45 @@ import ixias.persistence.SlickRepository
 
 class MySQLProfileTest extends Specification with AfterSpec {
 
+  implicit val driver = slick.jdbc.MySQLProfile
+  private val repository = new DateAndTimeTypesRepository
+
+  private val testLocalDate = LocalDate.parse("2023-08-07")
+  private val testLocalTime = LocalTime.parse("18:20:28")
+  private val testDateTime = LocalDateTime.parse("2023-08-07T19:32:35")
+
   def afterSpec = step {
     val result = repository.delete()
     Await.ready(result, Duration.Inf)
     result
   }
 
-  implicit val driver    = slick.jdbc.MySQLProfile
-  private val repository = new DateAndTimeTypesRepository
-
-  private val testDateTime = LocalDateTime.parse("2023-08-07T19:32:35")
-
   "MySQLProfile Date and Time types Test" should {
     "LocalDateTime is the same before and after storing in DB." in {
-      val mode = DateAndTimeTypes(None, testDateTime, testDateTime).toWithNoId
+      val mode = DateAndTimeTypes(None, testLocalDate, testLocalTime, testDateTime, testDateTime).toWithNoId
       val result = for {
         id    <- repository.add(mode)
         model <- repository.get(id)
       } yield {
-        model.exists(_.v.createdAt == testDateTime)
+        model.exists(v =>
+          v.v.createdAt == testDateTime && v.v.localDate == testLocalDate && v.v.localTime == testLocalTime
+        )
       }
       Await.ready(result, Duration.Inf)
       result
     }
 
     "LocalDateTime is different before and after storing in DB." in {
+      val failedLocalTime = LocalTime.parse("18:20:28.661")
       val failedDateTime = LocalDateTime.parse("2023-08-07T19:32:34.508")
-      val mode = DateAndTimeTypes(None, failedDateTime, failedDateTime).toWithNoId
+      val mode = DateAndTimeTypes(None, testLocalDate, failedLocalTime, failedDateTime, failedDateTime).toWithNoId
       val result = for {
         id <- repository.add(mode)
         model <- repository.get(id)
       } yield {
-        model.exists(_.v.createdAt != failedDateTime)
+        model.exists(v =>
+          v.v.createdAt != failedDateTime && v.v.localTime != failedDateTime
+        )
       }
       Await.ready(result, Duration.Inf)
       result
@@ -59,6 +66,8 @@ class MySQLProfileTest extends Specification with AfterSpec {
 import DateAndTimeTypes.Id
 case class DateAndTimeTypes(
   id: Option[Id],
+  localDate: LocalDate,
+  localTime: LocalTime,
   updatedAt: LocalDateTime,
   createdAt: LocalDateTime
 ) extends EntityModel[Id]
@@ -86,10 +95,14 @@ case class DateAndTimeTypesTable[P <: JdbcProfile]()(
 
   class Table(tag: Tag) extends BasicTable(tag, "test") {
     def id = column[Id]("id", O.AutoInc, O.PrimaryKey)
+    def localDate = column[LocalDate]("local_date")
+    def localTime = column[LocalTime]("local_time")
     def updatedAt = column[LocalDateTime]("updated_at")
     def createdAt = column[LocalDateTime]("created_at")
 
-    def * = (id.?, updatedAt, createdAt) <> (
+    def * = (
+      id.?, localDate, localTime, updatedAt, createdAt
+    ) <> (
       (DateAndTimeTypes.apply   _).tupled,
       DateAndTimeTypes.unapply
     )

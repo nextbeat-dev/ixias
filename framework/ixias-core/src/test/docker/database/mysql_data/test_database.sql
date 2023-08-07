@@ -4,6 +4,8 @@ USE `ixias`;
 
 CREATE TABLE `test` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `local_date` DATE NOT NULL,
+  `local_time` TIME NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
