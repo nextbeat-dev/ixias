@@ -48,7 +48,7 @@ object Dependencies {
   val specs2: Seq[ModuleID] = Seq(
     "specs2-core",
     "specs2-matcher-extra"
-  ).map("org.specs2" %% _ % "3.9.1" % Test)
+  ).map("org.specs2" %% _ % "4.5.1" % Test)
 
   val awsSdkVersion = "1.12.129"
   object aws {
