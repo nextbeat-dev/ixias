@@ -20,7 +20,6 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     hikariCP,
     keyczar,
     uapScala,
-    jodaTime,
     commonsCodec,
     slf4jApi
   ) ++ cats)
@@ -48,7 +47,6 @@ lazy val ixiasAwsQLDB = IxiaSProject("ixias-aws-qldb", "framework/ixias-aws-qldb
   .settings(libraryDependencies ++= Seq(
     qldb,
     jacksonDataformat,
-    jacksonDatatype,
     jacksonModule
   ))
   .dependsOn(ixiasCore)
@@ -62,7 +60,6 @@ lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-c
 lazy val ixiasPlayScalate = IxiaSProject("ixias-play-scalate", "framework/ixias-play-scalate")
   .settings(libraryDependencies ++= Seq(
     play,
-    scalaCompiler(scalaVersion.value),
     scalateCore
   ))
   .dependsOn(ixiasCore)
