@@ -15,18 +15,14 @@ ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8))
 
 ThisBuild / githubWorkflowBuildPreamble ++= Seq(
   WorkflowStep.Run(
-    List(
-      "docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d",
-    ),
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d"),
     name = Some("Set up Docker")
   )
 )
 
 ThisBuild / githubWorkflowBuild ++= Seq(
   WorkflowStep.Run(
-    List(
-      "docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml down"
-    ),
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml down"),
     name = Some("Close Docker")
   )
 )
