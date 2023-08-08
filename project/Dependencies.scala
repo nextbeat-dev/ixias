@@ -18,7 +18,7 @@ object Dependencies {
 
   val typesafeConfig = "com.typesafe" % "config" % "1.3.0"
 
-  val slick = "com.typesafe.slick" %% "slick" % "3.2.1"
+  val slick = "com.typesafe.slick" %% "slick" % "3.3.2"
 
   val shade = "io.monix" %% "shade" % "1.9.5"
 
