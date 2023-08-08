@@ -15,6 +15,10 @@ ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8))
 
 ThisBuild / githubWorkflowBuildPreamble ++= Seq(
   WorkflowStep.Run(
+    List("sbt '++ ${{ matrix.scala }}' ixias-cache/compile"),
+    name = Some("Deprecated project compile")
+  ),
+  WorkflowStep.Run(
     List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d"),
     name = Some("Set up Docker")
   )
