@@ -28,7 +28,7 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
         val clazz  = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
         val module = clazz.getField("MODULE$").get(null)
         val method = clazz.getMethod("apply", classOf[Short])
-        val `enum`   = method.invoke(module, code.asInstanceOf[AnyRef])
+        val `enum` = method.invoke(module, code.asInstanceOf[AnyRef])
         `enum`.asInstanceOf[T]
       }
     )
