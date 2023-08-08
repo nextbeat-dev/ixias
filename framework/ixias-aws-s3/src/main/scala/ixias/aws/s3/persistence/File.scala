@@ -58,7 +58,7 @@ case class FileTable[P <: JdbcProfile]()(implicit val driver: P, val s3dsn: S3DS
     )
 
     // The * projection of the table
-    def * = (id, region, bucket, key, typedef, width, height, updatedAt, createdAt) <> (
+    def * = (id, region, bucket, key, typedef, width, height, updatedAt, createdAt).<>(
       /* The bidirectional mappings : Tuple(table) => Model */
       (t: TableElementTuple) => {
         val imageSize = (t._6, t._7) match {

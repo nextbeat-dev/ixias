@@ -58,7 +58,7 @@ class UIAssets @javax.inject.Inject() (
       case (prev, path) => prev match {
         case Some(_) => prev
         case None    => {
-          val fullPath = path + "/" + file
+          val fullPath = s"$path/$file"
           val resource = new java.io.File(fullPath)
           if (resource.isFile) Some(resource) else None
         }
