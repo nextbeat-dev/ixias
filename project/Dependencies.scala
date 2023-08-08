@@ -62,5 +62,5 @@ object Dependencies {
   val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion"  % "2.10.0"
   val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.10.0"
 
-  val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.8.0"
+  val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 }
