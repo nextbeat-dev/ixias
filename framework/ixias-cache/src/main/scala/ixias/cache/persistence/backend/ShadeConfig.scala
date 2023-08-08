@@ -6,12 +6,15 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
-package ixias.persistence.backend
+package ixias.cache.persistence.backend
+
+import java.util.concurrent.TimeUnit
 
 import scala.util.Try
-import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
+
 import ixias.persistence.model.DataSourceName
+import ixias.persistence.backend.BasicDatabaseConfig
 
 trait ShadeConfig extends BasicDatabaseConfig {
 

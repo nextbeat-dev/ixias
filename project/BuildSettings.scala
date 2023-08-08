@@ -24,12 +24,12 @@ object BuildSettings {
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
     "-Xfatal-warnings", // Fail the compilation if there are any warnings.
     "-Xlint:-unused,_", // Enable recommended additional warnings.
-    "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
     "-Ywarn-dead-code", // Warn when dead code is identified.
     "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
+    "-Ywarn-numeric-widen", // Warn when numerics are widened.
+    "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
     "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
     "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
-    "-Ywarn-numeric-widen", // Warn when numerics are widened.
     "-Ypartial-unification" // Add support for partial unification of type constructors
   )
 
