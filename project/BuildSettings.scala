@@ -27,16 +27,13 @@ object BuildSettings {
     "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
     "-Ywarn-dead-code", // Warn when dead code is identified.
     "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-    "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
-    "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
-    "-Ywarn-numeric-widen", // Warn when numerics are widened.
-    "-Ypartial-unification" // Add support for partial unification of type constructors
+    "-Ywarn-inaccessible" // Warn about inaccessible types in method signatures.
   )
 
   /** These settings are used by all projects. */
   private val commonSettings = Seq(
     organization := "net.ixias",
-    scalaVersion := ScalaVersions.scala212,
+    scalaVersion := ScalaVersions.scala213,
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),
@@ -71,5 +68,17 @@ object BuildSettings {
         .settings(commonSettings: _*)
         .settings(publisherSettings: _*)
         .settings(scalacOptions ++= baseScalaSettings)
+
+    def deprecated(name: String, dir: String): Project =
+      Project(name, file(dir))
+        .settings(scalaVersion := ScalaVersions.scala212)
+        .settings(commonSettings: _*)
+        .settings(publisherSettings: _*)
+        .settings(scalacOptions ++= baseScalaSettings ++ Seq(
+          "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
+          "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
+          "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
+          "-Ypartial-unification" // Add support for partial unification of type constructors
+        ))
   }
 }

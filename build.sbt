@@ -10,8 +10,26 @@ import JavaVersions._
 import Dependencies._
 import BuildSettings._
 
-ThisBuild / crossScalaVersions         := Seq(scala212)
+ThisBuild / crossScalaVersions         := Seq(scala212, scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8))
+
+ThisBuild / githubWorkflowBuildPreamble ++= Seq(
+  WorkflowStep.Run(
+    List("sbt '++ ${{ matrix.scala }}' ixias-cache/compile"),
+    name = Some("Deprecated project compile")
+  ),
+  WorkflowStep.Run(
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d"),
+    name = Some("Set up Docker")
+  )
+)
+
+ThisBuild / githubWorkflowBuild ++= Seq(
+  WorkflowStep.Run(
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml down"),
+    name = Some("Close Docker")
+  )
+)
 
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,6 +90,12 @@ lazy val ixiasPlayScalate = IxiaSProject("ixias-play-scalate", "framework/ixias-
 lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-auth")
   .settings(libraryDependencies += play)
   .dependsOn(ixiasCore, ixiasPlayCore)
+
+// IxiaS Deprecated Libraries
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lazy val ixiasCache = IxiaSProject.deprecated("ixias-cache", "framework/ixias-cache")
+  .settings(libraryDependencies += shade)
+  .dependsOn(ixiasCore)
 
 // IxiaS Meta Packages
 //~~~~~~~~~~~~~~~~~~~~~
