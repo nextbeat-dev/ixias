@@ -8,12 +8,14 @@
 
 package ixias.persistence
 
-import ixias.model.{ @@, EntityModel }
-import ixias.persistence.dbio.{ Execution, EntityIOAction }
-import ixias.persistence.lifted.{ Aliases, ExtensionMethods }
+import scala.concurrent.ExecutionContextExecutor
 
-import ixias.util.Logger
 import org.slf4j.LoggerFactory
+
+import ixias.model.{@@, EntityModel}
+import ixias.persistence.dbio.{EntityIOAction, Execution}
+import ixias.persistence.lifted.{Aliases, ExtensionMethods}
+import ixias.util.Logger
 
 /**
  * The basic functionality that has to be implemented by all profiles.
@@ -34,7 +36,7 @@ trait Profile {
     new Logger(LoggerFactory.getLogger(this.getClass.getName))
 
   /** The Execution Context */
-  protected implicit val ctx = Execution.Implicits.trampoline
+  protected implicit val ctx: ExecutionContextExecutor = Execution.Implicits.trampoline
 
   /**
    * The API for using the utility methods with a single import statement.

@@ -34,7 +34,6 @@ trait AmazonQLDBProfile extends Profile
    * This provides the repository's implicits, the Database connections,
    * and commonly types and objects.
    */
-  trait API extends super.API
   val api: API = new API {}
 }
 
@@ -43,6 +42,5 @@ trait AmazonQLDBProfile extends Profile
  */
 trait AmazonQLDBRepository[K <: @@[_, _], M <: EntityModel[K]]
     extends Repository[K, M] with AmazonQLDBProfile {
-  trait API extends super.API
   override val api: API = new API {}
 }
