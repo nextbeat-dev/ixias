@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.12.18, 2.13.18]
+        scala: [2.12.18, 2.13.11]
         java: [temurin@8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -40,7 +40,7 @@ jobs:
           cache: sbt
 
       - name: Deprecated project compile
-        run: sbt '++ ${{ matrix.scala }}' ixias-cache/compile
+        run: sbt '++ 2.12.18' ixias-cache/compile
 
       - name: Set up Docker
         run: docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d
@@ -97,12 +97,12 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
-      - name: Download target directories (2.13.18)
+      - name: Download target directories (2.13.11)
         uses: actions/download-artifact@v3
         with:
-          name: target-${{ matrix.os }}-2.13.18-${{ matrix.java }}
+          name: target-${{ matrix.os }}-2.13.11-${{ matrix.java }}
 
-      - name: Inflate target directories (2.13.18)
+      - name: Inflate target directories (2.13.11)
         run: |
           tar xf targets.tar
           rm targets.tar
