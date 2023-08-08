@@ -34,17 +34,23 @@ ThisBuild / githubWorkflowBuild ++= Seq(
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
+  .settings(
+    javaOptions ++= Seq(
+      "-Dlogback.configurationFile=logback.xml"
+    )
+  )
   .settings(libraryDependencies ++= Seq(
     shapeless,
     typesafeConfig,
     slick,
     playJson,
-    shade,
     hikariCP,
     keyczar,
     uapScala,
     commonsCodec,
-    slf4jApi
+    slf4jApi,
+    connectorJava % Test,
+    logbackClassic % Test
   ) ++ cats ++ specs2)
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")

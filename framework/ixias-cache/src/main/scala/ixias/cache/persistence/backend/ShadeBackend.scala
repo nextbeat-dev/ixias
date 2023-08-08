@@ -6,18 +6,19 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
-package ixias.persistence.backend
+package ixias.cache.persistence.backend
 
 import scala.util.{ Success, Failure }
 import scala.concurrent.Future
 import shade.memcached.{ Memcached, Configuration }
 import ixias.persistence.model.DataSourceName
+import ixias.persistence.backend.{ BasicBackend, BasicDatabaseContainer }
 
 /**
  * The shade backend to handle the database and session.
  */
 case class ShadeBackend()
-   extends BasicBackend[Memcached] with ShadeConfig
+  extends BasicBackend[Memcached] with ShadeConfig
 {
   /** Get a Database instance from connection pool. */
   def getDatabase(implicit dsn: DataSourceName): Future[Database] = {

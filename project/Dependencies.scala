@@ -18,7 +18,7 @@ object Dependencies {
 
   val typesafeConfig = "com.typesafe" % "config" % "1.3.0"
 
-  val slick = "com.typesafe.slick" %% "slick" % "3.2.1"
+  val slick = "com.typesafe.slick" %% "slick" % "3.3.2"
 
   val shade = "io.monix" %% "shade" % "1.9.5"
 
@@ -26,7 +26,7 @@ object Dependencies {
 
   val keyczar = "org.keyczar" % "keyczar" % "0.71h"
 
-  val uapScala = "org.uaparser" %% "uap-scala" % "0.1.0"
+  val uapScala = "org.uaparser" %% "uap-scala" % "0.8.0"
 
   val commonsCodec = "commons-codec" % "commons-codec" % "1.10"
 
@@ -48,7 +48,7 @@ object Dependencies {
   val specs2: Seq[ModuleID] = Seq(
     "specs2-core",
     "specs2-matcher-extra"
-  ).map("org.specs2" %% _ % "3.9.1" % Test)
+  ).map("org.specs2" %% _ % "4.5.1" % Test)
 
   val awsSdkVersion = "1.12.129"
   object aws {
@@ -62,5 +62,5 @@ object Dependencies {
   val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion"  % "2.10.0"
   val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.10.0"
 
-  val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.8.0"
+  val scalateCore = "org.scalatra.scalate" %% "scalate-core" % "1.9.4"
 }
