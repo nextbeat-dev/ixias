@@ -6,7 +6,7 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
-package ixias.persistence
+package ixias.cache.persistence
 
 import scala.reflect.ClassTag
 import scala.concurrent.Future
@@ -15,8 +15,9 @@ import shade.memcached.{ Memcached, MemcachedCodecs }
 
 import ixias.model.{ @@, Entity, EntityModel }
 import ixias.persistence.model.DataSourceName
-import ixias.persistence.backend.ShadeBackend
-import ixias.persistence.action.ShadeDBActionProvider
+import ixias.cache.persistence.backend.ShadeBackend
+import ixias.cache.persistence.action.ShadeDBActionProvider
+import ixias.persistence.{ Profile, Repository }
 import ixias.security.RandomStringToken
 
 /**

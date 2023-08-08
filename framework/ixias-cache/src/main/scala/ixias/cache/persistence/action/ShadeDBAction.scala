@@ -6,13 +6,14 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
-package ixias.persistence.action
+package ixias.cache.persistence.action
 
 import scala.util.Failure
 import scala.concurrent.Future
 
-import ixias.persistence.ShadeProfile
 import ixias.persistence.model.DataSourceName
+import ixias.persistence.action.BasicAction
+import ixias.cache.persistence.ShadeProfile
 
 /**
  * The provider for `ShadeDBAction`
