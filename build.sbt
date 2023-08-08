@@ -94,6 +94,12 @@ lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-a
   .settings(libraryDependencies += play)
   .dependsOn(ixiasCore, ixiasPlayCore)
 
+// IxiaS Deprecated Libraries
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lazy val ixiasCache = IxiaSProject("ixias-cache", "framework/ixias-cache")
+  .settings(libraryDependencies += shade)
+  .dependsOn(ixiasCore)
+
 // IxiaS Meta Packages
 //~~~~~~~~~~~~~~~~~~~~~
 lazy val ixias = IxiaSProject("ixias", ".")
