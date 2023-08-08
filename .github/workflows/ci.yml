@@ -39,6 +39,9 @@ jobs:
           java-version: 8
           cache: sbt
 
+      - name: Deprecated project compile
+        run: sbt '++ ${{ matrix.scala }}' ixias-cache/compile
+
       - name: Set up Docker
         run: docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d
 
