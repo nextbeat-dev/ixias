@@ -11,7 +11,7 @@ import Dependencies._
 import BuildSettings._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
-ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8))
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8), JavaSpec.temurin(java11))
 
 ThisBuild / githubWorkflowBuildPreamble ++= Seq(
   WorkflowStep.Run(
