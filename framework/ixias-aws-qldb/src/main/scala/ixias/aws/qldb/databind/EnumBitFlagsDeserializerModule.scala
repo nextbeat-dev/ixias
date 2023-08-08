@@ -27,8 +27,8 @@ case class EnumBitFlagsDeserializer(
     val clazz  = Class.forName(elcls.getName + "$")
     val module = clazz.getField("MODULE$").get(null)
     val method = clazz.getMethod("apply", classOf[Long])
-    val enum   = method.invoke(module, p.getValueAsLong.asInstanceOf[AnyRef])
-    enum.asInstanceOf[Seq[EnumBitFlags]]
+    val `enum` = method.invoke(module, p.getValueAsLong.asInstanceOf[AnyRef])
+    `enum`.asInstanceOf[Seq[EnumBitFlags]]
   }
 }
 

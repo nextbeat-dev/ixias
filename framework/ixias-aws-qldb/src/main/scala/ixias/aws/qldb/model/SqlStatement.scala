@@ -9,7 +9,7 @@
 package ixias.aws.qldb.model
 
 import scala.util.Try
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import com.amazon.ion.IonValue
 import software.amazon.qldb.{ QldbSession, TransactionExecutor }
 

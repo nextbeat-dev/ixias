@@ -9,6 +9,7 @@
 package ixias.aws.qldb.model
 
 import scala.language.implicitConversions
+import scala.jdk.CollectionConverters._
 import com.amazon.ion.IonValue
 import software.amazon.qldb.{ Result => QldbResult }
 import ixias.aws.qldb.databind.DatabindModule
@@ -33,7 +34,7 @@ trait  ConvOps {
     MAPPER_FOR_READ_ION.readValue(v, ctag.runtimeClass).asInstanceOf[A]
 
   //-- [ From AmazonQldb Result ] ----------------------------------------------
-  implicit def toQldbResultTransformer(v: QldbResult) =
+  implicit def toQldbResultTransformer(v: QldbResult): QldbResultTransformer =
     QldbResultTransformer(v)
 }
 
@@ -92,9 +93,8 @@ case class QldbResultTransformer(self: QldbResult) extends AnyVal {
    * AmazonQLDB Result -> IonValue rows.
    */
   def toIonValueSeq: Seq[IonValue] = {
-    import collection.JavaConverters._
     val list = new java.util.ArrayList[IonValue]()
     self.iterator().forEachRemaining(v => list.add(v))
-    Seq(list.asScala: _*)
+    list.asScala.toSeq
   }
 }

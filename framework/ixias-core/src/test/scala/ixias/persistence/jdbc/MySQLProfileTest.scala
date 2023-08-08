@@ -14,6 +14,7 @@ import slick.jdbc.JdbcProfile
 import ixias.model._
 import ixias.persistence.model.Table
 import ixias.persistence.SlickRepository
+import ixias.persistence.jdbc.MySQLProfile
 
 class MySQLProfileTest extends Specification with AfterSpec {
 
@@ -21,7 +22,7 @@ class MySQLProfileTest extends Specification with AfterSpec {
    * 標準の[[slick.jdbc.MySQLProfile]]を使用した場合LocalDateTimeのパースエラーとなることを確認
    * [[slick.jdbc.MySQLProfile]]を拡張したものを使用した場合v3.2.3以前と同様の挙動になることを確認
    */
-  implicit val driver = ixias.persistence.jdbc.MySQLProfile
+  implicit val driver: MySQLProfile = MySQLProfile
   private val repository = new DateAndTimeTypesRepository
 
   private val testLocalDate = LocalDate.parse("2023-08-07")
@@ -106,7 +107,7 @@ case class DateAndTimeTypesTable[P <: JdbcProfile]()(
 
     def * = (
       id.?, localDate, localTime, updatedAt, createdAt
-    ) <> (
+    ).<>(
       (DateAndTimeTypes.apply   _).tupled,
       DateAndTimeTypes.unapply
     )
