@@ -40,7 +40,6 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     typesafeConfig,
     slick,
     playJson,
-    shade,
     hikariCP,
     keyczar,
     uapScala,
