@@ -20,7 +20,7 @@ object Dependencies {
 
   val slick = "com.typesafe.slick" %% "slick" % "3.3.2"
 
-  val shade = "io.monix" %% "shade" % "1.9.5"
+  val shade = "io.monix" % "shade_2.12" % "1.9.5"
 
   val hikariCP = "com.zaxxer" % "HikariCP" % "2.5.0"
 
