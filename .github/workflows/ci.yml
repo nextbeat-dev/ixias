@@ -39,11 +39,17 @@ jobs:
           java-version: 8
           cache: sbt
 
+      - name: Set up Docker
+        run: docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d
+
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}' githubWorkflowCheck
 
       - name: Build project
         run: sbt '++ ${{ matrix.scala }}' test
+
+      - name: Close Docker
+        run: docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml down
 
       - name: Compress target directories
         run: tar cf targets.tar framework/ixias-aws-sns/target target/ixias-aws/target framework/ixias-mail/target framework/ixias-aws-s3/target framework/ixias-play-scalate/target framework/ixias-play-auth/target target/ixias-play/target framework/ixias-play-core/target framework/ixias-aws-qldb/target framework/ixias-core/target target project/target
