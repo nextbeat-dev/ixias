@@ -36,7 +36,7 @@ object BuildSettings {
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),
-    fork in Test := true
+    Test / fork := true
   )
 
   private val publisherSettings = Seq(
@@ -44,8 +44,8 @@ object BuildSettings {
       val path = if (release) "releases" else "snapshots"
       Some("Nextbeat snapshots" at "s3://maven.ixias.net.s3-ap-northeast-1.amazonaws.com/" + path)
     },
-    publishArtifact in(Compile, packageDoc) := !release, // disable publishing the Doc jar for production
-    publishArtifact in(Compile, packageSrc) := !release, // disable publishing the sources jar for production
+    (Compile / packageDoc) / publishArtifact := !release, // disable publishing the Doc jar for production
+    (Compile / packageSrc) / publishArtifact := !release, // disable publishing the sources jar for production
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
