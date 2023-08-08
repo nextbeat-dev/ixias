@@ -26,17 +26,13 @@ object BuildSettings {
     "-Xlint:-unused,_", // Enable recommended additional warnings.
     "-Ywarn-dead-code", // Warn when dead code is identified.
     "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-    "-Ywarn-numeric-widen", // Warn when numerics are widened.
-    "-Ywarn-adapted-args", // Warn if an argument list is modified to match the receiver.
-    "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
-    "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
-    "-Ypartial-unification" // Add support for partial unification of type constructors
+    "-Ywarn-numeric-widen" // Warn when numerics are widened.
   )
 
   /** These settings are used by all projects. */
   private val commonSettings = Seq(
     organization := "net.ixias",
-    scalaVersion := ScalaVersions.scala212,
+    scalaVersion := ScalaVersions.scala213,
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),

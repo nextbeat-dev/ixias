@@ -49,7 +49,7 @@ trait AmazonQLDBActionProvider { self: AmazonQLDBProfile =>
       (table: T)
       (block: ((DBIOAction, T#Query)) => Future[A])
       (implicit conv: A => B): Future[B] =
-      DBAction[T].invokeBlock(DBActionRequest(table), block)
+      DBAction[T]().invokeBlock(DBActionRequest(table), block)
         .map(conv)
   }
 }

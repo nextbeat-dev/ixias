@@ -20,16 +20,16 @@ trait JsonEnvWrites extends EnvWrites {
    * Serializer for ixias.util.EnumStatus
    */
   implicit object EnumStatusWrites extends Writes[ixias.util.EnumStatus] {
-    def writes(enum: ixias.util.EnumStatus) =
-      JsNumber(enum.code)
+    def writes(`enum`: ixias.util.EnumStatus) =
+      JsNumber(`enum`.code)
   }
 
   /**
    * Serializer for Seq[ixias.util.EnumBitFlags]
    */
   implicit object EnumBitFlagsWrites extends Writes[ixias.util.EnumBitFlags] {
-    def writes(enum: ixias.util.EnumBitFlags) =
-      JsNumber(enum.code)
+    def writes(`enum`: ixias.util.EnumBitFlags) =
+      JsNumber(`enum`.code)
   }
 
   /**
