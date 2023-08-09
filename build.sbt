@@ -82,13 +82,6 @@ lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-c
   .settings(libraryDependencies += play)
   .dependsOn(ixiasCore)
 
-lazy val ixiasPlayScalate = IxiaSProject("ixias-play-scalate", "framework/ixias-play-scalate")
-  .settings(libraryDependencies ++= Seq(
-    play,
-    scalateCore
-  ))
-  .dependsOn(ixiasCore)
-
 lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-auth")
   .settings(libraryDependencies += play)
   .dependsOn(ixiasCore, ixiasPlayCore)
@@ -104,7 +97,7 @@ lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
   .dependsOn(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
 
 lazy val ixiasPlay = IxiaSProject("ixias-play", "target/ixias-play")
-  .aggregate(ixiasPlayCore, ixiasPlayScalate, ixiasPlayAuth)
+  .aggregate(ixiasPlayCore, ixiasPlayAuth)
   .dependsOn(ixiasPlayCore, ixiasPlayAuth)
 
 // Setting for prompt
