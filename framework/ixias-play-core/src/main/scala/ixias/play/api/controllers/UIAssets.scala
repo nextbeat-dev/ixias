@@ -22,7 +22,7 @@ class UIAssets @javax.inject.Inject() (
   errorHandler:  HttpErrorHandler,
   meta:          DefaultAssetsMetadata,
   fileMimeTypes: FileMimeTypes
-) extends AssetsBuilder(errorHandler, meta) {
+) extends AssetsBuilder(errorHandler, meta, env) {
 
   import controllers.Assets._
 

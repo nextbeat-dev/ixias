@@ -9,6 +9,7 @@
 package ixias.play.api.mvc
 
 import play.api.data.{ Form, Mapping }
+import play.api.data.FormBinding.Implicits._
 import play.api.mvc.{ Request, Result }
 import play.api.mvc.Results.BadRequest
 import play.api.i18n.MessagesProvider
