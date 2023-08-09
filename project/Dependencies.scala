@@ -9,7 +9,7 @@ import sbt._
 
 object Dependencies {
 
-  val play = "com.typesafe.play" %% "play" % "2.7.5"
+  val play = "com.typesafe.play" %% "play" % "2.9.0-M6"
   val playJson = "com.typesafe.play" %% "play-json" % "2.7.4"
 
   val connectorJava = "mysql" % "mysql-connector-java" % "5.1.39"
