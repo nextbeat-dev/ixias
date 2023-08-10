@@ -42,7 +42,7 @@ object BuildSettings {
   private val publisherSettings = Seq(
     publishTo := {
       val path = if (release) "releases" else "snapshots"
-      Some("Nextbeat snapshots" at "s3://maven.ixias.net.s3-ap-northeast-1.amazonaws.com/" + path)
+      Some("Nextbeat snapshots" at "s3://maven.nextbeat.net.s3-ap-northeast-1.amazonaws.com/" + path)
     },
     (Compile / packageDoc) / publishArtifact := !release, // disable publishing the Doc jar for production
     (Compile / packageSrc) / publishArtifact := !release, // disable publishing the sources jar for production
