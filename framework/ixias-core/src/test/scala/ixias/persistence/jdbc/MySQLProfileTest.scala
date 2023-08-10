@@ -18,7 +18,7 @@ import ixias.persistence.jdbc.MySQLProfile
 
 class MySQLProfileTest extends Specification with AfterSpec {
 
-  /**
+  /*
    * 標準の[[slick.jdbc.MySQLProfile]]を使用した場合LocalDateTimeのパースエラーとなることを確認
    * [[slick.jdbc.MySQLProfile]]を拡張したものを使用した場合v3.2.3以前と同様の挙動になることを確認
    */
