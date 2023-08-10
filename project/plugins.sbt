@@ -6,7 +6,6 @@
  */
 
 
-addSbtPlugin("com.typesafe.play"  % "sbt-twirl"          % "1.5.2")
 addSbtPlugin("com.scalapenos"     % "sbt-prompt"         % "1.0.2")
 addSbtPlugin("com.github.gseitz"  % "sbt-release"        % "1.0.7")
 addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.19.0")
