@@ -33,6 +33,9 @@ object BuildSettings {
   private val commonSettings = Seq(
     organization := "net.ixias",
     scalaVersion := ScalaVersions.scala213,
+    resolvers ++= Seq(
+      "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
+    ),
     Test / fork := true
   )
 
