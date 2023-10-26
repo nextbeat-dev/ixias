@@ -9,7 +9,7 @@ import sbt._
 
 object Dependencies {
 
-  val play = "org.playframework" %% "play" % "2.9.0"
+  val play = "org.playframework" %% "play" % "3.0.0"
   val playJson = "org.playframework" %% "play-json" % "3.0.0"
 
   val connectorJava = "mysql" % "mysql-connector-java" % "5.1.39"
