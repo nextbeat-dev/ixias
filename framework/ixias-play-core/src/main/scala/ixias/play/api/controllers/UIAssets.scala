@@ -67,7 +67,7 @@ class UIAssets @javax.inject.Inject() (
     resource match {
       case Some(file) => {
         val stream = new java.io.FileInputStream(file)
-        val source = akka.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
+        val source = org.apache.pekko.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
         logger.info(s"serving $file")
         Ok.chunked(source)
           .as(fileMimeTypes.forFileName(file.toString).getOrElse("application/octet-stream"))
