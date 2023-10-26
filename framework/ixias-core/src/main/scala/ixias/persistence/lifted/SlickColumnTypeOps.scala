@@ -8,7 +8,6 @@
 
 package ixias.persistence.lifted
 
-import org.joda.time.{DateTime, Duration, LocalDate, LocalTime}
 import slick.ast.BaseTypedType
 import slick.jdbc.{JdbcProfile, JdbcType}
 
@@ -121,53 +120,6 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
         d.toHours,
         d.toMinutes % 60,
         d.getSeconds % 60
-      )
-    }
-
-  // --[ Joda Time ]------------------------------------------------------------
-  // java.sql.Timestamp <-> org.joda.time.DateTime
-  implicit val jodaDateTimeColumnType: JdbcType[DateTime] with BaseTypedType[DateTime] =
-    MappedColumnType.base[org.joda.time.DateTime, java.sql.Timestamp](
-      dt => new java.sql.Timestamp(dt.getMillis),
-      ts => new org.joda.time.DateTime(ts.getTime)
-    )
-
-  // java.sql.Date <-> org.joda.time.LocalDate
-  implicit val jodaLocalDateColumnType: JdbcType[LocalDate] with BaseTypedType[LocalDate] =
-    MappedColumnType.base[org.joda.time.LocalDate, java.sql.Date](
-      ld => new java.sql.Date(ld.toDateTimeAtStartOfDay(org.joda.time.DateTimeZone.UTC).getMillis),
-      d  => new org.joda.time.LocalDate(d.getTime)
-    )
-
-  // java.sql.Time <-> org.joda.time.LocalTime
-  implicit val jodaLocalTimeColumnType: JdbcType[LocalTime] with BaseTypedType[LocalTime] =
-    MappedColumnType.base[org.joda.time.LocalTime, java.sql.Time](
-      lt => new java.sql.Time(lt.toDateTimeToday.getMillis),
-      t  => new org.joda.time.LocalTime(t, org.joda.time.DateTimeZone.UTC)
-    )
-
-  // java.sql.Time <-> org.joda.time.Duration
-  implicit val jodaDurationColumnType: driver.MappedJdbcType[Duration, String] with BaseTypedType[Duration] =
-    new driver.MappedJdbcType[org.joda.time.Duration, String] with slick.ast.BaseTypedType[org.joda.time.Duration] {
-      import java.util.TimeZone
-      import org.joda.time.Duration
-      override def sqlType = java.sql.Types.VARCHAR
-      override def valueToSQLLiteral(d: Duration) = "{ ts '" + map(d) + "' }"
-      override def getValue(r: java.sql.ResultSet, idx: Int) = {
-        val v = r.getTimestamp(idx)
-          (v.asInstanceOf[AnyRef] eq null) || tmd.wasNull(r, idx) match {
-            case true  => null.asInstanceOf[Duration]
-            case false => new Duration(v.getTime + TimeZone.getDefault.getRawOffset)
-          }
-      }
-      def comap(str: String) = {
-        val millis = org.joda.time.DateTime.parse(str).getMillisOfSecond.toLong
-        new Duration(millis + TimeZone.getDefault.getRawOffset)
-      }
-      def map(d: Duration) = "%02d:%02d:%02d".format(
-        d.getStandardHours,
-        d.getStandardMinutes % 60,
-        d.getStandardSeconds % 60
       )
     }
 }
