@@ -62,5 +62,5 @@ trait SlickProfile[P <: JdbcProfile]
 trait SlickRepository[K <: @@[_, _], M <: EntityModel[K], P <: JdbcProfile]
     extends Repository[K, M] with SlickProfile[P] {
 
-  override val api: CustomAPI = new CustomAPI with SlickDBIOActionOps[K, M] {}
+  override val api: CustomAPI with SlickDBIOActionOps[K, M] = new CustomAPI with SlickDBIOActionOps[K, M] {}
 }
