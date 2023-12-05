@@ -31,7 +31,7 @@ object SlickJdbcUrlBuilderProvider {
    * Registered SlickJdbcUrlBuilders.
    */
   private var stock: Map[String, SlickJdbcUrlBuilder] = Map(
-    "com.mysql.jdbc.Driver"           -> new SlickJdbcUrlBuilderForMySQL(),
+    "com.mysql.cj.jdbc.Driver"        -> new SlickJdbcUrlBuilderForMySQL(),
     "com.amazon.redshift.jdbc.Driver" -> new SlickJdbcUrlBuilderForRedshift()
   )
 
