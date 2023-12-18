@@ -12,7 +12,7 @@ object Dependencies {
   val play = "org.playframework" %% "play" % "3.0.0"
   val playJson = "org.playframework" %% "play-json" % "3.0.0"
 
-  val connectorJava = "mysql" % "mysql-connector-java" % "5.1.39"
+  val connectorJava = "mysql" % "mysql-connector-java" % "8.0.33"
 
   val shapeless = "com.chuusai" %% "shapeless" % "2.3.3"
 
