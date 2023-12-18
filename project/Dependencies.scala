@@ -20,7 +20,7 @@ object Dependencies {
 
   val slick = "com.typesafe.slick" %% "slick" % "3.3.2"
 
-  val hikariCP = "com.zaxxer" % "HikariCP" % "2.5.0"
+  val hikariCP = "com.zaxxer" % "HikariCP" % "5.0.1"
 
   val keyczar = "org.keyczar" % "keyczar" % "0.71h"
 
