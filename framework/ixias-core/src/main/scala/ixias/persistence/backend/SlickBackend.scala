@@ -8,12 +8,12 @@
 
 package ixias.persistence.backend
 
-import java.sql.Connection
 import scala.concurrent.Future
 import scala.util.{ Success, Failure }
 
 import com.zaxxer.hikari.{ HikariConfig, HikariDataSource }
-import slick.jdbc.{ JdbcProfile, JdbcBackend, JdbcDataSource }
+import slick.util.AsyncExecutor
+import slick.jdbc.{ JdbcProfile, JdbcBackend }
 import ixias.persistence.model.DataSourceName
 
 /**
@@ -27,15 +27,21 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
     SlickDatabaseContainer.getOrElseUpdate {
       (for {
         ds <- createDataSource
-        db <- Future(driver.backend.Database.forSource(ds))
+        db <- Future(driver.backend.Database.forDataSource(ds, Some(ds.getMaximumPoolSize), AsyncExecutor(
+          name = "AsyncExecutor.ixias",
+          minThreads = ds.getMaximumPoolSize,
+          maxThreads = ds.getMaximumPoolSize,
+          queueSize = 1000,
+          maxConnections = ds.getMaximumPoolSize
+        )))
       } yield db) andThen {
         case Success(_) => logger.info("Created a new data souce. dsn=%s".format(dsn.toString))
         case Failure(_) => logger.info("Failed to create a data souce. dsn=%s".format(dsn.toString))
       }
     }
 
-  /** Create a JdbcDataSource from DSN (Database Souce Name) */
-  def createDataSource(implicit dsn: DataSourceName): Future[HikariCPDataSource] =
+  /** Create a JdbcDataSource from DSN (Database Source Name) */
+  def createDataSource(implicit dsn: DataSourceName): Future[HikariDataSource] =
     Future.fromTry {
       for {
         driver <- getDriverClassName
@@ -55,28 +61,9 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
         getHostSpecMaxPoolSize       map hconf.setMaximumPoolSize
         getHostSpecConnectionTimeout map hconf.setConnectionTimeout
         getHostSpecIdleTimeout       map hconf.setIdleTimeout
-        HikariCPDataSource(new HikariDataSource(hconf), hconf)
+        new HikariDataSource(hconf)
       }
     }
-
-  /** The DataSource */
-  sealed case class HikariCPDataSource (
-    val ds:    HikariDataSource,
-    val hconf: HikariConfig
-  ) extends JdbcDataSource {
-
-    /** The maximum pool size. */
-    val maxConnections: Option[Int] = None
-
-    /** Create a new Connection or get one from the pool */
-    def createConnection(): Connection = ds.getConnection()
-
-    /**
-     * If this object represents a connection pool managed directly by Slick, close it.
-     * Otherwise no action is taken.
-     */
-    def close(): Unit = ds.close()
-  }
 }
 
 /** Manage data sources associated with DSN */
