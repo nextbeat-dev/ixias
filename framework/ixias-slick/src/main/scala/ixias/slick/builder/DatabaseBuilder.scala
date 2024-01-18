@@ -7,6 +7,8 @@
 
 package ixias.slick.builder
 
+import javax.sql.DataSource
+
 import com.zaxxer.hikari.HikariDataSource
 
 import slick.util.AsyncExecutor
@@ -23,10 +25,13 @@ trait DatabaseBuilder {
     maxConnections = maximumPoolSize
   )
 
-  def buildHikariDataSource(dataSource: HikariDataSource): Database = {
+  def fromHikariDataSource(dataSource: HikariDataSource): Database = {
     val asyncExecutor = buildAsyncExecutor(dataSource.getMaximumPoolSize)
     Database.forDataSource(dataSource, Some(dataSource.getMaximumPoolSize), asyncExecutor)
   }
+
+  def fromDataSource(dataSource: DataSource): Database =
+    Database.forDataSource(dataSource, None)
 }
 
 object DatabaseBuilder extends DatabaseBuilder
