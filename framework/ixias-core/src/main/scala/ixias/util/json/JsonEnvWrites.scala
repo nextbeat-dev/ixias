@@ -27,17 +27,6 @@ trait JsonEnvWrites extends EnvWrites {
   implicit def enumBitFlags[E <: ixias.util.EnumBitFlags]: Writes[E] = (o: E) => JsNumber(o.code)
 
   /**
-   * Serializer for ixias.persistence.model.Cursor
-   */
-  implicit object CursorWrites extends Writes[ixias.persistence.model.Cursor] {
-    def writes(cursor: ixias.persistence.model.Cursor) =
-      JsObject(Seq(
-        Some(            "offset" -> JsNumber(cursor.offset)),
-        cursor.limit.map("limit"  -> JsNumber(_))
-      ).flatten)
-  }
-
-  /**
    * Serializer for java.time.YearMonth
    */
   implicit object YearMonthWrites extends Writes[java.time.YearMonth] {
