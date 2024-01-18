@@ -9,7 +9,6 @@
 package ixias.slick.lifted
 
 import ixias.model._
-import ixias.persistence.model.Converter
 import scala.language.implicitConversions
 
 trait ConverterOps {

@@ -13,6 +13,6 @@ package ixias.slick.lifted
  * objects which simplify the use of the lifted embedding.
  */
 trait Aliases {
-  val  Cursor = ixias.slick.model.Cursor
-  type Cursor = ixias.slick.model.Cursor
+  val  Cursor = ixias.model.Cursor
+  type Cursor = ixias.model.Cursor
 }
