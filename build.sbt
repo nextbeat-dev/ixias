@@ -98,7 +98,7 @@ lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-a
 //~~~~~~~~~~~~~~~~~~~~~
 lazy val ixias = IxiaSProject("ixias", ".")
   .aggregate(ixiasCore, ixiasMail, ixiasSlick, ixiasAws, ixiasPlay)
-  .dependsOn(ixiasCore, ixiasMail, ixiasSlick)
+  .dependsOn(ixiasCore, ixiasMail)
 
 lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
   .aggregate(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
