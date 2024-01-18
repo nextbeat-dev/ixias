@@ -6,16 +6,16 @@
  * please view the LICENSE file that was distributed with this source code.
  */
 
-package ixias.persistence.model
+package ixias.model
 
 /**
  * A database cursor is a control structure that enables
  * traversal over the records in a database.
  */
 case class Cursor(
-  val offset: Long         = 0L,        // Select all elements except the first ones.
-  val limit:  Option[Long] = Some(10L)  // Select the first elements.
-) extends CursorLike
+                   offset: Long         = 0L,        // Select all elements except the first ones.
+                   limit:  Option[Long] = Some(10L)  // Select the first elements.
+                 ) extends CursorLike
 
 /**
  * Companion object
@@ -47,5 +47,3 @@ trait CursorLike { self: Cursor =>
     this.copy(offset = 0)
   }
 }
-
-
