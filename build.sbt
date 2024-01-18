@@ -49,6 +49,14 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     logbackClassic % Test
   ) ++ cats ++ specs2)
 
+lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
+  .settings(libraryDependencies ++= Seq(
+    slick,
+    hikariCP,
+    connectorJava % Test,
+  ))
+  .dependsOn(ixiasCore)
+
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   .settings(libraryDependencies ++= Seq(
     guice,
@@ -89,8 +97,8 @@ lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-a
 // IxiaS Meta Packages
 //~~~~~~~~~~~~~~~~~~~~~
 lazy val ixias = IxiaSProject("ixias", ".")
-  .aggregate(ixiasCore, ixiasMail, ixiasAws, ixiasPlay)
-  .dependsOn(ixiasCore, ixiasMail)
+  .aggregate(ixiasCore, ixiasMail, ixiasSlick, ixiasAws, ixiasPlay)
+  .dependsOn(ixiasCore, ixiasMail, ixiasSlick)
 
 lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
   .aggregate(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
