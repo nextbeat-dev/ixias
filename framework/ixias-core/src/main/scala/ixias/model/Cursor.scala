@@ -13,9 +13,9 @@ package ixias.model
  * traversal over the records in a database.
  */
 case class Cursor(
-                   offset: Long         = 0L,        // Select all elements except the first ones.
-                   limit:  Option[Long] = Some(10L)  // Select the first elements.
-                 ) extends CursorLike
+  offset: Long         = 0L,        // Select all elements except the first ones.
+  limit:  Option[Long] = Some(10L)  // Select the first elements.
+) extends CursorLike
 
 /**
  * Companion object
