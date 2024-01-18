@@ -18,7 +18,7 @@ import java.sql.{ PreparedStatement, ResultSet }
 import slick.ast.BaseTypedType
 import slick.jdbc.{ MySQLProfile => SlickMySQLProfile, JdbcType }
 
-import ixias.persistence.lifted._
+import ixias.slick.lifted._
 
 trait MySQLProfile extends SlickMySQLProfile {
   self =>
@@ -191,7 +191,7 @@ trait MySQLProfile extends SlickMySQLProfile {
       }
   }
 
-  override val api: API with Aliases with ExtensionMethods with SlickColumnTypeOps = new API with Aliases with ExtensionMethods with SlickColumnTypeOps {}
+  override val api: API with Aliases with ConverterOps with SlickColumnTypeOps = new API with Aliases with ConverterOps with SlickColumnTypeOps {}
 }
 
 object MySQLProfile extends MySQLProfile
