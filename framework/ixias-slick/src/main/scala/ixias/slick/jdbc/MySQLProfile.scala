@@ -191,7 +191,8 @@ trait MySQLProfile extends SlickMySQLProfile {
       }
   }
 
-  override val api: API with Aliases with ConverterOps with SlickColumnTypeOps = new API with Aliases with ConverterOps with SlickColumnTypeOps {}
+  override val api: API with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps =
+    new API with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps {}
 }
 
 object MySQLProfile extends MySQLProfile
