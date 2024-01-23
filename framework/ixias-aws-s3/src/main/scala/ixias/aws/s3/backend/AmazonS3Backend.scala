@@ -8,11 +8,10 @@
 
 package ixias.aws.s3.backend
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 import ixias.util.Logger
-import ixias.persistence.dbio.Execution
 
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.AWSStaticCredentialsProvider
@@ -21,13 +20,13 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder
 /**
  * The backend to get a client for AmazonS3.
  */
-object AmazonS3Backend extends AmazonS3Config {
+trait AmazonS3Backend extends AmazonS3Config {
 
   /** The logger for profile */
   private lazy val logger  = Logger.apply
 
   /** The Execution Context */
-  protected implicit val ctx: ExecutionContextExecutor = Execution.Implicits.trampoline
+  implicit def ctx: ExecutionContext
 
   /** Get a client to manage Amazon S3. */
   def getClient(implicit dsn: DataSourceName): Future[AmazonS3] = {
