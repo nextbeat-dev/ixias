@@ -29,15 +29,13 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Get file object.
    */
-  def get(id: File.Id): Future[Option[File#EmbeddedId]] =
-    slave.run(
-      fileTable.filter(_.id === id).result.headOption
-    ).map(_.map(_.toEmbeddedId))
+  def get(id: File.Id): Future[Option[EntityEmbeddedId]] =
+    slave.run[Option[File]](fileTable.filter(_.id === id).result.headOption)
 
   /**
    * Get file object with a pre-signed URL for accessing an Amazon S3 resource.
    */
-  def getWithPresigned(id: File.Id): Future[Option[File#EmbeddedId]] =
+  def getWithPresigned(id: File.Id): Future[Option[EntityEmbeddedId]] =
     get(id) flatMap {
       case None       => Future.successful(None)
       case Some(file) => for {
@@ -49,7 +47,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Get file object as `Entity` with a input stream for it.
    */
-  def getWithContent(id: File.Id): Future[Option[(File#EmbeddedId, S3ObjectInputStream)]] =
+  def getWithContent(id: File.Id): Future[Option[(EntityEmbeddedId, S3ObjectInputStream)]] =
     get(id) flatMap {
       case None       => Future.successful(None)
       case Some(file) => for {
@@ -61,20 +59,16 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Finds file objects by set of file ids.
    */
-  def filter(ids: Seq[File.Id]): Future[Seq[File#EmbeddedId]] =
-    slave.run(
-      fileTable.filter(_.id inSet ids).result
-    ).map(_.map(_.toEmbeddedId))
+  def filter(ids: Seq[File.Id]): Future[Seq[EntityEmbeddedId]] =
+    slave.run[Seq[File]](fileTable.filter(_.id inSet ids).result)
 
   /**
    * Finds file objects with a pre-signed URL by set of file ids.
    */
-  def filterWithPresigned(ids: Seq[File.Id]): Future[Seq[File#EmbeddedId]] =
+  def filterWithPresigned(ids: Seq[File.Id]): Future[Seq[EntityEmbeddedId]] =
     for {
       client   <- getClient
-      fileSeq1 <- slave.run(
-        fileTable.filter(_.id inSet ids).result
-      ).map(_.map(_.toEmbeddedId))
+      fileSeq1 <- filter(ids)
       fileSeq2 <- Future.sequence(fileSeq1.map {
         file => for {
           url <- client.genPresignedUrlForAccess(file.v)
@@ -113,7 +107,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
    * Update the file information.
    * At the same time upload a specified file to S3.
    */
-  def update(file: File#EmbeddedId, content: java.io.File): Future[Option[File#EmbeddedId]] =
+  def update(file: EntityEmbeddedId, content: java.io.File): Future[Option[EntityEmbeddedId]] =
     for {
       client <- getClient
       _      <- client.upload(file.v, content)
@@ -130,7 +124,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
    * However, the file body content has not yet been uploaded to S3.
    * After this method called, upload a file via presigned URL.
    */
-  def updateViaPresignedUrl(file: File#EmbeddedId): Future[(Option[File#EmbeddedId], String)] =
+  def updateViaPresignedUrl(file: EntityEmbeddedId): Future[(Option[EntityEmbeddedId], String)] =
     for {
       client <- getClient
       url    <- client.genPresignedUrlForUpload(file.v)
@@ -145,7 +139,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Update the sepecified file's image size.
    */
-  def updateImageSize(fid: File.Id, size: File.ImageSize): Future[Option[File#EmbeddedId]] =
+  def updateImageSize(fid: File.Id, size: File.ImageSize): Future[Option[EntityEmbeddedId]] =
     master.run {
       for {
         old <- fileTable.filter(_.id === fid).result.headOption
@@ -159,18 +153,18 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Remove the file information.
    */
-  def remove(id: File.Id): Future[Option[File#EmbeddedId]] =
+  def remove(id: File.Id): Future[Option[EntityEmbeddedId]] =
     master.run {
       for {
         old <- fileTable.filter(_.id === id).result.headOption
         _   <- fileTable.filter(_.id === id).delete
       } yield old
     }
-  
+
   /**
    * Remove the file information list.
    */
-  def bulkRemove(idSeq: Seq[File.Id]): Future[Seq[File#EmbeddedId]] =
+  def bulkRemove(idSeq: Seq[File.Id]): Future[Seq[EntityEmbeddedId]] =
     master.run {
       val rows = fileTable.filter(_.id inSet idSeq)
       for {
@@ -182,7 +176,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Erase the file information and a physical file object at S3.
    */
-  def erase(id: File.Id): Future[Option[File#EmbeddedId]] =
+  def erase(id: File.Id): Future[Option[EntityEmbeddedId]] =
     for {
       fileOpt <- master.run {
         for {
@@ -199,7 +193,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
   /**
    * Erase the file information list and the physical file object list at S3.
    */
-  def bulkErase(idSeq: Seq[File.Id]): Future[Seq[File#EmbeddedId]] =
+  def bulkErase(idSeq: Seq[File.Id]): Future[Seq[EntityEmbeddedId]] =
     for {
       fileSeq <- master.run {
         val rows = fileTable.filter(_.id inSet idSeq)
