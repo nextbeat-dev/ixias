@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Slick · IxiaS</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Documentation for IxiaS'/>
+<link rel="canonical" href="https://nextbeat-dev.github.io/ixias/03-Slick.html"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/warnOldVersion.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<script type="text/javascript" src="js/snippets.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.0.0*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="active page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">IxiaS</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.0.0*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="active page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<span id="version-warning"></span>
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">IxiaS</a></li>
+  <li>Slick</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#slick" name="slick" class="anchor"><span class="anchor-link"></span></a>Slick</h1>
+<p>この章では、IxiaSがラップしているSlickの使い方を説明します。</p>
+<p>プロジェクトに以下の依存関係を設定する必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">libraryDependencies ++= Seq(
+  &quot;net.ixias&quot; %% &quot;ixias-slick&quot; % &quot;2.0.0-SNAPSHOT&quot;,
+  &quot;mysql&quot; % &quot;mysql-connector-java&quot; % &quot;8.3.0&quot;
+)
+</code></pre>
+<p>以降のコード例では、以下のimportを想定しています。</p>
+<pre class="prettyprint"><code class="language-scala">import ixias.slick.jdbc.MySQLProfile.api._
+import ixias.slick.builder._
+</code></pre>
+<p>NextbeatではSlickを使用したDBアクセスを行う際に、IxiaSのEntity Modelを使用しています。 Entity Modelの章をまだ読んでいない場合は先に<a href="/ixias/01-Entity-Model.html">こちら</a>を読んでください。</p>
+<p>本章で使用するモデルはEntity Modelの章で作成したUserモデルを使用します。</p>
+<h2><a href="#mysqlprofile" name="mysqlprofile" class="anchor"><span class="anchor-link"></span></a>MySQLProfile</h2>
+<p>IxiaSでSlickを使用する際は、公式が提供しているMySQLProfileを使用せずに、独自に作成したProfileを使用します。</p>
+<pre class="prettyprint"><code class="language-scala">ixias.slick.jdbc.MySQLProfile.api._
+</code></pre>
+<p>ではなぜ公式ではなく独自のProfileを使用するのでしょうか？</p>
+<p>まず第一にSlick3.3からjava.time系のデータ型へのサポートが追加されたのですが、その時のデータの扱い方がRDBによって大きく差がある状態になりました。 特にMySQLProfileは、精度維持のためにほとんどの時間データを一旦文字列として取得してから変換するので、slick3.2以下で行っていたようなjava.sql.TimestampとLocalDateTimeのMappedColumnTypeを利用したものが動作しなくなってしまいました。</p>
+<p>対応方法はいくつかありますが、公式推奨実装であるProfileを拡張して日付関連のマッピングをoverrideする方法をNextbeatは採用しています。 そのため、独自にProfileを作成して内部でマッピング処理を実装してプロダクト側に提供しています。</p>
+<p>第二にIxiaSではEntity ModelやEnum等の独自の型を多様しています。Slickでは独自の型を扱う際にマッピング処理を作成しなければいけません。 プロダクトごとに同じようなマッピング処理を書くのは面倒です。 IxiaSで使用する独自の型に関してはライブラリ側でマッピング処理を実装し提供できるようにするため、独自のProfileを作成しています。</p>
+<h2><a href="#table定義" name="table定義" class="anchor"><span class="anchor-link"></span></a>Table定義</h2>
+<p>Table定義は以下のようになります。 基本的な実装はSlickのドキュメントに準じています。<a href="https://scala-slick.org/doc/stable/schemas.html">参照</a></p>
+<pre class="prettyprint"><code class="language-scala">class UserTable(tag: Tag) extends Table[User](tag, &quot;user&quot;) {
+  def id = column[User.Id](&quot;id&quot;, O.PrimaryKey, O.AutoInc)
+  def updatedAt = column[LocalDateTime](&quot;updated_at&quot;, TsCurrent)
+  def createdAt = column[LocalDateTime](&quot;created_at&quot;, Ts)
+
+  def * = (id.?, updatedAt, createdAt).&lt;&gt; (
+    (User.apply _).tupled,
+    (User.unapply _).andThen(_.map(_.copy(
+      _2 = LocalDateTime.now()
+    )))
+  )
+}
+</code></pre>
+<p><code>Table</code>クラスのコンストラクタには、第1引数に<code>tag</code>、第2引数にテーブル名を指定します。</p>
+<p>NextbeatではSlickを使用したDBアクセスを行う際に、更新処理系は更新を行いたいカラムのみを指定して更新を行うのではなく、モデル全体を使用して更新処理を行います。 そのため、<code>*</code>メソッドでのマッピング処理で<code>updated_at</code>カラムに対して<code>LocalDateTime.now()</code>を設定して現在日時が格納されるように設定する必要があります。</p>
+<p>※ <code>*</code>メソッドの実装は、<code>&lt;&gt;</code>メソッドを使用しています。<code>&lt;&gt;</code>メソッドは、<code>*</code>メソッドで指定したカラムの値をモデルに変換する関数と、モデルをカラムの値に変換する関数を指定します。</p>
+<h3><a href="#カラムのデータ型" name="カラムのデータ型" class="anchor"><span class="anchor-link"></span></a>カラムのデータ型</h3>
+<p>Slickではカラムの型を定義する際に、<code>column</code>メソッドを使用します。その際に第2引数以降はカラムのデータ型を設定することができるのですが、本来は<code>slick.sql.SqlProfile.ColumnOption.SqlType</code>型を使用して任意でデータ型を設定します。 IxiaSでは<code>ixias.slick.jdbc.MySQLProfile.api</code>に<code>ixias.slick.jdbc.SlickColumnType</code>が組み込まれているためこちらを使用することで、より簡単にデータ型を設定することができます。</p>
+<p>以下はIxiaSで提供されているデータ型の一覧です。</p>
+<table>
+  <thead>
+    <tr>
+      <th>値 </th>
+      <th>データ型 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Boolean </td>
+      <td>BOOLEAN </td>
+    </tr>
+    <tr>
+      <td>Int8 </td>
+      <td>TINYINT </td>
+    </tr>
+    <tr>
+      <td>Int16 </td>
+      <td>SMALLINT </td>
+    </tr>
+    <tr>
+      <td>Int32 </td>
+      <td>INT </td>
+    </tr>
+    <tr>
+      <td>Int64 </td>
+      <td>BIGINT </td>
+    </tr>
+    <tr>
+      <td>UInt8 </td>
+      <td>TINYINT UNSIGNED </td>
+    </tr>
+    <tr>
+      <td>UInt16 </td>
+      <td>SMALLINT UNSIGNED </td>
+    </tr>
+    <tr>
+      <td>UInt32 </td>
+      <td>INT UNSIGNED </td>
+    </tr>
+    <tr>
+      <td>UInt64 </td>
+      <td>BIGINT UNSIGNED </td>
+    </tr>
+    <tr>
+      <td>AsciiChar8 </td>
+      <td>VARCHAR(8) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiChar16 </td>
+      <td>VARCHAR(16) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiChar32 </td>
+      <td>VARCHAR(32) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiChar64 </td>
+      <td>VARCHAR(64) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiChar128 </td>
+      <td>VARCHAR(128) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiChar255 </td>
+      <td>VARCHAR(255) CHARACTER SET ascii </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin8 </td>
+      <td>VARCHAR(8) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin16 </td>
+      <td>VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin32 </td>
+      <td>VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin64 </td>
+      <td>VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin128 </td>
+      <td>VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>AsciiCharBin255 </td>
+      <td>VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8Char8 </td>
+      <td>VARCHAR(8) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8Char16 </td>
+      <td>VARCHAR(16) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8Char32 </td>
+      <td>VARCHAR(32) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8Char64 </td>
+      <td>VARCHAR(64) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8Char128 </td>
+      <td>VARCHAR(128) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8Char255 </td>
+      <td>VARCHAR(255) CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar8 </td>
+      <td>VARCHAR(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar16 </td>
+      <td>VARCHAR(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar32 </td>
+      <td>VARCHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar64 </td>
+      <td>VARCHAR(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar128 </td>
+      <td>VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>Utf8BinChar255 </td>
+      <td>VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin </td>
+    </tr>
+    <tr>
+      <td>DateTime </td>
+      <td>DATETIME </td>
+    </tr>
+    <tr>
+      <td>Date </td>
+      <td>DATE </td>
+    </tr>
+    <tr>
+      <td>Time </td>
+      <td>TIME </td>
+    </tr>
+    <tr>
+      <td>Ts </td>
+      <td>TIMESTAMP DEFAULT CURRENT_TIMESTAMP </td>
+    </tr>
+    <tr>
+      <td>TsCurrent </td>
+      <td>TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP </td>
+    </tr>
+    <tr>
+      <td>Text </td>
+      <td>TEXT CHARACTER SET utf8mb4 </td>
+    </tr>
+    <tr>
+      <td>Blob </td>
+      <td>BLOB </td>
+    </tr>
+    <tr>
+      <td>Decimal(m: Int, d: Int) </td>
+      <td>DECIMAL($m, $d) </td>
+    </tr>
+  </tbody>
+</table>
+<p>ここで定義されていないデータ型を使用したい場合は、<code>import slick.sql.SqlProfile.ColumnOption.SqlType</code>を使用してください。</p>
+<h2><a href="#database定義" name="database定義" class="anchor"><span class="anchor-link"></span></a>Database定義</h2>
+<p>Database定義は以下のようになります。 NextbeatではデータベースアクセスにHikariCPのコネクションプールを使用しています。</p>
+<p>IxiaSにはこのHikariCPのコネクションプールをConfファイルから設定値を読み取り構築するビルダーが提供されています。</p>
+<p>ビルダーはConfファイルから設定値を読み取るために、<code>DataSourceName</code>というものを使用します。</p>
+<pre class="prettyprint"><code class="language-scala">val dataSource = DataSourceName(&quot;ixias.db.mysql://slave/example&quot;)
+</code></pre>
+<p><code>DataSourceName</code>にはConfファイルのパスを表す文字列を引数に取ります。 文字列の形式は<code>{path}://{hostspec}/{database}</code>という正規表現で構築されており、それぞれDataSourceNameの各プロパティに格納されます。</p>
+<pre class="prettyprint"><code class="language-scala">case class DataSourceName(
+  path:     String,
+  hostspec: String,
+  database: String
+)
+</code></pre>
+<p>ここでいう<code>path</code>とは単純にConfファイルのパスを表す文字列です。 NextbeatではDBアクセスを行う際に、読み取り用と書き込み用で接続先のDBを変更しています。 NextbeatではAWSのAurora on MySQLを使用しているため、<code>hostspec</code>には<code>master</code>と<code>slave</code>の2つの値が設定されます。 <code>database</code>はその名の通りDB名です。</p>
+<p><code>application.conf</code>等のconfファイルには以下のように設定します。</p>
+<pre class="prettyprint"><code class="language-txt">ixias.db.mysql {
+  example {
+    username                 = &quot;username&quot;
+    password                 = &quot;password&quot;
+    driver_class_name        = &quot;com.mysql.cj.jdbc.Driver&quot;
+    hostspec.master.jdbc_url = &quot;jdbc:mysql://127.0.0.1:3306/example&quot;
+    hostspec.slave.jdbc_url  = &quot;jdbc:mysql://127.0.0.1:3306/example&quot;
+  }
+}
+</code></pre>
+<p><code>hostspec</code>には<code>master</code>と<code>slave</code>の2つの値が設定されており、それぞれの値には<code>jdbc_url</code>というキーで接続先のDBのURLを設定して接続先を変更しています。</p>
+<p>※ ローカル環境なので接続先は同じですが、本番環境では接続先が異なります。</p>
+<p>ではなぜこのようなネストした設定を取得できるのでしょうか？</p>
+<p>IxiaSではConfファイルから設定値を読み取る際に、<code>DataSourceName</code>の<code>path</code>、<code>database</code>、<code>hostspec</code>の値を組み合わせてそれぞれの組み合わせでConfファイルへのパスを構築しています。 そのためネストした設定値でも読み取ることができるのです。</p>
+<pre class="prettyprint"><code class="language-scala">def readValue[A](f: Configuration =&gt; Option[A])(implicit dsn: DataSourceName): Option[A] =
+    Seq(
+      dsn.path + &quot;.&quot; + dsn.database + &quot;.&quot; + CF_SECTION_HOSTSPEC.format(dsn.hostspec),
+      dsn.path + &quot;.&quot; + dsn.database,
+      dsn.path + &quot;.&quot; + CF_SECTION_HOSTSPEC.format(dsn.hostspec),
+      dsn.path
+    ).foldLeft[Option[A]](None) {
+      case (prev, path) =&gt; prev.orElse {
+        config.get[Option[Configuration]](path).flatMap(f(_))
+      }
+    }
+</code></pre>
+<p>Nextbeatではデータベースを複数作成しているプロダクトがありますが、このような設定を取得できるのでConfファイルの設定値を共通化することができます。</p>
+<pre class="prettyprint"><code class="language-txt">ixias.db.mysql {
+  username          = &quot;username&quot;
+  password          = &quot;password&quot;
+  driver_class_name = &quot;com.mysql.cj.jdbc.Driver&quot;
+
+  database1 {
+    hostspec.master.jdbc_url = &quot;jdbc:mysql://127.0.0.1:3306/database1&quot;
+    hostspec.slave.jdbc_url  = &quot;jdbc:mysql://127.0.0.1:3306/database1&quot;
+  }
+  
+  database2 {
+    hostspec.master.jdbc_url = &quot;jdbc:mysql://127.0.0.1:3307/database2&quot;
+    hostspec.slave.jdbc_url  = &quot;jdbc:mysql://127.0.0.1:3307/database2&quot;
+  }
+}
+</code></pre>
+<p>HikariCPを構築するための設定値に関しては公式のREADMEを参照してください。<a href="https://github.com/brettwooldridge/HikariCP/blob/dev/README.md">参照</a></p>
+<p>IxiaSのHikariConfigBuilderを使用して以下のようにHikariCPのDataSourceを構築します。</p>
+<pre class="prettyprint"><code class="language-scala">val dataSource = DataSourceName(&quot;ixias.db.mysql://slave/example&quot;)
+val hikariConfigBuilder = HikariConfigBuilder.default(dataSource)
+val hikariConfig        = hikariConfigBuilder.build()
+hikariConfig.validate() // 未設定値をデフォルト値で補完する
+
+val dataSource = new HikariDataSource(hikariConfig)
+</code></pre>
+<p>IxiaSにはHikariDataSourceからSlickのDatabaseを構築するビルダーも提供されているので、先ほど作成したHikariCPのDataSourceを使用して以下のようにSlickのDatabaseを構築します。</p>
+<pre class="prettyprint"><code class="language-scala">val database: Database = DatabaseBuilder.fromHikariDataSource(dataSource)
+</code></pre>
+<p>LambdaなどでHikariCPのコネクションプールを使用したくない場合は、<code>DatabaseBuilder</code>に<code>fromDataSource</code>というメソッドも提供されているため、任意のドライバーから作成したDataSourceを使用してSlickのDatabaseを構築することもできます。</p>
+<pre class="prettyprint"><code class="language-scala">val dataSource: DataSource = ???
+val database: Database = DatabaseBuilder.fromDataSource(dataSource)
+</code></pre>
+<h2><a href="#repository定義" name="repository定義" class="anchor"><span class="anchor-link"></span></a>Repository定義</h2>
+<p>NextbeatではSlickを使用したDBアクセスを行う際に、Repositoryというレイヤーを挟んで処理を行います。 NextbeatではDBアクセスを読み取り用と書き込み用で分けているため、それぞれのDatabaseインスタンスを作成します。</p>
+<pre class="prettyprint"><code class="language-scala">class UserRepository {
+  ...
+  val master: Database = DatabaseBuilder.fromHikariDataSource(masterDataSource)
+  val slave: Database = DatabaseBuilder.fromHikariDataSource(slaveDataSource)
+}
+</code></pre>
+<p>Slickを使用したDBアクセスを行う際には、<code>TableQuery</code>を使用してテーブルを定義する必要があるため、先ほど作成したUserTableを使用して以下のように構築を行います。</p>
+<pre class="prettyprint"><code class="language-scala">class UserRepository {
+  ...
+  val userTable = TableQuery[UserTable]
+}
+</code></pre>
+<p>Repositoryのメソッドは基本的にはSlickのドキュメントに準じています。<a href="https://scala-slick.org/doc/3.3.3/queries.html">参照</a></p>
+<pre class="prettyprint"><code class="language-scala">class UserRepository {
+
+  def getById(id: User.Id): Future[Ooption[User]] =
+    slave.run(userTable.filter(_.id === id).result.headOption)
+}
+</code></pre>
+<p>Entity Modelの章で「Idを持たないWithNoId型とはDBにデータを格納する前(Auto Incrementによって採番される前)のレコードを表現して、Idを持つEmbeddedId型とはDBにデータを格納した後(Auto Incrementによって採番された後)のレコードを表現している」という説明を行いました。</p>
+<p>Entity Modelを使用してレコード作成を行う際には、WithNoId型のモデルを引数に受け取っています。 WithNoId型のモデルを使用している場合、idは常に<code>None</code>になっていますので、Slickの追加処理を行う際に<code>None</code>が渡されることで任意の値でレコード作成を行わずにAuto Incrementによって採番された値でレコード作成を行うことができます。</p>
+<pre class="prettyprint"><code class="language-scala">def add(data: User#WithNoId): Future[User.Id] =
+  master.run(userTable returning userTable.map(_.id) += data)
+</code></pre>
+<p>先ほどの<code>getById</code>メソッドの戻り値は<code>Option[User]</code>を返すようにしていましたが、戻り値の型をEmbeddedId型に変更する場合は以下のように変換処理を行う必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">def getById(id: User.Id): Future[Ooption[User#EmbeddedId]] =
+  slave.run(userTable.filter(_.id === id).result.headOption).map(_.map(_.toEmbeddedId))
+</code></pre>
+<p>IxiaSにはこのような変換処理を暗黙的に行うtraitが用意されています。</p>
+<p><code>ixias.slick.SlickRepository</code>を使用することで、EmbeddedId型の戻り値が欲しいメソッドに対してEntity Modelが渡されている場合に暗黙的に型変換を行なってくれます。</p>
+<pre class="prettyprint"><code class="language-scala">import ixias.slick.SlickRepository
+class UserRepository()(implicit val ex: ExecutionContext) extends SlickRepository[User.Id, User] {
+  def getById(id: User.Id): Future[Ooption[EntityEmbeddedId]] =
+    slave.run[Option[User]](userTable.filter(_.id === id).result.headOption)
+}
+</code></pre>
+<p>※ SlickRepositoryには<code>EntityEmbeddedId</code>と<code>EntityWithNoId</code>の2つの型エイリアスが定義されています。</p>
+<p>※ SlickRepositoryは内部でExecutionContextを必要としているため暗黙的に受け取れるように設定を追加する必要があります。</p>
+<h2><a href="#play-frameworkへの組み込み" name="play-frameworkへの組み込み" class="anchor"><span class="anchor-link"></span></a>Play Frameworkへの組み込み</h2>
+<p>以下サンプル実装では、以下のimportを想定しています。</p>
+<pre class="prettyprint"><code class="language-scala">import javax.inject.{ Inject, Provider, Singleton }
+import scala.concurrent.Future
+import com.google.inject.name.Names
+import com.google.inject.AbstractModule
+import play.api.inject.ApplicationLifecycle
+import ixias.slick.model.DataSourceName
+import ixias.slick.builder._
+import ixias.slick.jdbc.MySQLProfile.api.Database
+</code></pre>
+<p>NextbeatではScalaを使用したプロダクトにはPlay Frameworkを使用しています。 IxiaSで構築を行なったリポジトリをPlay Frameworkに組み込むためのサンプルをご紹介します。</p>
+<p>Play FrameworkにはデフォルトでGoogle guiceのDIが組み込まれています。IxiaSでのDB処理に関してもこのDIに乗っかる形で実装を行います。</p>
+<p>まずはSlickのDatabaseをDIするためのモジュールを作成します。</p>
+<p>Play Frameworkを使用したアプリケーションではHikariCPのコネクションプールを使用するため、Provider経由でPlay FrameworkのApplicationLifecycleを受け取り、アプリケーションの終了時にコネクションプールを閉じるよう作成を行います。</p>
+<pre class="prettyprint"><code class="language-scala">@Singleton
+class MasterDatabaseProvider @Inject() (
+  lifecycle: ApplicationLifecycle
+) extends Provider[Database] {
+
+  private val hikariConfigBuilder = HikariConfigBuilder.default(DataSourceName(&quot;ixias.db.mysql://master/example&quot;))
+  private val hikariConfig        = hikariConfigBuilder.build()
+  hikariConfig.validate()
+
+  private val dataSource = new HikariDataSource(hikariConfig)
+
+  lifecycle.addStopHook { () =&gt;
+    Future.successful(dataSource.close())
+  }
+
+  override def get(): Database = DatabaseBuilder.fromHikariDataSource(dataSource)
+}
+</code></pre>
+<p>※ 読み取り用のDatabaseも同様に作成します。</p>
+<p>Play Frameworkにモジュールを組み込むためにAbstractModuleをMixInしたモジュールを作成します。</p>
+<p>Nextbeatでは読み取り用と書き込み用で接続先のDBを変更しているため、それぞれのDatabaseインスタンスを作成します。 Databaseインスタンスはどちらも同じ型になっているため、DIする際に同じ型だと区別することができません。 そのため、<code>@Named</code>アノテーションを使用して名前付きのインスタンスとして組み込めるように<code>Names.named(...)</code>で任意の名前を付与しています。</p>
+<pre class="prettyprint"><code class="language-scala">class DatabaseModule extends AbstractModule {
+
+  override def configure(): Unit = {
+    bind(classOf[Database])
+      .annotatedWith(Names.named(&quot;master&quot;))
+      .toProvider(classOf[MasterDatabaseProvider])
+      .asEagerSingleton()
+    bind(classOf[Database])
+      .annotatedWith(Names.named(&quot;slave&quot;))
+      .toProvider(classOf[SlaveDatabaseProvider])
+      .asEagerSingleton()
+  }
+}
+</code></pre>
+<p>Play Frameworkでは独自のモジュールを組み込むためには、Confファイルに以下のように有効化するための設定を追記します。</p>
+<pre class="prettyprint"><code class="language-txt">play.modules.enabled += &quot;modules.DatabaseModule&quot;
+</code></pre>
+<p>これでDatabaseの設定は完了です。</p>
+<p>次はRepositoryの設定を行います。 RepositoryではDIする際に<code>@Named</code>アノテーションを使用して名前付きのインスタンスとして組み込めるように<code>Names.named(...)</code>で任意の名前を付与しているためその設定と同じ名前で組み込みます。</p>
+<pre class="prettyprint"><code class="language-scala">@Singleton
+class UserRepository @Inject()(
+  @Named(&quot;master&quot;) master: Database,
+  @Named(&quot;slave&quot;) slave:   Database         
+) {
+  ...
+}
+</code></pre>
+<p>Repositoryに関してはDatabseのようにモジュールを作成する必要はなく、そのままDIすることができます。</p>
+<pre class="prettyprint"><code class="language-scala">@Singleton
+class Controller @Inject()(
+  cc:             MessagesControllerComponents,
+  taskRepository: TaskRepository
+) extends MessagesAbstractController(cc) {
+  ...
+}
+</code></pre>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/nextbeat-dev/ixias/tree/master/docs/target/mdoc/03-Slick.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="04-Play-Framework.html">Play Framework</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="03-Slick.html#slick" class="header">Slick</a>
+  <ul>
+    <li><a href="03-Slick.html#mysqlprofile" class="header">MySQLProfile</a></li>
+    <li><a href="03-Slick.html#table定義" class="header">Table定義</a></li>
+    <li><a href="03-Slick.html#database定義" class="header">Database定義</a></li>
+    <li><a href="03-Slick.html#repository定義" class="header">Repository定義</a></li>
+    <li><a href="03-Slick.html#play-frameworkへの組み込み" class="header">Play Frameworkへの組み込み</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2024</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '2.0.0-SNAPSHOT', 'https://nextbeat-dev.github.io/ixias/')});</script>
+
+
+</html>
