@@ -1,4 +1,0 @@
-[0m[[0m[0mdebug[0m] [0m[0m/Users/takahiko.tominaga/.sbt/ghpages/590f7b49a0ae73073758374ca7306a6844ab0bd9/net.ixias/docs$ git pull[0m
-[0m[[0m[31merror[0m] [0m[0mfatal: not a git repository (or any of the parent directories): .git[0m
-[0m[[0m[31merror[0m] [0m[0mNonzero exit code (128) running git.[0m
-[0m[[0m[31merror[0m] [0m[0m(docs / [31mghpagesUpdatedRepository[0m) Nonzero exit code (128) running git.[0m

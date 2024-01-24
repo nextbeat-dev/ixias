@@ -1,3 +1,0 @@
-# Play Framework
-
-Comming soon...
