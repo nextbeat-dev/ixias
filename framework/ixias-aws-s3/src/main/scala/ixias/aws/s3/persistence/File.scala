@@ -17,13 +17,14 @@ import ixias.persistence.model.Table
 // Table definition.
 //~~~~~~~~~~~~~~~~~~~~
 case class FileTable[P <: JdbcProfile]()(implicit val driver: P, val s3dsn: S3DSN)
-    extends Table[File, P] with AmazonS3Config { self =>
+  extends Table[File, P]
+     with AmazonS3Config { self =>
   import apiUnsafe._
 
   // --[ DNS ] -----------------------------------------------------------------
   lazy val dsn = Map(
     "master" -> DataSourceName("ixias.db.mysql://master/" + s3dsn.resource),
-    "slave"  -> DataSourceName("ixias.db.mysql://slave/"  + s3dsn.resource)
+    "slave"  -> DataSourceName("ixias.db.mysql://slave/" + s3dsn.resource)
   )
 
   // --[ Query ] ---------------------------------------------------------------
@@ -37,15 +38,24 @@ case class FileTable[P <: JdbcProfile]()(implicit val driver: P, val s3dsn: S3DS
   class Table(tag: Tag) extends BasicTable(tag, getMetaTableName) {
 
     // Columns
-    /* @1 */ def id        = column[Option[Long]]  ("id",         O.UInt64, O.PrimaryKey, O.AutoInc)
-    /* @2 */ def region    = column[String]        ("region",     O.Utf8Char32)
-    /* @3 */ def bucket    = column[String]        ("bucket",     O.Utf8Char32)
-    /* @4 */ def key       = column[String]        ("key",        O.Utf8Char255)
-    /* @5 */ def typedef   = column[String]        ("typedef",    O.Utf8Char32)
-    /* @6 */ def width     = column[Option[Int]]   ("width",      O.UInt16)
-    /* @7 */ def height    = column[Option[Int]]   ("height",     O.UInt16)
-    /* @8 */ def updatedAt = column[LocalDateTime] ("updated_at", O.TsCurrent)
-    /* @9 */ def createdAt = column[LocalDateTime] ("created_at", O.Ts)
+    /* @1 */
+    def id = column[Option[Long]]("id", O.UInt64, O.PrimaryKey, O.AutoInc)
+    /* @2 */
+    def region = column[String]("region", O.Utf8Char32)
+    /* @3 */
+    def bucket = column[String]("bucket", O.Utf8Char32)
+    /* @4 */
+    def key = column[String]("key", O.Utf8Char255)
+    /* @5 */
+    def typedef = column[String]("typedef", O.Utf8Char32)
+    /* @6 */
+    def width = column[Option[Int]]("width", O.UInt16)
+    /* @7 */
+    def height = column[Option[Int]]("height", O.UInt16)
+    /* @8 */
+    def updatedAt = column[LocalDateTime]("updated_at", O.TsCurrent)
+    /* @9 */
+    def createdAt = column[LocalDateTime]("created_at", O.Ts)
 
     // Indexes
     def ukey01 = index("key01", (bucket, key, region), unique = true)
@@ -53,8 +63,15 @@ case class FileTable[P <: JdbcProfile]()(implicit val driver: P, val s3dsn: S3DS
     // All columns as a tuple
     import File._
     type TableElementTuple = (
-      Option[Long], String, String, String, String,
-      Option[Int], Option[Int], LocalDateTime, LocalDateTime
+      Option[Long],
+      String,
+      String,
+      String,
+      String,
+      Option[Int],
+      Option[Int],
+      LocalDateTime,
+      LocalDateTime
     )
 
     // The * projection of the table
@@ -68,9 +85,20 @@ case class FileTable[P <: JdbcProfile]()(implicit val driver: P, val s3dsn: S3DS
         File(Some(Id(t._1.get)), t._2, t._3, t._4, t._5, imageSize, None, t._8, t._9)
       },
       /* The bidirectional mappings : Model => Tuple(table) */
-      (v: TableElementType)  => File.unapply(v).map { t => (
-        v.id, t._2, t._3, t._4, t._5, t._6.map(_.width), t._6.map(_.height), LocalDateTime.now(), t._9
-      ) }
+      (v: TableElementType) =>
+        File.unapply(v).map { t =>
+          (
+            v.id,
+            t._2,
+            t._3,
+            t._4,
+            t._5,
+            t._6.map(_.width),
+            t._6.map(_.height),
+            LocalDateTime.now(),
+            t._9
+          )
+        }
     )
   }
 }

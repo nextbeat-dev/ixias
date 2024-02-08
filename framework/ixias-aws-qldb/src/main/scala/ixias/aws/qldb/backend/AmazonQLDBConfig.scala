@@ -25,44 +25,31 @@ trait AmazonQLDBConfig extends BasicDatabaseConfig {
   protected val CF_QLDB_LEDGER_NAME = "ledger_name"
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Gets the AWS credentials object.
-   */
+  /** Gets the AWS credentials object.
+    */
   def getAWSCredentials(implicit dsn: DataSourceName): Try[AWSCredentials] =
     for {
       akey <- getAWSAccessKeyId
       skey <- getAWSSecretKey
     } yield new BasicAWSCredentials(akey, skey)
 
-  /**
-   * Gets the AWS access key ID for this credentials object.
-   */
+  /** Gets the AWS access key ID for this credentials object.
+    */
   protected def getAWSAccessKeyId(implicit dsn: DataSourceName): Try[String] =
-    Try(readValue(
-      _.get[Option[String]](CF_QLDB_ACCESS_KEY)).get
-    )
+    Try(readValue(_.get[Option[String]](CF_QLDB_ACCESS_KEY)).get)
 
-  /**
-   * Gets the AWS secret access key for this credentials object.
-   */
+  /** Gets the AWS secret access key for this credentials object.
+    */
   protected def getAWSSecretKey(implicit dsn: DataSourceName): Try[String] =
-    Try(readValue(
-      _.get[Option[String]](CF_QLDB_SECRET_KEY)).get
-    )
+    Try(readValue(_.get[Option[String]](CF_QLDB_SECRET_KEY)).get)
 
-  /**
-   * Gets a region enum corresponding to the given region name.
-   */
+  /** Gets a region enum corresponding to the given region name.
+    */
   def getAWSRegion(implicit dsn: DataSourceName): Try[Regions] =
-    Try(Regions.fromName(readValue(
-      _.get[Option[String]](CF_QLDB_REGION)).get
-    ))
+    Try(Regions.fromName(readValue(_.get[Option[String]](CF_QLDB_REGION)).get))
 
-  /**
-   * Gets the name of the Ledger
-   */
+  /** Gets the name of the Ledger
+    */
   def getLedgerName(implicit dsn: DataSourceName): Try[String] =
-    Try(readValue(
-      _.get[Option[String]](CF_QLDB_LEDGER_NAME)).get
-    )
+    Try(readValue(_.get[Option[String]](CF_QLDB_LEDGER_NAME)).get)
 }

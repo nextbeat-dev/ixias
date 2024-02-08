@@ -25,7 +25,7 @@ object EnumStatusSerializer extends JsonSerializer[EnumStatus] {
 // Resolver to serve serializer
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 object EnumStatusSerializerResolver extends Serializers.Base {
-  private  val SYMBOL = classOf[EnumStatus]
+  private val SYMBOL = classOf[EnumStatus]
   override def findSerializer(
     config:   SerializationConfig,
     javaType: JavaType,

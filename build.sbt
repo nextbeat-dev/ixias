@@ -27,6 +27,21 @@ ThisBuild / githubWorkflowBuild ++= Seq(
   )
 )
 
+ThisBuild / githubWorkflowAddedJobs ++= Seq(
+  WorkflowJob(
+    "scalafmt",
+    "Scalafmt",
+    githubWorkflowJobSetup.value.toList ::: List(
+      WorkflowStep.Run(
+        List("sbt scalafmtCheckAll 'project /' scalafmtSbtCheck"),
+        name = Some("Scalafmt check")
+      )
+    ),
+    scalas = List(scala213),
+    javas  = List(JavaSpec.temurin(java8))
+  )
+)
+
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
@@ -35,26 +50,30 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       "-Dlogback.configurationFile=logback.xml"
     )
   )
-  .settings(libraryDependencies ++= Seq(
-    shapeless,
-    typesafeConfig,
-    slick,
-    playJson,
-    hikariCP,
-    keyczar,
-    uapScala,
-    commonsCodec,
-    slf4jApi,
-    connectorJava % Test,
-    logbackClassic % Test
-  ) ++ cats ++ specs2)
+  .settings(
+    libraryDependencies ++= Seq(
+      shapeless,
+      typesafeConfig,
+      slick,
+      playJson,
+      hikariCP,
+      keyczar,
+      uapScala,
+      commonsCodec,
+      slf4jApi,
+      connectorJava  % Test,
+      logbackClassic % Test
+    ) ++ cats ++ specs2
+  )
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
-  .settings(libraryDependencies ++= Seq(
-    guice,
-    twilio,
-    commonsEmail
-  ))
+  .settings(
+    libraryDependencies ++= Seq(
+      guice,
+      twilio,
+      commonsEmail
+    )
+  )
   .dependsOn(ixiasCore)
 
 lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
@@ -62,18 +81,22 @@ lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
   .dependsOn(ixiasCore)
 
 lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
-  .settings(libraryDependencies ++= Seq(
-    aws.s3,
-    aws.cloudfront
-  ))
+  .settings(
+    libraryDependencies ++= Seq(
+      aws.s3,
+      aws.cloudfront
+    )
+  )
   .dependsOn(ixiasCore)
 
 lazy val ixiasAwsQLDB = IxiaSProject("ixias-aws-qldb", "framework/ixias-aws-qldb")
-  .settings(libraryDependencies ++= Seq(
-    qldb,
-    jacksonDataformat,
-    jacksonModule
-  ))
+  .settings(
+    libraryDependencies ++= Seq(
+      qldb,
+      jacksonDataformat,
+      jacksonModule
+    )
+  )
   .dependsOn(ixiasCore)
 
 // IxiaS Play Libraries
@@ -88,21 +111,21 @@ lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-a
 
 lazy val docs = (project in file("docs"))
   .settings(
-    description := "Documentation for IxiaS",
-    scalacOptions := Nil,
+    description    := "Documentation for IxiaS",
+    scalacOptions  := Nil,
     publish / skip := true,
-    mdocIn := baseDirectory.value / "src" / "main" / "mdoc",
-    paradoxTheme := Some(builtinParadoxTheme("generic")),
+    mdocIn         := baseDirectory.value / "src" / "main" / "mdoc",
+    paradoxTheme   := Some(builtinParadoxTheme("generic")),
     paradoxProperties ++= Map(
       "org"          -> organization.value,
       "scalaVersion" -> scalaVersion.value,
-      "version"      -> version.value.takeWhile(_ != '+'),
+      "version"      -> version.value.takeWhile(_ != '+')
     ),
     Compile / paradox / sourceDirectory := mdocOut.value,
-    Compile / paradoxRoots := List("index.html"),
-    makeSite := makeSite.dependsOn(mdoc.toTask("")).value,
-    git.remoteRepo := "git@github.com:nextbeat-dev/ixias.git",
-    ghpagesNoJekyll := true,
+    Compile / paradoxRoots              := List("index.html"),
+    makeSite                            := makeSite.dependsOn(mdoc.toTask("")).value,
+    git.remoteRepo                      := "git@github.com:nextbeat-dev/ixias.git",
+    ghpagesNoJekyll                     := true
   )
   .settings(commonSettings)
   .dependsOn(ixiasCore, ixiasMail, ixiasAwsSns, ixiasAwsS3, ixiasPlayCore, ixiasPlayAuth)

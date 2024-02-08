@@ -15,9 +15,8 @@ import play.api.libs.json.Json
 import ixias.util.Logging
 import ixias.play.api.json.JsValueError
 
-/**
- * The component to represent error response.
- */
+/** The component to represent error response.
+  */
 case class Error(status: Status, code: Int, message: Option[String] = None) extends Logging {
 
   /** Build a JSON response. */
@@ -36,10 +35,10 @@ case class Error(status: Status, code: Int, message: Option[String] = None) exte
 }
 
 trait Errors {
-  val E_NOT_FOUND       = Error(NotFound,            NOT_FOUND,             Some("Not found resource."))
-  val E_BAD_REQUEST     = Error(BadRequest,          BAD_REQUEST,           Some("Bad request."))
-  val E_AUTHENTICATION  = Error(Unauthorized,        UNAUTHORIZED,          Some("Authentication failure."))
-  val E_AUTHRIZATION    = Error(Unauthorized,        UNAUTHORIZED,          Some("Authorization failure."))
+  val E_NOT_FOUND       = Error(NotFound, NOT_FOUND, Some("Not found resource."))
+  val E_BAD_REQUEST     = Error(BadRequest, BAD_REQUEST, Some("Bad request."))
+  val E_AUTHENTICATION  = Error(Unauthorized, UNAUTHORIZED, Some("Authentication failure."))
+  val E_AUTHRIZATION    = Error(Unauthorized, UNAUTHORIZED, Some("Authorization failure."))
   val E_INTERNAL_SERVER = Error(InternalServerError, INTERNAL_SERVER_ERROR, Some("Internal server error."))
 
   import scala.language.implicitConversions

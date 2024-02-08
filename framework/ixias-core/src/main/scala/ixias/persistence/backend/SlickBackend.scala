@@ -16,24 +16,28 @@ import slick.util.AsyncExecutor
 import slick.jdbc.{ JdbcProfile, JdbcBackend }
 import ixias.persistence.model.DataSourceName
 
-/**
- * The slick backend to handle the database and session.
- */
-case class SlickBackend[P <: JdbcProfile](val driver: P)
-   extends BasicBackend[P#Backend#Database] with SlickConfig {
+/** The slick backend to handle the database and session.
+  */
+case class SlickBackend[P <: JdbcProfile](val driver: P) extends BasicBackend[P#Backend#Database] with SlickConfig {
 
   /** Get a Database instance from connection pool. */
   def getDatabase(implicit dsn: DataSourceName): Future[Database] =
     SlickDatabaseContainer.getOrElseUpdate {
       (for {
         ds <- createDataSource
-        db <- Future(driver.backend.Database.forDataSource(ds, Some(ds.getMaximumPoolSize), AsyncExecutor(
-          name = "AsyncExecutor.ixias",
-          minThreads = ds.getMaximumPoolSize,
-          maxThreads = ds.getMaximumPoolSize,
-          queueSize = 1000,
-          maxConnections = ds.getMaximumPoolSize
-        )))
+        db <- Future(
+                driver.backend.Database.forDataSource(
+                  ds,
+                  Some(ds.getMaximumPoolSize),
+                  AsyncExecutor(
+                    name           = "AsyncExecutor.ixias",
+                    minThreads     = ds.getMaximumPoolSize,
+                    maxThreads     = ds.getMaximumPoolSize,
+                    queueSize      = 1000,
+                    maxConnections = ds.getMaximumPoolSize
+                  )
+                )
+              )
       } yield db) andThen {
         case Success(_) => logger.info("Created a new data souce. dsn=%s".format(dsn.toString))
         case Failure(_) => logger.info("Failed to create a data souce. dsn=%s".format(dsn.toString))
@@ -54,13 +58,13 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
         hconf.addDataSourceProperty("useSSL", false)
 
         // Optional properties.
-        getUserName                  map hconf.setUsername
-        getPassword                  map hconf.setPassword
-        getHostSpecReadOnly          map hconf.setReadOnly
-        getHostSpecMinIdle           map hconf.setMinimumIdle
-        getHostSpecMaxPoolSize       map hconf.setMaximumPoolSize
+        getUserName map hconf.setUsername
+        getPassword map hconf.setPassword
+        getHostSpecReadOnly map hconf.setReadOnly
+        getHostSpecMinIdle map hconf.setMinimumIdle
+        getHostSpecMaxPoolSize map hconf.setMaximumPoolSize
         getHostSpecConnectionTimeout map hconf.setConnectionTimeout
-        getHostSpecIdleTimeout       map hconf.setIdleTimeout
+        getHostSpecIdleTimeout map hconf.setIdleTimeout
         new HikariDataSource(hconf)
       }
     }

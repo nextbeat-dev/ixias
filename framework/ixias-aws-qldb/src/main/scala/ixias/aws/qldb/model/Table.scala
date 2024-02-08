@@ -10,31 +10,28 @@ package ixias.aws.qldb.model
 
 import ixias.model._
 
-/**
- * The model of AmazonQLDB table.
- */
+/** The model of AmazonQLDB table.
+  */
 trait Table[K <: Document.Id[_], M <: EntityModel[K]] {
 
-  //-- [ Properties ] ----------------------------------------------------------
+  // -- [ Properties ] ----------------------------------------------------------
   /** Data storage location information */
-  val dsn:   DataSourceName
+  val dsn: DataSourceName
 
   /** Table queries */
   val query: Query
 
-  //-- [ Table Query ] ---------------------------------------------------------
-  type Query      <: TableQuery
-  type BasicQuery =  TableQuery
+  // -- [ Table Query ] ---------------------------------------------------------
+  type Query <: TableQuery
+  type BasicQuery = TableQuery
 
   type TableQuery     = ixias.aws.qldb.model.TableQuery[K, M]
   type DataSourceName = ixias.persistence.model.DataSourceName
-  val  DataSourceName = ixias.persistence.model.DataSourceName
+  val DataSourceName = ixias.persistence.model.DataSourceName
 
-  //-- [ Utility Methods ] -----------------------------------------------------
-  /**
-   * Overwrite function if necessary.
-   * As you add and change features in your app,
-   * you need to modify your entity classes to reflect these adjust.
-   */
+  // -- [ Utility Methods ] -----------------------------------------------------
+  /** Overwrite function if necessary. As you add and change features in your app, you need to modify your entity
+    * classes to reflect these adjust.
+    */
   def migrate[A](data: A): A = data
 }

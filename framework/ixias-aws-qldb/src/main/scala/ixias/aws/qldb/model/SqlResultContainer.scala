@@ -8,29 +8,23 @@
 
 package ixias.aws.qldb.model
 
-/**
- * Container definition with original execution result and conversion information
- */
+/** Container definition with original execution result and conversion information
+  */
 trait SqlResultContainer {
 
-  /**
-   * Type of model of mapping destination
-   */
+  /** Type of model of mapping destination
+    */
   type Model
 
-  /**
-   * Type of Result
-   */
+  /** Type of Result
+    */
   type Result
 
-  /**
-   * Get result value.
-   */
+  /** Get result value.
+    */
   def value: Result
 
-  /**
-   * Raw results of Amazon QLDB
-   */
+  /** Raw results of Amazon QLDB
+    */
   val data: software.amazon.qldb.Result
 }
-

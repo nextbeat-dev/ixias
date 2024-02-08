@@ -14,20 +14,18 @@ import ixias.persistence.lifted._
 import ixias.persistence.backend.SlickBackend
 import ixias.persistence.action.SlickDBActionProvider
 
-/**
- * The profile for persistence with using the Slick library.
- */
-trait SlickProfile[P <: JdbcProfile]
-    extends Profile with SlickDBActionProvider[P] { self =>
+/** The profile for persistence with using the Slick library.
+  */
+trait SlickProfile[P <: JdbcProfile] extends Profile with SlickDBActionProvider[P] { self =>
 
   /** The type of slick driver */
-  type Driver   = P
+  type Driver = P
 
   /** The type of database objects. */
   type Database = P#Backend#Database
 
   /** The back-end type required by this profile */
-  type Backend  = SlickBackend[P]
+  type Backend = SlickBackend[P]
 
   /** The configured driver. */
   protected val driver: Driver
@@ -39,28 +37,22 @@ trait SlickProfile[P <: JdbcProfile]
   protected val DBAction    = SlickDBAction
   protected val RunDBAction = SlickRunDBAction
 
-  /**
-   * The API for using the utility methods with a single import statement.
-   * This provides the repository's implicits, the Database connections,
-   * and commonly types and objects.
-   */
-  trait CustomAPI extends super.API
-      with driver.API
-      with SlickQueryOps
-      with SlickColumnTypeOps[P]
-      with SlickRepOps[P] {
+  /** The API for using the utility methods with a single import statement. This provides the repository's implicits,
+    * the Database connections, and commonly types and objects.
+    */
+  trait CustomAPI extends super.API with driver.API with SlickQueryOps with SlickColumnTypeOps[P] with SlickRepOps[P] {
     lazy val driver = self.driver
   }
   trait APIUnsafe extends CustomAPI with SlickRepUnsafeOps[P]
-  val api:       CustomAPI = new CustomAPI       {}
+  val api:       CustomAPI = new CustomAPI {}
   val apiUnsafe: APIUnsafe = new APIUnsafe {}
 }
 
-/**
- * The repository for persistence with using the Slick library.
- */
+/** The repository for persistence with using the Slick library.
+  */
 trait SlickRepository[K <: @@[_, _], M <: EntityModel[K], P <: JdbcProfile]
-    extends Repository[K, M] with SlickProfile[P] {
+  extends Repository[K, M]
+     with SlickProfile[P] {
 
   override val api: CustomAPI with SlickDBIOActionOps[K, M] = new CustomAPI with SlickDBIOActionOps[K, M] {}
 }

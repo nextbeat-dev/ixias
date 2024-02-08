@@ -22,26 +22,24 @@ trait FileBuilder[S <: @@[_, _], M <: AnyRef] { self =>
 
   // --[ Properties ]-----------------------------------------------------------
   /** Silo configuration */
-  val siloBase:      SiloBase
+  val siloBase: SiloBase
 
   /** Feature name */
   val fileNamespace: String
 
   /** Prefix of filename */
-  val filePrefix:    String
+  val filePrefix: String
 
   /** directory seperator as string */
   val DIRECTORY_SEPARATOR = """/"""
 
   // --[ Methods ]------------------------------------------------------------
-  /**
-   * Get a base-id for silo generation.
-   */
+  /** Get a base-id for silo generation.
+    */
   protected def siloBaseId(base: Model): SiloBaseId
 
-  /**
-   * Get a key-name of the file in the storage destination.
-   */
+  /** Get a key-name of the file in the storage destination.
+    */
   protected def build(namespace: String, fname: String, base: Model): String = (
     namespace
       :: siloBase.silo(self.siloBaseId(base))
@@ -50,17 +48,17 @@ trait FileBuilder[S <: @@[_, _], M <: AnyRef] { self =>
   ).mkString(DIRECTORY_SEPARATOR)
 
   // --[ Methods ]------------------------------------------------------------
-  /**
-   * Get a key-name of the file in the storage destination.
-   */
-  final def apply(base: Model, typedef: String = "unknown")
-    (implicit dsn: DataSourceName): File#WithNoId =
+  /** Get a key-name of the file in the storage destination.
+    */
+  final def apply(base: Model, typedef: String = "unknown")(implicit dsn: DataSourceName): File#WithNoId =
     (for {
-      fkey <- scala.util.Try(build(
-        fileNamespace,
-        "%s-%s".format(filePrefix, RandomStringToken.next(64)),
-        base
-      ))
+      fkey <- scala.util.Try(
+                build(
+                  fileNamespace,
+                  "%s-%s".format(filePrefix, RandomStringToken.next(64)),
+                  base
+                )
+              )
       file <- File(fkey, typedef, None)
     } yield file) getOrElse {
       val message = "Failed to create file object. dsn, baseModel = %s".format(dsn, base)
@@ -80,14 +78,12 @@ trait FileBuilderExt[S1 <: @@[_, _], S2 <: @@[_, _], M <: AnyRef] extends FileBu
   val siloRoot: SiloRoot
 
   // --[ Methods ]------------------------------------------------------------
-  /**
-   * Get a root-id for silo generation.
-   */
+  /** Get a root-id for silo generation.
+    */
   protected def siloRootId(root: Model): SiloRootId
 
-  /**
-   * Get a key-name of the file in the storage destination.
-   */
+  /** Get a key-name of the file in the storage destination.
+    */
   override protected def build(namespace: String, fname: String, base: Model): String = (
     siloRoot.silo(self.siloRootId(base))
       :: namespace

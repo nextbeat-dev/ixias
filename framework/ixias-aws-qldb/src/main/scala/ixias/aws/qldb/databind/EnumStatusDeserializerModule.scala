@@ -32,7 +32,7 @@ case class EnumStatusDeserializer(
 // Resolver to serve deserializer
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 object EnumStatusDeserializerResolver extends Deserializers.Base {
-  private  val SYMBOL = classOf[EnumStatus]
+  private val SYMBOL = classOf[EnumStatus]
   override def findBeanDeserializer(
     javaType: JavaType,
     config:   DeserializationConfig,

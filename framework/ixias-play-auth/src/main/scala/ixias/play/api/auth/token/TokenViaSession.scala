@@ -20,17 +20,16 @@ case class TokenViaSession(val name: String) extends Token {
     ConfigLoader(_.getString).map(SameSite.parse)
 
   // The configuration
-  def cookieName = config.get[String]           (s"session.${name}.cookieName")
-  def maxAge     = config.get[Option[Duration]] (s"session.${name}.maxAge")
-  def path       = config.get[String]           (s"session.${name}.path")
-  def domain     = config.get[Option[String]]   (s"session.${name}.domain")
-  def secure     = config.get[Boolean]          (s"session.${name}.secure")
-  def httpOnly   = config.get[Boolean]          (s"session.${name}.httpOnly")
-  def sameSite   = config.get[Option[SameSite]] (s"session.${name}.sameSite")
+  def cookieName = config.get[String](s"session.${ name }.cookieName")
+  def maxAge     = config.get[Option[Duration]](s"session.${ name }.maxAge")
+  def path       = config.get[String](s"session.${ name }.path")
+  def domain     = config.get[Option[String]](s"session.${ name }.domain")
+  def secure     = config.get[Boolean](s"session.${ name }.secure")
+  def httpOnly   = config.get[Boolean](s"session.${ name }.httpOnly")
+  def sameSite   = config.get[Option[SameSite]](s"session.${ name }.sameSite")
 
-  /**
-   * Put a specified security token to storage.
-   */
+  /** Put a specified security token to storage.
+    */
   def put(token: AuthenticityToken)(result: Result)(implicit request: RequestHeader): Result = {
     val signed     = SignedToken.unwrap(Token.signWithHMAC(token))
     val maxAgeSecs = maxAge.map(_.getSeconds.toInt)
@@ -38,15 +37,13 @@ case class TokenViaSession(val name: String) extends Token {
     result.withCookies(cookie)
   }
 
-  /**
-   * Discard a security token in storage.
-   */
+  /** Discard a security token in storage.
+    */
   def discard(result: Result)(implicit request: RequestHeader): Result =
     result.discardingCookies(DiscardingCookie(cookieName))
 
-  /**
-   * Extract a security token from storage.
-   */
+  /** Extract a security token from storage.
+    */
   def extract(implicit request: RequestHeader): Option[AuthenticityToken] =
     for {
       signed <- request.cookies.get(cookieName).map(c => SignedToken(c.value))

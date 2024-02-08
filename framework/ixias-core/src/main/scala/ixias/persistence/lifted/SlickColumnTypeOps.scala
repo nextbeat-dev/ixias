@@ -9,10 +9,10 @@
 package ixias.persistence.lifted
 
 import slick.ast.BaseTypedType
-import slick.jdbc.{JdbcProfile, JdbcType}
+import slick.jdbc.{ JdbcProfile, JdbcType }
 
 import java.time
-import java.time.{LocalDateTime, YearMonth}
+import java.time.{ LocalDateTime, YearMonth }
 
 trait SlickColumnTypeOps[P <: JdbcProfile] {
   val driver: P
@@ -20,11 +20,13 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
 
   // --[ Ixias Enum ]-----------------------------------------------------------
   // Short <-> ixias.util.EnumStatus
-  implicit def ixiasEnumStatusColumnType[T <: ixias.util.EnumStatus](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] =
+  implicit def ixiasEnumStatusColumnType[T <: ixias.util.EnumStatus](implicit
+    ctag: reflect.ClassTag[T]
+  ): JdbcType[T] with BaseTypedType[T] =
     MappedColumnType.base[T, Short](
       enum => enum.code,
       code => {
-        val clazz  = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
+        val clazz = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
         val module = clazz.getField("MODULE$").get(null)
         val method = clazz.getMethod("apply", classOf[Short])
         val `enum` = method.invoke(module, code.asInstanceOf[AnyRef])
@@ -33,7 +35,9 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
     )
 
   // Long <-> Seq[ixias.util.EnumBitFlags]
-  implicit def ixiasEnumBitsetSeqColumnType[T <: ixias.util.EnumBitFlags](implicit ctag: reflect.ClassTag[T]): JdbcType[Seq[T]] with BaseTypedType[Seq[T]] = {
+  implicit def ixiasEnumBitsetSeqColumnType[T <: ixias.util.EnumBitFlags](implicit
+    ctag: reflect.ClassTag[T]
+  ): JdbcType[Seq[T]] with BaseTypedType[Seq[T]] = {
     val clazz  = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
     val module = clazz.getField("MODULE$").get(null)
     MappedColumnType.base[Seq[T], Long](
@@ -52,19 +56,23 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
 
   // --[ Ixias Id ]-------------------------------------------------------------
   // Long <-> ixias.model.@@[Long, _]
-  implicit def ixiasIdAsLongColumnType[T <: ixias.model.@@[Long, _]](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] = {
+  implicit def ixiasIdAsLongColumnType[T <: ixias.model.@@[Long, _]](implicit
+    ctag: reflect.ClassTag[T]
+  ): JdbcType[T] with BaseTypedType[T] = {
     val Id = ixias.model.the[ixias.model.Identity[T]]
     MappedColumnType.base[T, Long](
-      id    => id.asInstanceOf[Long],
+      id => id.asInstanceOf[Long],
       value => Id(value.asInstanceOf[T])
     )
   }
 
   // String <-> ixias.model.@@[String, _]
-  implicit def ixiasIdAsStringColumnType[T <: ixias.model.@@[String, _]](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] = {
+  implicit def ixiasIdAsStringColumnType[T <: ixias.model.@@[String, _]](implicit
+    ctag: reflect.ClassTag[T]
+  ): JdbcType[T] with BaseTypedType[T] = {
     val Id = ixias.model.the[ixias.model.Identity[T]]
     MappedColumnType.base[T, String](
-      id    => id.asInstanceOf[String],
+      id => id.asInstanceOf[String],
       value => Id(value.asInstanceOf[T])
     )
   }
@@ -81,21 +89,21 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
   implicit val javaLocalDateColumnType: JdbcType[time.LocalDate] with BaseTypedType[time.LocalDate] =
     MappedColumnType.base[java.time.LocalDate, java.sql.Date](
       ld => java.sql.Date.valueOf(ld),
-      d  => d.toLocalDate()
+      d => d.toLocalDate()
     )
 
   // java.sql.Date <-> java.time.YearMonth
   implicit val javaYearMonthColumnType: JdbcType[YearMonth] with BaseTypedType[YearMonth] =
     MappedColumnType.base[java.time.YearMonth, java.sql.Date](
       ld => java.sql.Date.valueOf(ld.atDay(1)),
-      d  => java.time.YearMonth.from(d.toLocalDate())
+      d => java.time.YearMonth.from(d.toLocalDate())
     )
 
   // java.sql.Time <-> java.time.LocalTime
   implicit val javaLocalTimeColumnType: JdbcType[time.LocalTime] with BaseTypedType[time.LocalTime] =
     MappedColumnType.base[java.time.LocalTime, java.sql.Time](
       lt => java.sql.Time.valueOf(lt),
-      t  => t.toLocalTime()
+      t => t.toLocalTime()
     )
 
   // java.sql.Time <-> java.time.Duration
@@ -118,7 +126,7 @@ trait SlickColumnTypeOps[P <: JdbcProfile] {
       }
       def map(d: Duration): String = "%02d:%02d:%02d".format(
         d.toHours,
-        d.toMinutes % 60,
+        d.toMinutes  % 60,
         d.getSeconds % 60
       )
     }

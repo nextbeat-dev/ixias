@@ -13,7 +13,7 @@ import shapeless.Unwrapped
 /** The Identity of Entity */
 trait Identity[T] {
   type U
-  def  apply(u: U): T
+  def apply(u:  U): T
   def unwrap(t: T): U
 }
 
@@ -22,7 +22,7 @@ object Identity {
   implicit def unwrappedIdentity[W, U0](implicit uw: Unwrapped.Aux[W, U0]): Identity.Aux[W, U0] =
     new Identity[W] {
       type U = U0
-      def  apply(u: U): W = uw.wrap(u)
+      def apply(u:  U): W = uw.wrap(u)
       def unwrap(w: W): U = uw.unwrap(w)
     }
 }

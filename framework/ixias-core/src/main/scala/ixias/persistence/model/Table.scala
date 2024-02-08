@@ -13,7 +13,7 @@ import slick.jdbc.JdbcProfile
 
 trait Table[R, P <: JdbcProfile] { self =>
 
-  //-- [ Required properties ] -------------------------------------------------
+  // -- [ Required properties ] -------------------------------------------------
   /** The configured driver. */
   val driver: P
 
@@ -26,7 +26,7 @@ trait Table[R, P <: JdbcProfile] { self =>
   /** The alias for DSN */
   val DataSourceName = ixias.persistence.model.DataSourceName
 
-  //-- [ Table Manifest ] ------------------------------------------------------
+  // -- [ Table Manifest ] ------------------------------------------------------
   /** The type of table row. */
   type Record = R
 
@@ -34,33 +34,30 @@ trait Table[R, P <: JdbcProfile] { self =>
   type Tag = slick.lifted.Tag
 
   /** The type of all table row objects. */
-  type Table      <: driver.Table[Record]
-  type BasicTable =  driver.Table[Record]
+  type Table <: driver.Table[Record]
+  type BasicTable = driver.Table[Record]
 
-  //-- [ Table Query ] ---------------------------------------------------------
-  /**
-   * Represents a database table. Implementation class add extension methods to TableQuery
-   * for operations that can be performed on tables but not on arbitrary queries.
-   */
-  type Query      <: slick.lifted.TableQuery[Table]
-  type BasicQuery =  slick.lifted.TableQuery[Table]
+  // -- [ Table Query ] ---------------------------------------------------------
+  /** Represents a database table. Implementation class add extension methods to TableQuery for operations that can be
+    * performed on tables but not on arbitrary queries.
+    */
+  type Query <: slick.lifted.TableQuery[Table]
+  type BasicQuery = slick.lifted.TableQuery[Table]
 
-  //-- [ Utility Methods ] -----------------------------------------------------
-  /**
-   * The API for using the utility methods with a single import statement.
-   * This provides the repository's implicits, the Database connections,
-   * and commonly types and objects.
-   */
-  trait API extends driver.API
-      with Aliases
-      with ExtensionMethods
-      with SlickColumnOptionOps
-      with SlickColumnTypeOps[P]
-      with SlickRepOps[P] {
+  // -- [ Utility Methods ] -----------------------------------------------------
+  /** The API for using the utility methods with a single import statement. This provides the repository's implicits,
+    * the Database connections, and commonly types and objects.
+    */
+  trait API
+    extends driver.API
+       with Aliases
+       with ExtensionMethods
+       with SlickColumnOptionOps
+       with SlickColumnTypeOps[P]
+       with SlickRepOps[P] {
     lazy val driver = self.driver
   }
   trait APIUnsafe extends API with SlickRepUnsafeOps[P]
-  val api:       API       = new API       {}
+  val api:       API       = new API {}
   val apiUnsafe: APIUnsafe = new APIUnsafe {}
 }
-

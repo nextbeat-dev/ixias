@@ -21,10 +21,9 @@ object DeviceDetectionAttrKey {
   val IsMobile  = TypedKey[Boolean]("IsMobile")
 }
 
-/**
- * Provides the custom action to detect device by User-Agent
- */
-trait  DeviceDetectionBuilder extends ActionBuilder[Request, AnyContent]
+/** Provides the custom action to detect device by User-Agent
+  */
+trait DeviceDetectionBuilder extends ActionBuilder[Request, AnyContent]
 object DeviceDetectionBuilder {
   def apply(parser: BodyParser[AnyContent])(implicit ec: ExecutionContext): DeviceDetectionBuilder =
     new DeviceDetectionBuilderImpl(parser)
@@ -34,24 +33,29 @@ object DeviceDetectionBuilder {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class DeviceDetectionBuilderImpl(
   val parser: BodyParser[AnyContent]
-)(implicit val executionContext: ExecutionContext) extends DeviceDetectionBuilder {
+)(implicit val executionContext: ExecutionContext)
+  extends DeviceDetectionBuilder {
 
   val MOBILE_UA_REGEX = "(iPhone|webOS|iPod|Android|BlackBerry|mobile|SAMSUNG|IEMobile|OperaMobi)".r.unanchored
 
   /** Invoke the block. */
   def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]) =
     request.headers.get("User-Agent") match {
-      case None     => block(request)
-      case Some(ua) => block {
-        val client = Parser.default.parse(ua)
-        request
-          .addAttr(DeviceDetectionAttrKey.OS,        client.os)
-          .addAttr(DeviceDetectionAttrKey.Device,    client.device)
-          .addAttr(DeviceDetectionAttrKey.UserAgent, client.userAgent)
-          .addAttr(DeviceDetectionAttrKey.IsMobile,  ua match {
-            case MOBILE_UA_REGEX(_) => true
-            case _                  => false
-          })
-      }
+      case None => block(request)
+      case Some(ua) =>
+        block {
+          val client = Parser.default.parse(ua)
+          request
+            .addAttr(DeviceDetectionAttrKey.OS, client.os)
+            .addAttr(DeviceDetectionAttrKey.Device, client.device)
+            .addAttr(DeviceDetectionAttrKey.UserAgent, client.userAgent)
+            .addAttr(
+              DeviceDetectionAttrKey.IsMobile,
+              ua match {
+                case MOBILE_UA_REGEX(_) => true
+                case _                  => false
+              }
+            )
+        }
     }
 }

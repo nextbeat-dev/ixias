@@ -10,11 +10,11 @@ package ixias.aws.qldb.databind
 
 import com.fasterxml.jackson.module.scala.JacksonModule
 
-object DatabindModule extends JacksonModule
-    with EnumBitFlagsSerializerModule
-    with EnumBitFlagsDeserializerModule
-    with EnumStatusSerializerModule
-    with EnumStatusDeserializerModule
-{
+object DatabindModule
+  extends JacksonModule
+     with EnumBitFlagsSerializerModule
+     with EnumBitFlagsDeserializerModule
+     with EnumStatusSerializerModule
+     with EnumStatusDeserializerModule {
   override def getModuleName = "DatabindModule"
 }

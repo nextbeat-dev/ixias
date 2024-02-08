@@ -8,20 +8,19 @@
 
 package ixias.file.csv
 
-trait CsvFormat
-{
+trait CsvFormat {
   val ASCII_NULL            = 0x00
   val ASCII_HTAB            = 0x09
-  val ASCII_VTAB            = 0x0B
-  val ASCII_LINE_FEED       = 0x0A
-  val ASCII_CARRIAGE_RETURN = 0x0D
+  val ASCII_VTAB            = 0x0b
+  val ASCII_LINE_FEED       = 0x0a
+  val ASCII_CARRIAGE_RETURN = 0x0d
   val ASCII_SPACE           = 0x20
 
-  val CSV_FIELD_TERM_CHAR   = '\t'
-  val CSV_ENCLOSED_CHAR     = '"'
-  val CSV_ESCAPED_CHAR      = '\\'
+  val CSV_FIELD_TERM_CHAR = '\t'
+  val CSV_ENCLOSED_CHAR   = '"'
+  val CSV_ESCAPED_CHAR    = '\\'
 
-  val CSV_WRITE_LINE_TERM   = "\r\n"
+  val CSV_WRITE_LINE_TERM = "\r\n"
   val CSV_WRITE_QUOTE_STYLE: QuoteStyle = QuoteStyle.NONE_NUMERIC
   val CSV_WRITE_MINIMAL_QUOTE_SPECS = Seq(
     '\r',

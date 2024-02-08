@@ -11,13 +11,13 @@ package ixias.play.api.auth.mvc
 import play.api.mvc._
 import scala.concurrent.{ Future, ExecutionContext }
 
-/**
- * Provides the custom action for authentication.
- */
-trait  AuthenticatedActionBuilder extends ActionBuilder[Request, AnyContent]
+/** Provides the custom action for authentication.
+  */
+trait AuthenticatedActionBuilder extends ActionBuilder[Request, AnyContent]
 object AuthenticatedActionBuilder {
-  def apply(auth: AuthProfile[_, _, _], parser: BodyParser[AnyContent])
-    (implicit ec: ExecutionContext): AuthenticatedActionBuilder =
+  def apply(auth: AuthProfile[_, _, _], parser: BodyParser[AnyContent])(implicit
+    ec: ExecutionContext
+  ): AuthenticatedActionBuilder =
     new AuthenticatedActionBuilderImpl(auth, parser)
 }
 
@@ -26,15 +26,17 @@ object AuthenticatedActionBuilder {
 class AuthenticatedActionBuilderImpl(
   val auth:   AuthProfile[_, _, _],
   val parser: BodyParser[AnyContent]
-)(implicit val executionContext: ExecutionContext) extends AuthenticatedActionBuilder {
+)(implicit val executionContext: ExecutionContext)
+  extends AuthenticatedActionBuilder {
 
   /** Invoke the block. */
   def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]) = {
     auth.authenticate(request) flatMap {
-      case Left(failed)           => Future.successful(failed)
-      case Right((data, updater)) => block {
-        request.addAttr(auth.RequestAttrKey.Auth, data)
-      } map updater
+      case Left(failed) => Future.successful(failed)
+      case Right((data, updater)) =>
+        block {
+          request.addAttr(auth.RequestAttrKey.Auth, data)
+        } map updater
     }
   }
 }

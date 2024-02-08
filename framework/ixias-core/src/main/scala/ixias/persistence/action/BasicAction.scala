@@ -10,15 +10,12 @@ package ixias.persistence.action
 
 import scala.concurrent.Future
 
-/**
- * A builder for generic DB Actions that generalizes over the type of requests.
- */
+/** A builder for generic DB Actions that generalizes over the type of requests.
+  */
 trait BasicActionFunction[-R, +T] {
 
-  /**
-   * Invoke the block.
-   * This is the main method that an ActionBuilder has to implement.
-   */
+  /** Invoke the block. This is the main method that an ActionBuilder has to implement.
+    */
   def invokeBlock[A](request: R, block: T => Future[A]): Future[A]
 }
 

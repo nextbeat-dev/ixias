@@ -8,12 +8,10 @@
 
 package ixias.persistence.lifted
 
-/**
- * Aliases for lifted embedding features. This trait can be mixed into aliasing
- * objects which simplify the use of the lifted embedding.
- */
-trait Aliases
-{
-  val  Cursor = ixias.persistence.model.Cursor
+/** Aliases for lifted embedding features. This trait can be mixed into aliasing objects which simplify the use of the
+  * lifted embedding.
+  */
+trait Aliases {
+  val Cursor = ixias.persistence.model.Cursor
   type Cursor = ixias.persistence.model.Cursor
 }
