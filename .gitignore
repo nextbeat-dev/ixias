@@ -8,3 +8,8 @@
 /target/
 /framework/*/target
 backup
+.bsp
+.DS_Store
+*/target/*
+.metals
+.vscode
