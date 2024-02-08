@@ -44,15 +44,15 @@ trait SlickProfile[P <: JdbcProfile]
    * This provides the repository's implicits, the Database connections,
    * and commonly types and objects.
    */
-  trait API extends super.API
+  trait CustomAPI extends super.API
       with driver.API
       with SlickQueryOps
       with SlickColumnTypeOps[P]
       with SlickRepOps[P] {
     lazy val driver = self.driver
   }
-  trait APIUnsafe extends API with SlickRepUnsafeOps[P]
-  val api:       API       = new API       {}
+  trait APIUnsafe extends CustomAPI with SlickRepUnsafeOps[P]
+  val api:       CustomAPI = new CustomAPI       {}
   val apiUnsafe: APIUnsafe = new APIUnsafe {}
 }
 
@@ -61,7 +61,6 @@ trait SlickProfile[P <: JdbcProfile]
  */
 trait SlickRepository[K <: @@[_, _], M <: EntityModel[K], P <: JdbcProfile]
     extends Repository[K, M] with SlickProfile[P] {
-  trait API extends super.API
-      with SlickDBIOActionOps[K, M]
-  override val api: API = new API {}
+
+  override val api: CustomAPI with SlickDBIOActionOps[K, M] = new CustomAPI with SlickDBIOActionOps[K, M] {}
 }

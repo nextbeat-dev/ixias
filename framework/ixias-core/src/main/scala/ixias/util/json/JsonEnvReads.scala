@@ -21,53 +21,54 @@ trait JsonEnvReads extends EnvReads {
    * Deserializer for ixias.model.@@[Long, _]
    */
   def idAsNumberReads[T <: ixias.model.@@[Long, _]]: Reads[T] =
-    new Reads[T] {
-      def reads(json: JsValue) = json match {
-        case JsNumber(n) if n.isValidLong => {
-          val Id = ixias.model.the[ixias.model.Identity[T]]
-          JsSuccess(Id(n.toLong.asInstanceOf[T]))
-        }
-        case JsNumber(n) => JsError("error.expected.tag.long")
-        case _           => JsError("error.expected.tag.jsnumber")
+    (json: JsValue) => json match {
+      case JsNumber(n) if n.isValidLong => {
+        val Id = ixias.model.the[ixias.model.Identity[T]]
+        JsSuccess(Id(n.toLong.asInstanceOf[T]))
       }
+      case JsNumber(n) => JsError("error.expected.tag.long")
+      case _ => JsError("error.expected.tag.jsnumber")
     }
 
   /**
    * Deserializer for ixias.model.@@[String, _]
    */
   def idAsStrReads[T <: ixias.model.@@[String, _]]: Reads[T] =
-    new Reads[T] {
-      def reads(json: JsValue) = json match {
-        case JsString(s) => {
-          val Id = ixias.model.the[ixias.model.Identity[T]]
-          JsSuccess(Id(s.asInstanceOf[T]))
-        }
-        case _  => JsError("error.expected.tag.jsstring")
+    (json: JsValue) => json match {
+      case JsString(s) => {
+        val Id = ixias.model.the[ixias.model.Identity[T]]
+        JsSuccess(Id(s.asInstanceOf[T]))
       }
+      case _ => JsError("error.expected.tag.jsstring")
     }
 
   /**
    * Deserializer for ixias.util.EnumStatus
    */
-  def enumReads[E <: ixias.util.EnumStatus](enum: ixias.util.EnumStatus.Of[E]): Reads[E] =
-    new Reads[E] {
-      def reads(json: JsValue) = json match {
-        case JsNumber(n) if n.isValidShort => JsSuccess(enum(n.toShort))
-        case JsNumber(n) => JsError("error.expected.enum.short")
-        case _           => JsError("error.expected.enum.jsnumber")
-      }
+  def enumReads[E <: ixias.util.EnumStatus](`enum`: ixias.util.EnumStatus.Of[E]): Reads[E] =
+    (json: JsValue) => json match {
+      case JsNumber(n) if n.isValidShort => JsSuccess(`enum`(n.toShort))
+      case JsNumber(n) => JsError("error.expected.enum.short")
+      case _ => JsError("error.expected.enum.jsnumber")
     }
 
   /**
    * Deserializer for ixias.util.EnumBitFlags
    */
-  def enumReads[E <: ixias.util.EnumBitFlags](enum: ixias.util.EnumBitFlags.Of[E]): Reads[Seq[E]] =
-    new Reads[Seq[E]] {
-      def reads(json: JsValue) = json match {
-        case JsNumber(n) if n.isValidLong => JsSuccess(enum(n.toLong))
-        case JsNumber(n) => JsError("error.expected.enum.long")
-        case _           => JsError("error.expected.enum.jsnumber")
-      }
+  def enumReads[E <: ixias.util.EnumBitFlags](`enum`: ixias.util.EnumBitFlags.Of[E]): Reads[Seq[E]] =
+    (json: JsValue) => json match {
+      case JsNumber(n) if n.isValidLong => JsSuccess(`enum`(n.toLong))
+      case JsNumber(n) => JsError("error.expected.enum.long")
+      case _ => JsError("error.expected.enum.jsnumber")
+    }
+
+  /**
+   * Deserializer for ixias.util.EnumBitFlags
+   */
+  def enumBitFlagsReads[E <: ixias.util.EnumBitFlags](`enum`: ixias.util.EnumBitFlags.Of[E]): Reads[Seq[E]] =
+    (json: JsValue) => json.validate[Seq[Long]] match {
+      case JsSuccess(nlist, _) => JsSuccess(`enum`(nlist.sum))
+      case JsError(e) => JsError(e)
     }
 
   /**
