@@ -10,10 +10,10 @@ package ixias.file.csv
 
 import ixias.util.Enum
 
-  sealed abstract class QuoteStyle extends Enum
-  object QuoteStyle extends Enum.Of[QuoteStyle] {
-    case object NONE         extends QuoteStyle
-    case object MINIMAL      extends QuoteStyle
-    case object NONE_NUMERIC extends QuoteStyle
-    case object ALL          extends QuoteStyle
-  }
+sealed abstract class QuoteStyle extends Enum
+object QuoteStyle extends Enum.Of[QuoteStyle] {
+  case object NONE         extends QuoteStyle
+  case object MINIMAL      extends QuoteStyle
+  case object NONE_NUMERIC extends QuoteStyle
+  case object ALL          extends QuoteStyle
+}

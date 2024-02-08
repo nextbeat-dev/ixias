@@ -1,188 +1,146 @@
 /*
- * This file is part of the ixias service.
+ * This file is part of the IxiaS service.
  *
  * For the full copyright and license information,
  * please view the LICENSE file that was distributed with this source code.
  */
 
-lazy val commonSettings = Seq(
-  organization  := "net.ixias",
-  scalaVersion  := "2.12.2",
-  resolvers ++= Seq(
-    "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/",
-    "Sonatype Release"  at "https://oss.sonatype.org/content/repositories/releases/",
-    "Sonatype Snapshot" at "https://oss.sonatype.org/content/repositories/snapshots/",
-    "keyczar"           at "https://raw.githubusercontent.com/google/keyczar/master/java/maven/"
-  ),
-  // Scala compile options
-  scalacOptions ++= Seq(
-    "-deprecation",            // Emit warning and location for usages of deprecated APIs.
-    "-feature",                // Emit warning and location for usages of features that should be imported explicitly.
-    "-unchecked",              // Enable additional warnings where generated code depends on assumptions.
-    "-Xfatal-warnings",        // Fail the compilation if there are any warnings.
-    "-Xlint:-unused,_",        // Enable recommended additional warnings.
-    "-Ywarn-adapted-args",     // Warn if an argument list is modified to match the receiver.
-    "-Ywarn-dead-code",        // Warn when dead code is identified.
-    "-Ywarn-unused:imports",   // Warn if an import selector is not referenced.
-    "-Ywarn-inaccessible",     // Warn about inaccessible types in method signatures.
-    "-Ywarn-nullary-override", // Warn when non-nullary overrides nullary, e.g. def foo() over def foo.
-    "-Ywarn-numeric-widen"     // Warn when numerics are widened.
-  ),
-  libraryDependencies ++= Seq(
-    "org.specs2"      %% "specs2-core"          % "3.9.1"  % Test,
-    "org.specs2"      %% "specs2-matcher-extra" % "3.9.1"  % Test,
-    "ch.qos.logback"   % "logback-classic"      % "1.1.3"  % Test,
-    "mysql"            % "mysql-connector-java" % "5.1.39" % Test
+import ScalaVersions._
+import JavaVersions._
+import Dependencies._
+import BuildSettings._
+
+ThisBuild / crossScalaVersions         := Seq(scala213)
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java8), JavaSpec.temurin(java11))
+
+ThisBuild / githubWorkflowBuildPreamble ++= Seq(
+  WorkflowStep.Run(
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml up -d"),
+    name = Some("Set up Docker")
   )
 )
 
-lazy val playSettings = Seq(
-  unmanagedSourceDirectories   in Compile += baseDirectory.value / "src" / "main" / "scala",
-  unmanagedSourceDirectories   in Test    += baseDirectory.value / "src" / "test" / "scala",
-  unmanagedResourceDirectories in Test    += baseDirectory.value / "src" / "test" / "resources",
-  libraryDependencies ++= Seq(ws, ehcache)
+ThisBuild / githubWorkflowBuild ++= Seq(
+  WorkflowStep.Run(
+    List("docker-compose -f framework/ixias-core/src/test/docker/docker-compose.yml down"),
+    name = Some("Close Docker")
+  )
 )
 
-
-// Publisher Setting
-//~~~~~~~~~~~~~~~~~~~
-import ReleaseTransformations._
-lazy val publisherSettings = Seq(
-  publishTo := {
-    val branch  = "git branch".lines_!.find{_.head == '*'}.map{_.drop(2)}.getOrElse("")
-    val release = (branch == "master" || branch.startsWith("release"))
-    val path = if (release) "releases" else "snapshots"
-    Some("Nextbeat snapshots" at "s3://maven.ixias.net.s3-ap-northeast-1.amazonaws.com/" + path)
-  },
-  publishArtifact in (Compile, packageDoc) := false, // disable publishing the Doc jar
-  publishArtifact in (Compile, packageSrc) := false, // disable publishing the sources jar
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    publishArtifacts,
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
+ThisBuild / githubWorkflowAddedJobs ++= Seq(
+  WorkflowJob(
+    "scalafmt",
+    "Scalafmt",
+    githubWorkflowJobSetup.value.toList ::: List(
+      WorkflowStep.Run(
+        List("sbt scalafmtCheckAll 'project /' scalafmtSbtCheck"),
+        name = Some("Scalafmt check")
+      )
+    ),
+    scalas = List(scala213),
+    javas  = List(JavaSpec.temurin(java8))
   )
 )
 
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-lazy val ixiasCore = (project in file("framework/ixias-core"))
-  .settings(name := "ixias-core")
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "com.chuusai"        %% "shapeless"     % "2.3.2",
-    "com.typesafe"        % "config"        % "1.3.0",
-    "com.typesafe.slick" %% "slick"         % "3.2.1",
-    "org.typelevel"      %% "cats"          % "0.8.1",
-    "io.monix"           %% "shade"         % "1.9.5",
-    "com.zaxxer"          % "HikariCP"      % "2.5.0",
-    "org.keyczar"         % "keyczar"       % "0.71h",
-    "org.uaparser"       %% "uap-scala"     % "0.1.0",
-    "commons-codec"       % "commons-codec" % "1.10",
-    "joda-time"           % "joda-time"     % "2.9.4",
-    "org.slf4j"           % "slf4j-api"     % "1.7.21"
-  ))
+lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
+  .settings(
+    javaOptions ++= Seq(
+      "-Dlogback.configurationFile=logback.xml"
+    )
+  )
+  .settings(
+    libraryDependencies ++= Seq(
+      shapeless,
+      typesafeConfig,
+      slick,
+      playJson,
+      hikariCP,
+      keyczar,
+      uapScala,
+      commonsCodec,
+      slf4jApi,
+      connectorJava  % Test,
+      logbackClassic % Test
+    ) ++ cats ++ specs2
+  )
 
-lazy val ixiasMail = (project in file("framework/ixias-mail"))
-  .settings(name := "ixias-mail")
+lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
+  .settings(
+    libraryDependencies ++= Seq(
+      guice,
+      twilio,
+      commonsEmail
+    )
+  )
   .dependsOn(ixiasCore)
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "com.google.inject"   % "guice"           % "4.1.0",
-    "com.twilio.sdk"      % "twilio-java-sdk" % "6.3.0",
-    "org.apache.commons"  % "commons-email"   % "1.4"
-  ))
 
-lazy val awsSdkVersion = "1.11.156"
-lazy val ixiasAwsSns = (project in file("framework/ixias-aws-sns"))
-  .settings(name := "ixias-aws-sns")
+lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
+  .settings(libraryDependencies += aws.sns)
   .dependsOn(ixiasCore)
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "com.amazonaws" % "aws-java-sdk-sns" % awsSdkVersion
-  ))
 
-lazy val ixiasAwsS3 = (project in file("framework/ixias-aws-s3"))
-  .settings(name := "ixias-aws-s3")
+lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
+  .settings(
+    libraryDependencies ++= Seq(
+      aws.s3,
+      aws.cloudfront
+    )
+  )
   .dependsOn(ixiasCore)
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "com.amazonaws" % "aws-java-sdk-s3" % awsSdkVersion
-  ))
+
+lazy val ixiasAwsQLDB = IxiaSProject("ixias-aws-qldb", "framework/ixias-aws-qldb")
+  .settings(
+    libraryDependencies ++= Seq(
+      qldb,
+      jacksonDataformat,
+      jacksonModule
+    )
+  )
+  .dependsOn(ixiasCore)
 
 // IxiaS Play Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-lazy val ixiasPlayCore = (project in file("framework/ixias-play-core"))
-  .settings(name := "ixias-play-core")
-  .enablePlugins(PlayScala)
+lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-core")
+  .settings(libraryDependencies += play)
   .dependsOn(ixiasCore)
-  .settings(commonSettings:    _*)
-  .settings(playSettings:      _*)
-  .settings(publisherSettings: _*)
 
-lazy val ixiasPlayScalate = (project in file("framework/ixias-play-scalate"))
-  .settings(name := "ixias-play-scalate")
-  .enablePlugins(PlayScala)
-  .dependsOn(ixiasCore)
-  .settings(commonSettings:    _*)
-  .settings(playSettings:      _*)
-  .settings(publisherSettings: _*)
-  .settings(libraryDependencies ++= Seq(
-    "org.scala-lang"        % "scala-compiler" % scalaVersion.value,
-    "org.scalatra.scalate" %% "scalate-core"   % "1.8.0"
-  ))
-
-lazy val ixiasPlayAuth = (project in file("framework/ixias-play-auth"))
-  .settings(name := "ixias-play-auth")
-  .enablePlugins(PlayScala)
+lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-auth")
+  .settings(libraryDependencies += play)
   .dependsOn(ixiasCore, ixiasPlayCore)
-  .settings(commonSettings:    _*)
-  .settings(playSettings:      _*)
-  .settings(publisherSettings: _*)
+
+lazy val docs = (project in file("docs"))
+  .settings(
+    description    := "Documentation for IxiaS",
+    scalacOptions  := Nil,
+    publish / skip := true,
+    mdocIn         := baseDirectory.value / "src" / "main" / "mdoc",
+    paradoxTheme   := Some(builtinParadoxTheme("generic")),
+    paradoxProperties ++= Map(
+      "org"          -> organization.value,
+      "scalaVersion" -> scalaVersion.value,
+      "version"      -> version.value.takeWhile(_ != '+')
+    ),
+    Compile / paradox / sourceDirectory := mdocOut.value,
+    Compile / paradoxRoots              := List("index.html"),
+    makeSite                            := makeSite.dependsOn(mdoc.toTask("")).value,
+    git.remoteRepo                      := "git@github.com:nextbeat-dev/ixias.git",
+    ghpagesNoJekyll                     := true
+  )
+  .settings(commonSettings)
+  .dependsOn(ixiasCore, ixiasMail, ixiasAwsSns, ixiasAwsS3, ixiasPlayCore, ixiasPlayAuth)
+  .enablePlugins(MdocPlugin, SitePreviewPlugin, ParadoxSitePlugin, GhpagesPlugin)
 
 // IxiaS Meta Packages
 //~~~~~~~~~~~~~~~~~~~~~
-lazy val ixias = (project in file("."))
-  .settings(name := "ixias")
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .aggregate(ixiasCore, ixiasMail, ixiasAws, ixiasPlay)
+lazy val ixias = IxiaSProject("ixias", ".")
+  .aggregate(ixiasCore, ixiasMail, ixiasAws, ixiasPlay, docs)
   .dependsOn(ixiasCore, ixiasMail)
 
-lazy val ixiasAws = (project in file("target/ixias-aws"))
-  .settings(name := "ixias-aws")
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .aggregate(ixiasCore, ixiasAwsSns, ixiasAwsS3)
-  .dependsOn(ixiasCore, ixiasAwsSns, ixiasAwsS3)
+lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
+  .aggregate(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
+  .dependsOn(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
 
-lazy val ixiasPlay = (project in file("target/ixias-play"))
-  .settings(name := "ixias-play")
-  .settings(commonSettings:    _*)
-  .settings(publisherSettings: _*)
-  .aggregate(ixiasPlayCore, ixiasPlayScalate, ixiasPlayAuth)
+lazy val ixiasPlay = IxiaSProject("ixias-play", "target/ixias-play")
+  .aggregate(ixiasPlayCore, ixiasPlayAuth)
   .dependsOn(ixiasPlayCore, ixiasPlayAuth)
-
-// Setting for prompt
-import com.scalapenos.sbt.prompt._
-val defaultTheme = PromptTheme(List(
-  text("[SBT] ", fg(green)),
-  text(state => { Project.extract(state).get(organization) + "@" }, fg(magenta)),
-  text(state => { Project.extract(state).get(name) },               fg(magenta)),
-  text(":", NoStyle),
-  gitBranch(clean = fg(green), dirty = fg(yellow)).padLeft("[").padRight("]"),
-  text(" > ", NoStyle)
-))
-promptTheme := defaultTheme
-shellPrompt := (implicit state => promptTheme.value.render(state))

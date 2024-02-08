@@ -10,13 +10,14 @@ package ixias.model
 
 import java.time.LocalDateTime
 
-/**
- * The definition for projecting domain model of DDD
- */
-trait EntityModel[K <: @@[_, _]] extends Serializable
-{
+/** The definition for projecting domain model of DDD
+  */
+trait EntityModel[K <: @@[_, _]] extends Serializable {
+
   /** The type of entity id */
-  type Id = K
+  type Id         = K
+  type WithNoId   = Entity.WithNoId[Id, this.type]
+  type EmbeddedId = Entity.EmbeddedId[Id, this.type]
 
   /** The entity's identity. */
   val id: Option[Id]
@@ -26,4 +27,13 @@ trait EntityModel[K <: @@[_, _]] extends Serializable
 
   /** The date and time when this entity was added to the system. */
   val createdAt: LocalDateTime
+
+  /** convet to a Entiry object. */
+  def toWithNoId:   WithNoId   = Entity.WithNoId(this)
+  def toEmbeddedId: EmbeddedId = Entity.EmbeddedId(this)
+}
+
+trait EntityModelWithNoTimeRec[K <: @@[_, _]] extends EntityModel[K] {
+  val updatedAt: LocalDateTime = null
+  val createdAt: LocalDateTime = null
 }

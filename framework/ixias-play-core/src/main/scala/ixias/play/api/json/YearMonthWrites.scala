@@ -10,23 +10,23 @@ package ixias.play.api.json
 
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import play.api.libs.json.EnvWrites
+import play.api.libs.json.{ EnvWrites, Writes }
+
 import scala.language.implicitConversions
 
 object YearMonthWrites extends EnvWrites {
 
   /** Formatting */
-  implicit def DefaultYearMonthFormatter(formatter: DateTimeFormatter) =
+  implicit def DefaultYearMonthFormatter(formatter: DateTimeFormatter): YearMonthWrites.TemporalFormatter[YearMonth] =
     new TemporalFormatter[YearMonth] {
       def format(temporal: YearMonth): String = {
         formatter.format(temporal)
       }
     }
 
-  /**
-   * The default typeclass to write a `java.time.YearMonth`,
-   */
-  implicit val writesYearMonth =
+  /** The default typeclass to write a `java.time.YearMonth`,
+    */
+  implicit val writesYearMonth: Writes[YearMonth] =
     temporalWrites[YearMonth, DateTimeFormatter](
       DateTimeFormatter.ofPattern("yyyy-MM")
     )

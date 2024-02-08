@@ -11,22 +11,26 @@ package ixias.play.api.mvc
 import play.api.mvc._
 import cats.data.EitherT
 import cats.instances.future._
-import scala.concurrent.Future
+
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.implicitConversions
 
 trait BaseExtensionMethods { self: BaseControllerHelpers =>
-  val Cursor        = ixias.persistence.model.Cursor
-  val JsonHelper    = ixias.play.api.mvc.JsonHelper
-  val FormHelper    = ixias.play.api.mvc.FormHelper
-  val AttrHelper    = ixias.play.api.mvc.RequestHeaderAttrHelper
+  val Cursor     = ixias.persistence.model.Cursor
+  val AttrHelper = ixias.play.api.mvc.RequestHeaderAttrHelper
+  val FormHelper: ixias.play.api.mvc.FormHelper = ixias.play.api.mvc.FormHelper
+  val JsonHelper: ixias.play.api.mvc.JsonHelper = ixias.play.api.mvc.JsonHelper
 
   /** The ExecutionContext with using on Playframework. */
-  implicit lazy val executionContext = defaultExecutionContext
+  implicit lazy val executionContext: ExecutionContext = defaultExecutionContext
 
   // --[ Methods ] -------------------------------------------------------------
   // Either[Result, Result] -> Result
   implicit def convEitherToResult(v: Either[Result, Result]): Result =
-    v match { case Right(r) => r case Left(l) => l }
+    v match {
+      case Right(r) => r
+      case Left(l)  => l
+    }
 
   // Future[Either[Result, Result]] -> Future[Result]
   implicit def convEitherToResult(f: Future[Either[Result, Result]]): Future[Result] =

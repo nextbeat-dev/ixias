@@ -8,13 +8,11 @@
 
 package ixias.play.api.auth.token
 
-import play.api.mvc.{ RequestHeader, Result }
-import scala.concurrent.{ Future, ExecutionContext }
-
 import ixias.model._
-import ixias.security.{ TokenSigner, RandomStringToken }
+import ixias.security.TokenSigner
 import ixias.util.Configuration
-import ixias.play.api.auth.container.Container
+import ixias.util.Logging
+import play.api.mvc.{ RequestHeader, Result }
 
 // The security token
 //~~~~~~~~~~~~~~~~~~~~
@@ -36,36 +34,32 @@ trait Token {
 
 // Companion object
 //~~~~~~~~~~~~~~~~~~
-object Token {
+object Token extends Logging {
 
-  sealed    trait  Tag
+  sealed trait Tag
   protected object Tag {
     trait SignedToken       extends Token
     trait AuthenticityToken extends Token
   }
   type SignedToken       = String @@ Tag.SignedToken
   type AuthenticityToken = String @@ Tag.AuthenticityToken
-  val  SignedToken       = the[Identity[SignedToken]]
-  val  AuthenticityToken = the[Identity[AuthenticityToken]]
+  val SignedToken       = the[Identity[SignedToken]]
+  val AuthenticityToken = the[Identity[AuthenticityToken]]
 
   /** The object that provides some cryptographic operations */
   protected lazy val signer = TokenSigner()
 
   /** Verifies a given HMAC on a piece of data */
   final def verifyHMAC(signedToken: SignedToken): Option[AuthenticityToken] =
-    signer.verify(SignedToken.unwrap(signedToken)).toOption
-      .map(AuthenticityToken(_))
+    signer.verify(SignedToken.unwrap(signedToken)) match {
+      case scala.util.Success(v) => Some(AuthenticityToken(v))
+      case scala.util.Failure(ex) => {
+        logger.warn("Token's HMAC verification failed. %s", ex)
+        None
+      }
+    }
 
-  /** Signs the given String with HMAC-SHA1 using the secret token.*/
+  /** Signs the given String with HMAC-SHA1 using the secret token. */
   final def signWithHMAC(token: AuthenticityToken): SignedToken =
     SignedToken(signer.sign(AuthenticityToken.unwrap(token)))
-
-  /** Generate a new token as string */
-  final def generate(container: Container[_])(implicit ec: ExecutionContext): Future[AuthenticityToken] = {
-    val token = AuthenticityToken(RandomStringToken.next(32))
-    container.read(token).flatMap {
-      case Some(_) => generate(container)
-      case None    => Future.successful(token)
-    }
-  }
 }

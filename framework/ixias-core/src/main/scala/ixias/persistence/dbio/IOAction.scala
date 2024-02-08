@@ -10,9 +10,8 @@ package ixias.persistence.dbio
 
 import scala.concurrent.Future
 
-/**
- * A Persistence I/O Action that can be executed on a database.
- */
+/** A Persistence I/O Action that can be executed on a database.
+  */
 trait IOAction {
 
   /** Construct a success validation value. */

@@ -13,19 +13,15 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.concurrent.Future
 import ixias.persistence.model.DataSourceName
 
-
-/**
-  * The container to manage databse base associated with DSN
+/** The container to manage databse base associated with DSN
   */
-private[backend] trait BasicDatabaseContainer[T] {
+trait BasicDatabaseContainer[T] {
 
   /** Shared store */
   protected var cache = new ConcurrentHashMap[DataSourceName, Future[T]]()
 
-  /**
-    * If given DSN is already in this map, returns associated data souce.
-    * Otherwise, computes value from given expression `op`, stores with key
-    * in map and returns that value.
+  /** If given DSN is already in this map, returns associated data souce. Otherwise, computes value from given
+    * expression `op`, stores with key in map and returns that value.
     */
   def getOrElseUpdate(op: => Future[T])(implicit dsn: DataSourceName): Future[T] =
     cache.computeIfAbsent(dsn, _ => op)

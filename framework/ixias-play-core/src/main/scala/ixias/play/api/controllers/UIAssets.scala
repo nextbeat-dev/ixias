@@ -9,17 +9,19 @@
 package ixias.play.api.controllers
 
 import play.api.{ Mode, Environment, Configuration }
-import play.api.mvc.{ Action, AnyContent, InjectedController }
-import play.api.http.LazyHttpErrorHandler
+import play.api.http.{ FileMimeTypes, HttpErrorHandler }
+import play.api.mvc.{ Action, AnyContent }
 import play.api.Logger
 import controllers.{ AssetsBuilder, DefaultAssetsMetadata }
 
 @javax.inject.Singleton
 class UIAssets @javax.inject.Inject() (
-  env:  Environment,
-  conf: Configuration,
-  meta: DefaultAssetsMetadata
-) extends AssetsBuilder(LazyHttpErrorHandler, meta) with InjectedController {
+  env:           Environment,
+  conf:          Configuration,
+  errorHandler:  HttpErrorHandler,
+  meta:          DefaultAssetsMetadata,
+  fileMimeTypes: FileMimeTypes
+) extends AssetsBuilder(errorHandler, meta, env) {
 
   import controllers.Assets._
 
@@ -40,31 +42,33 @@ class UIAssets @javax.inject.Inject() (
   val basePaths: Seq[java.io.File] =
     conf.getOptional[Seq[String]](CF_ASSETS_DEV_DIR) match {
       case Some(dirs) => dirs.map(env.getFile).filter(_.exists)
-      case None       => Seq(
-        env.getFile("ui"),
-        env.getFile("ui/src"),
-        env.getFile("ui/build"),
-        env.getFile("ui/dist"),
-        env.getFile("target/web/public/main")
-      ).filter(_.exists)
+      case None =>
+        Seq(
+          env.getFile("ui"),
+          env.getFile("ui/src"),
+          env.getFile("ui/build"),
+          env.getFile("ui/dist"),
+          env.getFile("target/web/public/main")
+        ).filter(_.exists)
     }
 
   /** Assetsハンドラー : 開発モード */
   private def devAssetHandler(file: String): Action[AnyContent] = Action { implicit request =>
     val resource = basePaths.foldLeft[Option[java.io.File]](None) {
-      case (prev, path) => prev match {
-        case Some(_) => prev
-        case None    => {
-          val fullPath = path + "/" + file
-          val resource = new java.io.File(fullPath)
-          if (resource.isFile) Some(resource) else None
+      case (prev, path) =>
+        prev match {
+          case Some(_) => prev
+          case None => {
+            val fullPath = s"$path/$file"
+            val resource = new java.io.File(fullPath)
+            if (resource.isFile) Some(resource) else None
+          }
         }
-      }
     }
     resource match {
       case Some(file) => {
         val stream = new java.io.FileInputStream(file)
-        val source = akka.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
+        val source = org.apache.pekko.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
         logger.info(s"serving $file")
         Ok.chunked(source)
           .as(fileMimeTypes.forFileName(file.toString).getOrElse("application/octet-stream"))
