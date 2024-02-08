@@ -42,7 +42,7 @@ object RequestHeaderAttrHelper extends Logging {
     validated match {
       case Validated.Valid(v) => Right(v)
       case Validated.Invalid(nel) => {
-        nel.map(invalid => logger.error(invalid))
+        nel.map(invalid => logger.warn(invalid))
         Left(E_NOT_FOUND)
       }
     }
