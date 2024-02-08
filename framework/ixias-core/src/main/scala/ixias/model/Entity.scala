@@ -11,7 +11,7 @@ package ixias.model
 import scala.reflect.runtime.universe._
 
 /** Entity's id Status */
-trait  IdStatus
+trait IdStatus
 object IdStatus {
   trait Empty  extends IdStatus
   trait Exists extends IdStatus
@@ -21,10 +21,10 @@ object IdStatus {
 final case class Entity[K <: @@[_, _], +M <: EntityModel[K], S <: IdStatus](v: M) {
 
   /** The entity data model */
-  type Model    <: M
+  type Model <: M
 
   /** The status of entity's identity */
-  type IdStatus =  S
+  type IdStatus = S
 
   /** get id value when id is exists */
   def id(implicit ev: S =:= IdStatus.Exists): K = v.id.get
@@ -42,24 +42,25 @@ final case class Entity[K <: @@[_, _], +M <: EntityModel[K], S <: IdStatus](v: M
 object Entity {
 
   // Entity with no identity.
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~
-  type   WithNoId[K <: @@[_, _], M <: EntityModel[K]] = Entity[K, M, IdStatus.Empty]
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  type WithNoId[K <: @@[_, _], M <: EntityModel[K]] = Entity[K, M, IdStatus.Empty]
   object WithNoId {
+
     /** Create a entity object with no id. */
     def apply[K <: @@[_, _], M <: EntityModel[K]](data: M): WithNoId[K, M] =
       data.id match {
-        case None    =>       new Entity(data)
+        case None    => new Entity(data)
         case Some(_) => throw new IllegalArgumentException("The entity's id is already set.")
       }
   }
 
   // Entity has embedded Id.
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~
-  type   EmbeddedId[K <: @@[_, _], M <: EntityModel[K]] = Entity[K, M, IdStatus.Exists]
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  type EmbeddedId[K <: @@[_, _], M <: EntityModel[K]] = Entity[K, M, IdStatus.Exists]
   object EmbeddedId {
     def apply[K <: @@[_, _], M <: EntityModel[K]](data: M): EmbeddedId[K, M] =
       data.id match {
-        case Some(_) =>       new Entity(data)
+        case Some(_) => new Entity(data)
         case None    => throw new IllegalArgumentException("Could not found id on entity's data.")
       }
   }

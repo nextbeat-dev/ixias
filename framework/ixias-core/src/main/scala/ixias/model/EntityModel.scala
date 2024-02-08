@@ -10,14 +10,13 @@ package ixias.model
 
 import java.time.LocalDateTime
 
-/**
- * The definition for projecting domain model of DDD
- */
+/** The definition for projecting domain model of DDD
+  */
 trait EntityModel[K <: @@[_, _]] extends Serializable {
 
   /** The type of entity id */
   type Id         = K
-  type WithNoId   = Entity.WithNoId  [Id, this.type]
+  type WithNoId   = Entity.WithNoId[Id, this.type]
   type EmbeddedId = Entity.EmbeddedId[Id, this.type]
 
   /** The entity's identity. */

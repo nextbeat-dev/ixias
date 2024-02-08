@@ -12,22 +12,19 @@ import java.util.ArrayDeque
 import scala.annotation.tailrec
 import scala.concurrent.{ ExecutionContextExecutor, ExecutionContext }
 
-/**
- * Contains the default ExecutionContext used by Iteratees.
- */
+/** Contains the default ExecutionContext used by Iteratees.
+  */
 object Execution {
 
   def defaultExecutionContext: ExecutionContext = Implicits.defaultExecutionContext
 
   object Implicits {
-    implicit def defaultExecutionContext: ExecutionContext = Execution.trampoline
-    implicit def trampoline: ExecutionContextExecutor = Execution.trampoline
+    implicit def defaultExecutionContext: ExecutionContext         = Execution.trampoline
+    implicit def trampoline:              ExecutionContextExecutor = Execution.trampoline
   }
 
-  /**
-   * Executes in the current thread.
-   * Uses a thread local trampoline to make sure the stack doesn't overflow.
-   */
+  /** Executes in the current thread. Uses a thread local trampoline to make sure the stack doesn't overflow.
+    */
   object trampoline extends ExecutionContextExecutor {
 
     /*
@@ -65,14 +62,12 @@ object Execution {
           val runnables = arrayDeque.asInstanceOf[ArrayDeque[Runnable]]
           runnables.addLast(runnable)
         case illegal =>
-          throw new IllegalStateException(
-            s"Unsupported trampoline ThreadLocal value: $illegal")
+          throw new IllegalStateException(s"Unsupported trampoline ThreadLocal value: $illegal")
       }
     }
 
-    /**
-     * Run all tasks that have been scheduled in the ThreadLocal.
-     */
+    /** Run all tasks that have been scheduled in the ThreadLocal.
+      */
     @tailrec
     private def executeScheduled(): Unit = {
       local.get match {
@@ -93,8 +88,7 @@ object Execution {
             runnable.run()
           }
         case illegal =>
-          throw new IllegalStateException(
-            s"Unsupported trampoline ThreadLocal value: $illegal")
+          throw new IllegalStateException(s"Unsupported trampoline ThreadLocal value: $illegal")
       }
     }
 

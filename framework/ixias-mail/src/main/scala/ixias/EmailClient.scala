@@ -37,19 +37,15 @@ trait EmailClient {
     new Logger(LoggerFactory.getLogger(this.getClass.getName))
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Send an email with the provided data.
-   */
-  def send(to: UserEmail, tpl: EmailTemplate[_])
-    (implicit ctx: ExecutionContext): Future[String] =
+  /** Send an email with the provided data.
+    */
+  def send(to: UserEmail, tpl: EmailTemplate[_])(implicit ctx: ExecutionContext): Future[String] =
     tpl.from match {
       case Some(from) => send(to, from, tpl)
       case None       => Future.failed(new NoSuchElementException("The from adrress is empty."))
     }
 
-  /**
-   * Send an email with the provided data.
-   */
-  def send(to: UserEmail, from: UserEmail, tpl: EmailTemplate[_])
-    (implicit ctx: ExecutionContext): Future[String]
+  /** Send an email with the provided data.
+    */
+  def send(to: UserEmail, from: UserEmail, tpl: EmailTemplate[_])(implicit ctx: ExecutionContext): Future[String]
 }

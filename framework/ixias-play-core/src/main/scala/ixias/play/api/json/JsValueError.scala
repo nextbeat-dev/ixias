@@ -14,13 +14,13 @@ import play.api.libs.functional.syntax._
 // The Error response
 //~~~~~~~~~~~~~~~~~~~~
 case class JsValueError(
-  val error:   Int,            // Error code
-  val message: Option[String]  // Error message
+  val error:   Int,           // Error code
+  val message: Option[String] // Error message
 )
 
 object JsValueError {
   implicit val writes: Writes[JsValueError] = (
-    (__ \ "error"  ).write[Int] and
-    (__ \ "message").write[Option[String]]
+    (__ \ "error").write[Int] and
+      (__ \ "message").write[Option[String]]
   )(unlift(JsValueError.unapply))
 }

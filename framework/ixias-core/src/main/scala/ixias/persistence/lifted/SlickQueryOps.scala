@@ -32,6 +32,9 @@ final case class SlickQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](
 }
 
 trait SlickQueryOps {
-  implicit def toQueryTransformer[E, U, C[_]](a: Query[E, U, C]): SlickQueryTransformer[E, U, C] = SlickQueryTransformer(a)
-  implicit def toQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](a: Query[Rep[T], U, Seq]): SlickQueryTransformerId[T, U, Seq] = SlickQueryTransformerId(a)
+  implicit def toQueryTransformer[E, U, C[_]](a: Query[E, U, C]): SlickQueryTransformer[E, U, C] =
+    SlickQueryTransformer(a)
+  implicit def toQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](
+    a: Query[Rep[T], U, Seq]
+  ): SlickQueryTransformerId[T, U, Seq] = SlickQueryTransformerId(a)
 }

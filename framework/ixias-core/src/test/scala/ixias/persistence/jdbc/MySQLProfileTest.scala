@@ -27,7 +27,7 @@ class MySQLProfileTest extends Specification with AfterSpec {
 
   private val testLocalDate = LocalDate.parse("2023-08-07")
   private val testLocalTime = LocalTime.parse("18:20:28")
-  private val testDateTime = LocalDateTime.parse("2023-08-07T19:32:35")
+  private val testDateTime  = LocalDateTime.parse("2023-08-07T19:32:35")
 
   def afterSpec = step {
     val result = repository.delete()
@@ -52,15 +52,13 @@ class MySQLProfileTest extends Specification with AfterSpec {
 
     "LocalDateTime is different before and after storing in DB." in {
       val failedLocalTime = LocalTime.parse("18:20:28.661")
-      val failedDateTime = LocalDateTime.parse("2023-08-07T19:32:34.508")
+      val failedDateTime  = LocalDateTime.parse("2023-08-07T19:32:34.508")
       val mode = DateAndTimeTypes(None, testLocalDate, failedLocalTime, failedDateTime, failedDateTime).toWithNoId
       val result = for {
-        id <- repository.add(mode)
+        id    <- repository.add(mode)
         model <- repository.get(id)
       } yield {
-        model.exists(v =>
-          v.v.createdAt != failedDateTime && v.v.localTime != failedDateTime
-        )
+        model.exists(v => v.v.createdAt != failedDateTime && v.v.localTime != failedDateTime)
       }
       Await.ready(result, Duration.Inf)
       result
@@ -70,7 +68,7 @@ class MySQLProfileTest extends Specification with AfterSpec {
 
 import DateAndTimeTypes.Id
 case class DateAndTimeTypes(
-  id: Option[Id],
+  id:        Option[Id],
   localDate: LocalDate,
   localTime: LocalTime,
   updatedAt: LocalDateTime,
@@ -83,8 +81,8 @@ object DateAndTimeTypes {
   type Id = Long @@ DateAndTimeTypes
 }
 
-case class DateAndTimeTypesTable[P <: JdbcProfile]()(
-  implicit val driver: P
+case class DateAndTimeTypesTable[P <: JdbcProfile]()(implicit
+  val driver: P
 ) extends Table[DateAndTimeTypes, P] {
 
   import api._
@@ -92,30 +90,34 @@ case class DateAndTimeTypesTable[P <: JdbcProfile]()(
   // --[ DNS ] -----------------------------------------------------------------
   lazy val dsn = Map(
     "master" -> DataSourceName("ixias.db.mysql://master/test"),
-    "slave" -> DataSourceName("ixias.db.mysql://slave/test")
+    "slave"  -> DataSourceName("ixias.db.mysql://slave/test")
   )
 
   class Query extends BasicQuery(new Table(_)) {}
   lazy val query = new Query
 
   class Table(tag: Tag) extends BasicTable(tag, "test") {
-    def id = column[Id]("id", O.AutoInc, O.PrimaryKey)
+    def id        = column[Id]("id", O.AutoInc, O.PrimaryKey)
     def localDate = column[LocalDate]("local_date")
     def localTime = column[LocalTime]("local_time")
     def updatedAt = column[LocalDateTime]("updated_at")
     def createdAt = column[LocalDateTime]("created_at")
 
     def * = (
-      id.?, localDate, localTime, updatedAt, createdAt
+      id.?,
+      localDate,
+      localTime,
+      updatedAt,
+      createdAt
     ).<>(
-      (DateAndTimeTypes.apply   _).tupled,
+      (DateAndTimeTypes.apply _).tupled,
       DateAndTimeTypes.unapply
     )
   }
 }
 
-class DateAndTimeTypesRepository[P <: JdbcProfile]()(
-  implicit val driver: P
+class DateAndTimeTypesRepository[P <: JdbcProfile]()(implicit
+  val driver: P
 ) extends SlickRepository[DateAndTimeTypes.Id, DateAndTimeTypes, P] {
   import api._
 
@@ -137,9 +139,9 @@ class DateAndTimeTypesRepository[P <: JdbcProfile]()(
       for {
         old <- row.result.headOption
         _ <- old match {
-          case None => slick += entity.v
-          case Some(_) => row.update(entity.v)
-        }
+               case None    => slick += entity.v
+               case Some(_) => row.update(entity.v)
+             }
       } yield old
     }
 

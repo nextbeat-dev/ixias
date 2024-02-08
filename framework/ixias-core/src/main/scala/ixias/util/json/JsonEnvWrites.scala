@@ -11,43 +11,44 @@ package ixias.util.json
 import play.api.libs.json._
 import play.api.libs.json.EnvWrites
 
-/**
- * Writes Conbinator for type conversion in service
- */
+/** Writes Conbinator for type conversion in service
+  */
 trait JsonEnvWrites extends EnvWrites {
 
-  /**
-   * Serializer for ixias.util.EnumStatus
-   */
+  /** Serializer for ixias.util.EnumStatus
+    */
   implicit def enumStatus[E <: ixias.util.EnumStatus]: Writes[E] = (o: E) => JsNumber(o.code)
 
-  /**
-   * Serializer for Seq[ixias.util.EnumBitFlags]
-   */
+  /** Serializer for Seq[ixias.util.EnumBitFlags]
+    */
   implicit def enumBitFlags[E <: ixias.util.EnumBitFlags]: Writes[E] = (o: E) => JsNumber(o.code)
 
-  /**
-   * Serializer for ixias.persistence.model.Cursor
-   */
+  /** Serializer for ixias.persistence.model.Cursor
+    */
   implicit object CursorWrites extends Writes[ixias.persistence.model.Cursor] {
     def writes(cursor: ixias.persistence.model.Cursor) =
-      JsObject(Seq(
-        Some(            "offset" -> JsNumber(cursor.offset)),
-        cursor.limit.map("limit"  -> JsNumber(_))
-      ).flatten)
+      JsObject(
+        Seq(
+          Some("offset" -> JsNumber(cursor.offset)),
+          cursor.limit.map("limit" -> JsNumber(_))
+        ).flatten
+      )
   }
 
-  /**
-   * Serializer for java.time.YearMonth
-   */
+  /** Serializer for java.time.YearMonth
+    */
   implicit object YearMonthWrites extends Writes[java.time.YearMonth] {
     def writes(yearMonth: java.time.YearMonth) =
-      JsObject(Seq(
-        "year"  -> JsNumber(yearMonth.getYear),
-        "month" -> JsNumber(yearMonth.getMonthValue),
-        "text"  -> JsString(yearMonth.format(
-          java.time.format.DateTimeFormatter.ofPattern("yyyy-MM")
-        ))
-      ))
+      JsObject(
+        Seq(
+          "year"  -> JsNumber(yearMonth.getYear),
+          "month" -> JsNumber(yearMonth.getMonthValue),
+          "text" -> JsString(
+            yearMonth.format(
+              java.time.format.DateTimeFormatter.ofPattern("yyyy-MM")
+            )
+          )
+        )
+      )
   }
 }

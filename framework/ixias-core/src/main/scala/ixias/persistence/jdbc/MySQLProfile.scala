@@ -22,9 +22,9 @@ trait MySQLProfile extends SlickMySQLProfile {
 
   override val columnTypes: self.JdbcTypes = new CustomMySQLJdbcTypes
 
-  /**
-   * Copied from https://github.com/slick/slick/blob/v3.3.2/slick/src/main/scala/slick/jdbc/MySQLProfile.scala#L323-L345
-   */
+  /** Copied from
+    * https://github.com/slick/slick/blob/v3.3.2/slick/src/main/scala/slick/jdbc/MySQLProfile.scala#L323-L345
+    */
   @inline
   private def stringToMySqlString(value: String): String =
     value match {
@@ -34,15 +34,15 @@ trait MySQLProfile extends SlickMySQLProfile {
         sb append '\''
         for (c <- value) c match {
           case '\'' => sb append "\\'"
-          case '"' => sb append "\\\""
-          case 0 => sb append "\\0"
-          case 26 => sb append "\\Z"
+          case '"'  => sb append "\\\""
+          case 0    => sb append "\\0"
+          case 26   => sb append "\\Z"
           case '\b' => sb append "\\b"
           case '\n' => sb append "\\n"
           case '\r' => sb append "\\r"
           case '\t' => sb append "\\t"
           case '\\' => sb append "\\\\"
-          case _ => sb append c
+          case _    => sb append c
         }
         sb append '\''
         sb.toString

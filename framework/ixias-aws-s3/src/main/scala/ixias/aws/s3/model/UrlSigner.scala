@@ -20,10 +20,8 @@ import com.amazonaws.util.DateUtils
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner
 import com.amazonaws.services.cloudfront.util.SignerUtils._
 
-/**
- * The file resource definition
- * to provide clients with a URL to display the image
- */
+/** The file resource definition to provide clients with a URL to display the image
+  */
 object UrlSigner extends AmazonS3Config {
 
   protected val CF_CLOUD_FRONT_KEY_PAIR_ID         = "cloudfront_key_pair_id"
@@ -31,9 +29,8 @@ object UrlSigner extends AmazonS3Config {
   protected val CF_CLOUD_FRONT_DISTRIBUTION_DOMAIN = "cloudfront_distribution_domain"
   protected val CF_CLOUD_FRONT_SIGNED_URL_TIMEOUT  = "cloudfront_signed_url_timeout"
 
-  /**
-   * The request to resize image.
-   */
+  /** The request to resize image.
+    */
   case class Request(
     width:  Option[Int],
     height: Option[Int],
@@ -42,22 +39,19 @@ object UrlSigner extends AmazonS3Config {
     custom: Seq[(String, String)]
   ) {
 
-    /**
-     * Generate a URL query string.
-     */
+    /** Generate a URL query string.
+      */
     lazy val queryString = (Seq(
-      width  .map(v => "dw=%d"   .format(v)),
-      height .map(v => "dh=%d"   .format(v)),
-      ratio  .map(v => "ratio=%s".format(v.value)),
-      format .map(v => "fmt=%s"  .format(v.value)),
+      width.map(v => "dw=%d".format(v)),
+      height.map(v => "dh=%d".format(v)),
+      ratio.map(v => "ratio=%s".format(v.value)),
+      format.map(v => "fmt=%s".format(v.value))
     ).flatten ++
-      custom .map(v => "%s=%s"   .format(v._1, v._2))
-    ).mkString("&")
+      custom.map(v => "%s=%s".format(v._1, v._2))).mkString("&")
   }
 
-  /**
-   * Companion object: Resize-Request
-   */
+  /** Companion object: Resize-Request
+    */
   object Request {
 
     // --[ Enum: Ratio ]----------------------------------------------------------
@@ -77,34 +71,31 @@ object UrlSigner extends AmazonS3Config {
     }
   }
 
-  /**
-   * Implicit convertor: To java.time.Duration
-   */
+  /** Implicit convertor: To java.time.Duration
+    */
   implicit def toFiniteDuration(d: FiniteDuration): java.time.Duration =
     java.time.Duration.ofNanos(d.toNanos)
 
-  /**
-   * Generate a signed URL that allows access to distribution and S3 objects by
-   * applying access restrictions specified in a custom policy document.
-   */
-  def getSigendCloudFrontUrl(file: File#EmbeddedId, resize: Request)
-    (implicit dsn: DataSourceName): java.net.URL = {
-      val keyPairId  = readValue(_.get[Option[String]](CF_CLOUD_FRONT_KEY_PAIR_ID)).get
-      val pkFilePath = readValue(_.get[Option[String]](CF_CLOUD_FRONT_PRIVATE_KEY_FILE)).get
-      val domain     = readValue(_.get[Option[String]](CF_CLOUD_FRONT_DISTRIBUTION_DOMAIN)).get
-      val timeout    = readValue(_.get[Option[FiniteDuration]](CF_CLOUD_FRONT_SIGNED_URL_TIMEOUT))
-                                   .getOrElse(FiniteDuration(30, TimeUnit.MINUTES))
-      //- Generate Signed-URL
-      val resourcePath = generateResourcePath(Protocol.https, domain, file.v.key)
-      new java.net.URL({
-        CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-          resourcePath + "?" + resize.queryString,
-          keyPairId,
-          loadPrivateKey(new java.io.File(pkFilePath)),
-          DateUtils.parseISO8601Date(
-            ZonedDateTime.now.plus(timeout).toInstant.toString
-          )
+  /** Generate a signed URL that allows access to distribution and S3 objects by applying access restrictions specified
+    * in a custom policy document.
+    */
+  def getSigendCloudFrontUrl(file: File#EmbeddedId, resize: Request)(implicit dsn: DataSourceName): java.net.URL = {
+    val keyPairId  = readValue(_.get[Option[String]](CF_CLOUD_FRONT_KEY_PAIR_ID)).get
+    val pkFilePath = readValue(_.get[Option[String]](CF_CLOUD_FRONT_PRIVATE_KEY_FILE)).get
+    val domain     = readValue(_.get[Option[String]](CF_CLOUD_FRONT_DISTRIBUTION_DOMAIN)).get
+    val timeout = readValue(_.get[Option[FiniteDuration]](CF_CLOUD_FRONT_SIGNED_URL_TIMEOUT))
+      .getOrElse(FiniteDuration(30, TimeUnit.MINUTES))
+    // - Generate Signed-URL
+    val resourcePath = generateResourcePath(Protocol.https, domain, file.v.key)
+    new java.net.URL({
+      CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
+        resourcePath + "?" + resize.queryString,
+        keyPairId,
+        loadPrivateKey(new java.io.File(pkFilePath)),
+        DateUtils.parseISO8601Date(
+          ZonedDateTime.now.plus(timeout).toInstant.toString
         )
-      })
+      )
+    })
   }
 }

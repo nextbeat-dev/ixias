@@ -22,25 +22,37 @@ object YearMonthReads extends EnvReads {
       def parse(input: String): Option[YearMonth] = try {
         Some(YearMonth.parse(input, formatter))
       } catch {
-        case _: DateTimeParseException => None
+        case _: DateTimeParseException           => None
         case _: UnsupportedTemporalTypeException => None
       }
     }
 
-  /**
-   * Reads for the `java.time.YearMonth` type.
-   */
-  def yearMonthReads[T](parsing: T, corrector: String => String = identity)(implicit p: T => TemporalParser[YearMonth]): Reads[YearMonth] =
+  /** Reads for the `java.time.YearMonth` type.
+    */
+  def yearMonthReads[T](parsing: T, corrector: String => String = identity)(implicit
+    p: T => TemporalParser[YearMonth]
+  ): Reads[YearMonth] =
     new Reads[YearMonth] {
       def reads(json: JsValue): JsResult[YearMonth] = json match {
         case JsNumber(d) => JsSuccess(YearMonth.from(epoch(d.toLong)))
-        case JsString(s) => p(parsing).parse(corrector(s)) match {
-          case Some(d) => JsSuccess(d)
-          case _ => JsError(Seq(JsPath ->
-            Seq(JsonValidationError("error.expected.date.isoformat", parsing))))
-        }
-        case _ => JsError(Seq(JsPath ->
-          Seq(JsonValidationError("error.expected.date"))))
+        case JsString(s) =>
+          p(parsing).parse(corrector(s)) match {
+            case Some(d) => JsSuccess(d)
+            case _ =>
+              JsError(
+                Seq(
+                  JsPath ->
+                    Seq(JsonValidationError("error.expected.date.isoformat", parsing))
+                )
+              )
+          }
+        case _ =>
+          JsError(
+            Seq(
+              JsPath ->
+                Seq(JsonValidationError("error.expected.date"))
+            )
+          )
       }
 
       @inline def epoch(millis: Long): LocalDate = LocalDate.now(
@@ -48,9 +60,8 @@ object YearMonthReads extends EnvReads {
       )
     }
 
-  /**
-   * The default typeclass to reads `java.time.YearMonth` from JSON.
-   */
+  /** The default typeclass to reads `java.time.YearMonth` from JSON.
+    */
   implicit val DefaultYearMonthReads: Reads[YearMonth] =
     yearMonthReads(DateTimeFormatter.ofPattern("yyyy-MM"))
 }

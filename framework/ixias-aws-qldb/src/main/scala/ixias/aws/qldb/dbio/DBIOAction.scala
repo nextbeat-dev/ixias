@@ -12,22 +12,18 @@ import scala.concurrent.{ Future, ExecutionContext }
 import software.amazon.qldb.{ QldbSession, TransactionExecutor }
 import ixias.aws.qldb.model.{ SqlStatement, ConvOps }
 
-/**
- * Executor for database IO/Action.
- */
+/** Executor for database IO/Action.
+  */
 case class DBIOAction(session: QldbSession) extends ConvOps {
 
-  /**
-   * Execute query
-   */
+  /** Execute query
+    */
   def execute(stmt: SqlStatement): Future[stmt.Result] =
     Future.fromTry(stmt.execute(session))
 
-  /**
-   * Transaction block
-   * Since transaction commit is called when the Executor ends,
-   * it waits for the end of block processing.
-   */
+  /** Transaction block Since transaction commit is called when the Executor ends, it waits for the end of block
+    * processing.
+    */
   def transaction[A](block: DBIOActionWithTxt => Future[A]): Future[A] =
     session.execute(tx => {
       import scala.concurrent.Await
@@ -41,15 +37,12 @@ case class DBIOAction(session: QldbSession) extends ConvOps {
     })
 }
 
-/**
- * Executor for database IO/Action with transaction.
- */
+/** Executor for database IO/Action with transaction.
+  */
 case class DBIOActionWithTxt(tx: TransactionExecutor) extends ConvOps {
 
-  /**
-   * Execute query with transaction
-   */
+  /** Execute query with transaction
+    */
   def execute(stmt: SqlStatement): Future[stmt.Result] =
     Future.fromTry(stmt.execute(tx))
 }
-

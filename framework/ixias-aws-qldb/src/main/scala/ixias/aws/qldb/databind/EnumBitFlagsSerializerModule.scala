@@ -36,8 +36,8 @@ case class EnumBitFlagsSerializer(
 // Resolver to serve serializer
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 object EnumBitFlagsSerializerResolver extends Serializers.Base {
-  private  val SYMBOL  = classOf[Seq[_]]
-  private  val CONTENT = classOf[EnumBitFlags]
+  private val SYMBOL  = classOf[Seq[_]]
+  private val CONTENT = classOf[EnumBitFlags]
   override def findCollectionLikeSerializer(
     config:                SerializationConfig,
     collectionType:        CollectionLikeType,
@@ -45,8 +45,8 @@ object EnumBitFlagsSerializerResolver extends Serializers.Base {
     elementTypeSerializer: TypeSerializer,
     elementSerializer:     JsonSerializer[Object]
   ): JsonSerializer[_] = (
-    (SYMBOL  isAssignableFrom collectionType.getRawClass) &&
-    (CONTENT isAssignableFrom collectionType.getContentType.getRawClass)
+    (SYMBOL isAssignableFrom collectionType.getRawClass) &&
+      (CONTENT isAssignableFrom collectionType.getContentType.getRawClass)
   ) match {
     case true  => EnumBitFlagsSerializer(collectionType)
     case false => null

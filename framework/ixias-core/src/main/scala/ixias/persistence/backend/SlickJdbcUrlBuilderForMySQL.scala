@@ -11,9 +11,8 @@ package ixias.persistence.backend
 import scala.util.Try
 import ixias.persistence.model.DataSourceName
 
-/**
- * Build a JDBC-Url for MySQL.
- */
+/** Build a JDBC-Url for MySQL.
+  */
 class SlickJdbcUrlBuilderForMySQL extends SlickJdbcUrlBuilder with BasicDatabaseConfig {
 
   // --[ Properties ]-----------------------------------------------------------
@@ -21,9 +20,8 @@ class SlickJdbcUrlBuilderForMySQL extends SlickJdbcUrlBuilder with BasicDatabase
   val FMT_URL_LOADBALANCE = """jdbc:mysql:loadbalance://%s/%s"""
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Generate a url for JDBC connection resouce.
-   */
+  /** Generate a url for JDBC connection resouce.
+    */
   def buildUrl(implicit dsn: DataSourceName): Try[String] =
     for {
       hosts    <- getHosts

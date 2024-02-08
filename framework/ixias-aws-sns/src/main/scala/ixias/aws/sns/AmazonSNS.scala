@@ -22,7 +22,7 @@ trait AmazonSNS extends Aliases with Logging {
 
   // --[ Alias ]----------------------------------------------------------------
   /** The data source name */
-  val  DataSourceName = ixias.aws.sns.backend.DataSourceName
+  val DataSourceName = ixias.aws.sns.backend.DataSourceName
   type DataSourceName = ixias.aws.sns.backend.DataSourceName
   implicit val dsn: DataSourceName
 
@@ -34,34 +34,39 @@ trait AmazonSNS extends Aliases with Logging {
   protected implicit val ctx: ExecutionContext = Execution.Implicits.trampoline
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Sends a message to a topic's subscribed endpoints.
-   */
+  /** Sends a message to a topic's subscribed endpoints.
+    */
   def publish(message: String): Future[Seq[PublishResult]] =
     backend.isSkip(dsn) match {
-      case true  => {
+      case true => {
         backend.getTopicARN(dsn) map { topic =>
           logger.info("AWS-SNS :: skip to publish a message. topic = %s, message = %s".format(topic, message))
         }
         Future.successful(Seq.empty)
       }
-      case false => for {
-        client    <- backend.getClient(dsn)
-        topicSeq  <- Future.fromTry(backend.getTopicARN(dsn))
-        resultSeq <- Future.sequence {
-          topicSeq map { topic =>
-            Future.fromTry {
-              Try(client.publish(topic, message))
-            } andThen {
-              case Success(result) => logger.info(
-                "AWS-SNS :: publish a message. topic = %s, message = %s, result = %s"
-                  .format(topic, message, result.toString()))
-              case Failure(ex)     => logger.error(
-                "AWS-SNS :: failed to publish a message. topic = %s, message = %s"
-                  .format(topic, message), ex)
-            }
-          }
-        }
-      } yield resultSeq
+      case false =>
+        for {
+          client   <- backend.getClient(dsn)
+          topicSeq <- Future.fromTry(backend.getTopicARN(dsn))
+          resultSeq <- Future.sequence {
+                         topicSeq map { topic =>
+                           Future.fromTry {
+                             Try(client.publish(topic, message))
+                           } andThen {
+                             case Success(result) =>
+                               logger.info(
+                                 "AWS-SNS :: publish a message. topic = %s, message = %s, result = %s"
+                                   .format(topic, message, result.toString())
+                               )
+                             case Failure(ex) =>
+                               logger.error(
+                                 "AWS-SNS :: failed to publish a message. topic = %s, message = %s"
+                                   .format(topic, message),
+                                 ex
+                               )
+                           }
+                         }
+                       }
+        } yield resultSeq
     }
 }
