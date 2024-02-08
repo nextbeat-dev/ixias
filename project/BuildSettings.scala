@@ -44,8 +44,6 @@ object BuildSettings {
       val path = if (release) "releases" else "snapshots"
       Some("Nextbeat snapshots" at "s3://maven.nextbeat.net.s3-ap-northeast-1.amazonaws.com/" + path)
     },
-    (Compile / packageDoc) / publishArtifact := !release, // disable publishing the Doc jar for production
-    (Compile / packageSrc) / publishArtifact := !release, // disable publishing the sources jar for production
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
