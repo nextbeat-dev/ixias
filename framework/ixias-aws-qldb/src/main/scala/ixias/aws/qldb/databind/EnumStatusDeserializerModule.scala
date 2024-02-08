@@ -24,15 +24,15 @@ case class EnumStatusDeserializer(
     val clazz  = Class.forName(javaType.getRawClass.getName + "$")
     val module = clazz.getField("MODULE$").get(null)
     val method = clazz.getMethod("apply", classOf[Short])
-    val enum   = method.invoke(module, p.getValueAsInt.toShort.asInstanceOf[AnyRef])
-    enum.asInstanceOf[EnumStatus]
+    val `enum` = method.invoke(module, p.getValueAsInt.toShort.asInstanceOf[AnyRef])
+    `enum`.asInstanceOf[EnumStatus]
   }
 }
 
 // Resolver to serve deserializer
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 object EnumStatusDeserializerResolver extends Deserializers.Base {
-  private  val SYMBOL = classOf[EnumStatus]
+  private val SYMBOL = classOf[EnumStatus]
   override def findBeanDeserializer(
     javaType: JavaType,
     config:   DeserializationConfig,

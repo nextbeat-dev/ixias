@@ -11,18 +11,16 @@ package ixias.persistence.backend
 import scala.util.Try
 import ixias.persistence.model.DataSourceName
 
-/**
- * Build a JDBC-Url for Redshift.
- */
+/** Build a JDBC-Url for Redshift.
+  */
 class SlickJdbcUrlBuilderForRedshift extends SlickJdbcUrlBuilder with BasicDatabaseConfig {
 
   // --[ Properties ]-----------------------------------------------------------
   val FMT_URL_DEFALT = """jdbc:postgresql://%s/%s?currentSchema=%s"""
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Generate a url for JDBC connection resouce.
-   */
+  /** Generate a url for JDBC connection resouce.
+    */
   def buildUrl(implicit dsn: DataSourceName): Try[String] =
     for {
       hosts    <- getHosts

@@ -8,45 +8,42 @@
 
 package ixias.persistence
 
-import ixias.model.{ @@, EntityModel }
-import ixias.persistence.dbio.{ Execution, EntityIOAction }
-import ixias.persistence.lifted.{ Aliases, ExtensionMethods }
+import scala.concurrent.ExecutionContextExecutor
 
-import ixias.util.Logger
 import org.slf4j.LoggerFactory
 
-/**
- * The basic functionality that has to be implemented by all profiles.
- */
+import ixias.model.{ @@, EntityModel }
+import ixias.persistence.dbio.{ EntityIOAction, Execution }
+import ixias.persistence.lifted.{ Aliases, ExtensionMethods }
+import ixias.util.Logger
+
+/** The basic functionality that has to be implemented by all profiles.
+  */
 trait Profile {
 
   /** The type of database objects. */
   type Database <: AnyRef
 
   /** The back-end type required by this profile */
-  type Backend  <: ixias.persistence.backend.BasicBackend[Database]
+  type Backend <: ixias.persistence.backend.BasicBackend[Database]
 
   /** The back-end implementation for this profile */
   protected val backend: Backend
 
   /** The logger for profile */
-  protected lazy val logger  =
+  protected lazy val logger =
     new Logger(LoggerFactory.getLogger(this.getClass.getName))
 
   /** The Execution Context */
-  protected implicit val ctx = Execution.Implicits.trampoline
+  protected implicit val ctx: ExecutionContextExecutor = Execution.Implicits.trampoline
 
-  /**
-   * The API for using the utility methods with a single import statement.
-   * This provides the repository's implicits, the Database connections,
-   * and commonly types and objects.
-   */
+  /** The API for using the utility methods with a single import statement. This provides the repository's implicits,
+    * the Database connections, and commonly types and objects.
+    */
   trait API extends Aliases with ExtensionMethods
   val api: API
 }
 
-/**
- * The basic repository with IOAction
- */
-trait Repository[K <: @@[_, _], M <: EntityModel[K]]
-    extends Profile with EntityIOAction[K, M]
+/** The basic repository with IOAction
+  */
+trait Repository[K <: @@[_, _], M <: EntityModel[K]] extends Profile with EntityIOAction[K, M]

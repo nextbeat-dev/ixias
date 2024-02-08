@@ -17,16 +17,13 @@ import ixias.aws.qldb.AmazonQLDBProfile
 
 trait AmazonQLDBActionProvider { self: AmazonQLDBProfile =>
 
-  /**
-   * The Request of Invocation.
-   */
+  /** The Request of Invocation.
+    */
   sealed case class DBActionRequest[T <: Table[_, _]](table: T)
 
-  /**
-   * The base action to execute query.
-   */
-  sealed case class DBAction[T <: Table[_, _]]()
-      extends BasicAction[DBActionRequest[T], (DBIOAction, T#Query)] {
+  /** The base action to execute query.
+    */
+  sealed case class DBAction[T <: Table[_, _]]() extends BasicAction[DBActionRequest[T], (DBIOAction, T#Query)] {
     type Request          = DBActionRequest[T]
     type BlockFunction[A] = ((DBIOAction, T#Query)) => Future[A]
 
@@ -36,20 +33,19 @@ trait AmazonQLDBActionProvider { self: AmazonQLDBProfile =>
         session <- backend.getDatabase(req.table.dsn)
         value   <- block(DBIOAction(session) -> req.table.query)
       } yield value) andThen {
-        case scala.util.Failure(ex) => logger.error(
-          "The database action failed. dsn=%s".format(req.table.dsn.toString), ex)
+        case scala.util.Failure(ex) =>
+          logger.error("The database action failed. dsn=%s".format(req.table.dsn.toString), ex)
       }
   }
 
-  /**
-   * Execute database action.
-   */
+  /** Execute database action.
+    */
   object RunDBAction {
-    def apply[A, B, T <: Table[_, _]]
-      (table: T)
-      (block: ((DBIOAction, T#Query)) => Future[A])
-      (implicit conv: A => B): Future[B] =
-      DBAction[T].invokeBlock(DBActionRequest(table), block)
+    def apply[A, B, T <: Table[_, _]](
+      table: T
+    )(block: ((DBIOAction, T#Query)) => Future[A])(implicit conv: A => B): Future[B] =
+      DBAction[T]()
+        .invokeBlock(DBActionRequest(table), block)
         .map(conv)
   }
 }

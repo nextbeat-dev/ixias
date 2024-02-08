@@ -25,6 +25,7 @@ object Converter extends TableDefaultConverter {
 
 /** Default Serializers. */
 trait TableDefaultConverter {
+
   /** Convert to Same Type. */
   implicit def SameTypeConv[A <: AnyVal]: Converter[A, A] = new Converter[A, A] {
     def convert(v: A) = v
@@ -42,17 +43,16 @@ trait TableDefaultConverter {
   /** Serializer for Seq[T] types. */
   implicit def SeqConv[A: ClassTag, B: ClassTag](implicit fmt: Converter[A, B]): Converter[Seq[A], Seq[B]] =
     new Converter[Seq[A], Seq[B]] {
-      def convert(itr: Seq[A]) = itr.foldLeft(Seq.empty[B]){
-        (prev, v) => prev :+ fmt.convert(v)
+      def convert(itr: Seq[A]) = itr.foldLeft(Seq.empty[B]) { (prev, v) =>
+        prev :+ fmt.convert(v)
       }
     }
 
-  /**
-   * Serializer for Map[String, T] types.
-   */
+  /** Serializer for Map[String, T] types.
+    */
   implicit def MapConv[A, B](implicit fmt: Converter[A, B]): Converter[Map[String, A], Map[String, B]] =
     new Converter[Map[String, A], Map[String, B]] {
-      def convert(itr: Map[String, A]) = itr.foldLeft(ListMap.empty[String, B]){
+      def convert(itr: Map[String, A]) = itr.foldLeft(ListMap.empty[String, B]) {
         case (prev, (k, v)) => prev + (k -> fmt.convert(v))
       }
     }

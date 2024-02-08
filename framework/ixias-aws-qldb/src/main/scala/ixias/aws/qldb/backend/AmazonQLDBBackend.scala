@@ -18,25 +18,22 @@ import software.amazon.qldb.{ QldbSession, PooledQldbDriver }
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.services.qldbsession.AmazonQLDBSessionClientBuilder
 
-/**
- * The backend to get a client for AmazonQLDB
- */
+/** The backend to get a client for AmazonQLDB
+  */
 object AmazonQLDBBackend extends BasicBackend[QldbSession] with AmazonQLDBConfig {
 
   val CACHE_DRIVER_MAP  = new HashMap[DataSourceName, PooledQldbDriver]()
   val CACHE_SESSION_MAP = new HashMap[(Long, DataSourceName), QldbSession]()
 
-  /**
-   * Get a client to manage Amazon QLDB
-   */
+  /** Get a client to manage Amazon QLDB
+    */
   def getDatabase(implicit dsn: DataSourceName): Future[QldbSession] = {
     logger.debug("Get a database dsn=%s hash=%s".format(dsn.toString, dsn.hashCode))
     Future.fromTry(getSession)
   }
 
-  /**
-   * Get a Amazon QLDB session
-   */
+  /** Get a Amazon QLDB session
+    */
   def getSession(implicit dsn: DataSourceName): Try[QldbSession] =
     this.synchronized {
       val threadId = Thread.currentThread.getId
@@ -55,40 +52,38 @@ object AmazonQLDBBackend extends BasicBackend[QldbSession] with AmazonQLDBConfig
       }
     }
 
-  /**
-   * Check if the session is closed
-   * [NOTE] Useful only for session verification made with `PooledQldbDriver`
-   */
+  /** Check if the session is closed [NOTE] Useful only for session verification made with `PooledQldbDriver`
+    */
   def checkSessionIfClosed(session: QldbSession): Boolean =
     Try(session.getSessionToken) match {
       case Failure(_) => true
       case Success(_) => false
     }
 
-  /**
-   * Get a Amazon QLDB Driver to manage client session
-   */
+  /** Get a Amazon QLDB Driver to manage client session
+    */
   def getDriver(implicit dsn: DataSourceName): Try[PooledQldbDriver] =
     this.synchronized {
       CACHE_DRIVER_MAP.get(dsn) match {
         case Some(driver) => Success(driver)
-        case None         => for {
-          credentials <- getAWSCredentials
-          region      <- getAWSRegion
-          ledgerName  <- getLedgerName
-        } yield {
-          val builder = AmazonQLDBSessionClientBuilder.standard
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
-            .withRegion(region)
-          val driver  = PooledQldbDriver.builder
-            .withLedger(ledgerName)
-            .withRetryLimit(3)
-            .withSessionClientBuilder(builder)
-            .build
-          logger.info("Create a new driver. dsn=%s".format(dsn.toString))
-          CACHE_DRIVER_MAP.update(dsn, driver)
-          driver
-        }
+        case None =>
+          for {
+            credentials <- getAWSCredentials
+            region      <- getAWSRegion
+            ledgerName  <- getLedgerName
+          } yield {
+            val builder = AmazonQLDBSessionClientBuilder.standard
+              .withCredentials(new AWSStaticCredentialsProvider(credentials))
+              .withRegion(region)
+            val driver = PooledQldbDriver.builder
+              .withLedger(ledgerName)
+              .withRetryLimit(3)
+              .withSessionClientBuilder(builder)
+              .build
+            logger.info("Create a new driver. dsn=%s".format(dsn.toString))
+            CACHE_DRIVER_MAP.update(dsn, driver)
+            driver
+          }
       }
     }
 }

@@ -15,17 +15,17 @@ import scala.language.implicitConversions
 
 trait SlickRepOps[P <: JdbcProfile] {
   val driver: P
-  implicit def bitwiseColumnExtensionMethods[B1](c: Rep[B1]) =
+  implicit def bitwiseColumnExtensionMethods[B1](c: Rep[B1]): BaseBitwiseColumnExtensionMethods[B1] =
     new BaseBitwiseColumnExtensionMethods[B1](c)
 }
 
 // Bitwise operators
 //~~~~~~~~~~~~~~~~~~~
 trait BitwiseColumnExtensionMethods[B1, P1] extends Any with slick.lifted.ExtensionMethods[B1, P1] {
-  def & [P2, R](e: Rep[P2])(implicit om: o#arg[B1, P2]#to[B1, R]) =
+  def &[P2, R](e: Rep[P2])(implicit om: o#arg[B1, P2]#to[B1, R]) =
     om.column(new SqlOperator("&"), n, e.toNode)
 }
-final class BaseBitwiseColumnExtensionMethods[P1](val c: Rep[P1]) extends AnyVal
-    with BitwiseColumnExtensionMethods[P1, P1]
-    with slick.lifted.BaseExtensionMethods[P1]
-
+final class BaseBitwiseColumnExtensionMethods[P1](val c: Rep[P1])
+  extends AnyVal
+     with BitwiseColumnExtensionMethods[P1, P1]
+     with slick.lifted.BaseExtensionMethods[P1]

@@ -8,18 +8,11 @@
 
 package ixias.play.api.mvc
 
-/**
- * Custom binders for Path, and Query String
- *
- * If you provide your own PathBindable or QueryStringBindable,
- * make sure PlayFramework knows to import them
- * in your routes file by using the routesImport SBT settings key.
- *
- * [ Hint ]
- *   RoutesKeys.routesImport := Seq("CustomBinder._")
- */
-trait Binders extends binder.Box
-    with binder.IdBindable
-    with binder.CursorBindable
-    with binder.JavaTimeBindable
-
+/** Custom binders for Path, and Query String
+  *
+  * If you provide your own PathBindable or QueryStringBindable, make sure PlayFramework knows to import them in your
+  * routes file by using the routesImport SBT settings key.
+  *
+  * [ Hint ] RoutesKeys.routesImport := Seq("CustomBinder._")
+  */
+trait Binders extends binder.Box with binder.IdBindable with binder.CursorBindable with binder.JavaTimeBindable

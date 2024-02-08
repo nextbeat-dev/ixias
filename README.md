@@ -1,25 +1,11 @@
 # IxiaS
 
-IxiaS is a development platform using scala languages.
+IxiaSとはNextbeat旧CTOの衣笠が開発したOSSであり、社内のScalaプロダクト共通で用いられているScalaライブラリです。
 
-# Getting Started
+本リポジトリは[ixias-net/ixias](https://github.com/ixias-net/ixias)からのフォークプロジェクトです。
 
-Just add IxiaS, a JDBC driver, and a slf4j implementation to your sbt build settings:
+大元のプロジェクトから大きく変更が加えられており互換性はありません。
 
-``` scala
-resolvers ++= Seq(
-  "IxiaS Releases" at "http://maven.ixias.net.s3-ap-northeast-1.amazonaws.com/releases"
-)
+## ドキュメント
 
-libraryDependencies ++= Seq(
-  "net.ixias" %% "ixias"      % "1.1.11",
-  "net.ixias" %% "ixias-aws"  % "1.1.11",
-  "net.ixias" %% "ixias-play" % "1.1.11",
-  "mysql"          % "mysql-connector-java" % "5.1.+",
-  "ch.qos.logback" % "logback-classic"      % "1.1.+"
-)
-```
-
-# NOTE
-
-The quick start document is not ready. coming soon...
+[こちら](https://nextbeat-dev.github.io/ixias/index.html)を参照してください

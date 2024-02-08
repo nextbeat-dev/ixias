@@ -12,9 +12,8 @@ import org.keyczar._
 import org.keyczar.enums.{ KeyPurpose, KeyStatus }
 import org.keyczar.interfaces.KeyczarReader
 
-/**
- * These will read key files from disk,
- */
+/** These will read key files from disk,
+  */
 class KeyReader(
   metadata: KeyMetadata,
   keys:     Seq[KeyczarKey]
@@ -22,8 +21,7 @@ class KeyReader(
 
   /** Gets an input stream of a particular version of a key. */
   def getKey: String =
-    getKey(KeyMetadata.read(getMetadata)
-      .getPrimaryVersion.getVersionNumber)
+    getKey(KeyMetadata.read(getMetadata).getPrimaryVersion.getVersionNumber)
 
   /** Gets an input stream of the primary key. */
   def getKey(version: Int): String =
@@ -33,10 +31,8 @@ class KeyReader(
   def getMetadata: String = metadata.toString
 }
 
-
-/**
- * Keyczar KeyReader that reads from a HMAC private key file
- */
+/** Keyczar KeyReader that reads from a HMAC private key file
+  */
 object HmacKeyReader {
 
   /** Creates a HmacKeyReader. */
@@ -48,9 +44,8 @@ object HmacKeyReader {
   }
 }
 
-/**
- * Keyczar KeyReader that reads from a AES private key file
- */
+/** Keyczar KeyReader that reads from a AES private key file
+  */
 object AesKeyReader {
 
   /** Creates a AesKeyReader. */

@@ -9,6 +9,7 @@
 package ixias.aws.qldb.model
 
 import scala.language.implicitConversions
+import scala.jdk.CollectionConverters._
 import com.amazon.ion.IonValue
 import software.amazon.qldb.{ Result => QldbResult }
 import ixias.aws.qldb.databind.DatabindModule
@@ -17,23 +18,21 @@ import ixias.aws.qldb.databind.DatabindModule
 // to support mutual conversion between Amazon Ion and model.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import ConvOps._
-trait  ConvOps {
+trait ConvOps {
 
-  //-- [ To Amazon Ion ] -------------------------------------------------------
-  /**
-   * Model -> Single IonValue value.
-   */
+  // -- [ To Amazon Ion ] -------------------------------------------------------
+  /** Model -> Single IonValue value.
+    */
   implicit def convToIonValue[A](v: A): IonValue =
     MAPPER_FOR_WRITE_ION.writeValueAsIonValue(v)
 
-  /**
-   * Single IonValue value -> Model
-   */
+  /** Single IonValue value -> Model
+    */
   implicit def convToModel[A](v: IonValue)(implicit ctag: reflect.ClassTag[A]): A =
     MAPPER_FOR_READ_ION.readValue(v, ctag.runtimeClass).asInstanceOf[A]
 
-  //-- [ From AmazonQldb Result ] ----------------------------------------------
-  implicit def toQldbResultTransformer(v: QldbResult) =
+  // -- [ From AmazonQldb Result ] ----------------------------------------------
+  implicit def toQldbResultTransformer(v: QldbResult): QldbResultTransformer =
     QldbResultTransformer(v)
 }
 
@@ -46,14 +45,15 @@ object ConvOps {
   import com.fasterxml.jackson.databind.{ SerializationFeature, DeserializationFeature }
   import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
-  //- Ignore serialize of id field
+  // - Ignore serialize of id field
   @JsonIgnoreProperties(Array("id"))
   case class ShapeMixIn(@JsonProperty("id") id: Option[AnyVal])
 
   /** Mapper for AmazonIon object. */
   lazy val MAPPER_FOR_READ_ION = {
     val mapper = new IonObjectMapper()
-    mapper.registerModule(new JavaTimeModule)
+    mapper
+      .registerModule(new JavaTimeModule)
       .registerModule(DefaultScalaModule)
       .registerModule(DatabindModule)
       .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
@@ -65,7 +65,8 @@ object ConvOps {
   /** Mapper for AmazonIon object. */
   lazy val MAPPER_FOR_WRITE_ION = {
     val mapper = new IonObjectMapper()
-    mapper.registerModule(new JavaTimeModule)
+    mapper
+      .registerModule(new JavaTimeModule)
       .registerModule(DefaultScalaModule)
       .registerModule(DatabindModule)
       .setSerializationInclusion(JsonInclude.Include.NON_ABSENT)
@@ -88,13 +89,11 @@ case class QldbResultTransformer(self: QldbResult) extends AnyVal {
     )
   }
 
-  /**
-   * AmazonQLDB Result -> IonValue rows.
-   */
+  /** AmazonQLDB Result -> IonValue rows.
+    */
   def toIonValueSeq: Seq[IonValue] = {
-    import collection.JavaConverters._
     val list = new java.util.ArrayList[IonValue]()
     self.iterator().forEachRemaining(v => list.add(v))
-    Seq(list.asScala: _*)
+    list.asScala.toSeq
   }
 }

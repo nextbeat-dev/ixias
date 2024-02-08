@@ -10,47 +10,42 @@ package ixias.aws.qldb.model
 
 import com.amazon.ion.IonValue
 
-/**
- *  Typedef for Not-Nothing
- */
+/** Typedef for Not-Nothing
+  */
 sealed trait NotNothing[-T]
-object       NotNothing {
+object NotNothing {
   implicit object NotNothing                 extends NotNothing[Any]
   implicit object YoureSupposedToSupplyAType extends NotNothing[Nothing]
 }
 
-/**
- * Preparation information for generating `SqlStatement`
- */
+/** Preparation information for generating `SqlStatement`
+  */
 case class SqlPrepareStatement(
-  val tableName:  String,        // Table name
-  val baseQuery:  String,        // Query definition with reserved words
-  val bindParams: Seq[IonValue]  // Bind params for placeholder
+  val tableName:  String,       // Table name
+  val baseQuery:  String,       // Query definition with reserved words
+  val bindParams: Seq[IonValue] // Bind params for placeholder
 ) {
 
-  //-- [ Constants ] -----------------------------------------------------------
+  // -- [ Constants ] -----------------------------------------------------------
   val T_DDL_INSERT     = """INSERT""".r
   val T_DDL_BIND_PHOLD = """\?""".r
   val T_TABLE_NAME     = """__TABLE_NAME__""".r
 
-  //-- [ Methods ] -------------------------------------------------------------
-  /**
-   * Fixied `SqlStatement`
-   */
+  // -- [ Methods ] -------------------------------------------------------------
+  /** Fixied `SqlStatement`
+    */
   def affectedDocs = {
     implicit val mctag = reflect.classTag[AffectedDocument]
     SqlStatement.ForMultiResult(query, bindParams)
   }
 
-  /**
-   * Fixied `SqlStatement`
-   */
+  /** Fixied `SqlStatement`
+    */
   def result[A: NotNothing](implicit ctag: reflect.ClassTag[A]) =
-    SqlStatement.ForMultiResult(query,  bindParams)
+    SqlStatement.ForMultiResult(query, bindParams)
 
-  /**
-   * Get query to be execution.
-   */
+  /** Get query to be execution.
+    */
   def query = {
     // Whether it is specified reserved word to replace to table's name
     if (T_TABLE_NAME.findFirstIn(baseQuery).isEmpty) {

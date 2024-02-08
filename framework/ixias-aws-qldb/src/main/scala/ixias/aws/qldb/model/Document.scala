@@ -18,16 +18,15 @@ case class AffectedDocument(
 
 object AffectedDocument {
   type Id = Document.Id[AffectedDocument]
-  val  Id = the[Identity[Id]]
+  val Id = the[Identity[Id]]
 }
 
 // typedef for Document
 //~~~~~~~~~~~~~~~~~~~~~~
-trait  Document
+trait Document
 object Document {
 
-  /**
-   * Provide definition of Document-Id
-   */
+  /** Provide definition of Document-Id
+    */
   type Id[T] = String @@ (Document, T)
 }

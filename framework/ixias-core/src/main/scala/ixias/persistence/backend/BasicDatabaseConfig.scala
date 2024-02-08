@@ -9,14 +9,14 @@
 package ixias.persistence.backend
 
 import scala.util.Try
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import ixias.util.Configuration
 import ixias.persistence.model.DataSourceName
 
 trait BasicDatabaseConfig {
 
   /** The section format */
-  protected val CF_SECTION_HOSTSPEC  = """hostspec.%s"""
+  protected val CF_SECTION_HOSTSPEC = """hostspec.%s"""
 
   /** The keys of configuration */
   protected val CF_USERNAME          = "username"
@@ -31,9 +31,8 @@ trait BasicDatabaseConfig {
   protected val config = Configuration()
 
   // --[ Configuration ]--------------------------------------------------------
-  /**
-   * Get a value by specified key.
-   */
+  /** Get a value by specified key.
+    */
   final protected def readValue[A](f: Configuration => Option[A])(implicit dsn: DataSourceName): Option[A] =
     Seq(
       dsn.path + "." + dsn.database + "." + CF_SECTION_HOSTSPEC.format(dsn.hostspec),
@@ -41,9 +40,10 @@ trait BasicDatabaseConfig {
       dsn.path + "." + CF_SECTION_HOSTSPEC.format(dsn.hostspec),
       dsn.path
     ).foldLeft[Option[A]](None) {
-      case (prev, path) => prev.orElse {
-        config.get[Option[Configuration]](path).flatMap(f(_))
-      }
+      case (prev, path) =>
+        prev.orElse {
+          config.get[Option[Configuration]](path).flatMap(f(_))
+        }
     }
 
   // --[ Methods ]--------------------------------------------------------------
@@ -76,10 +76,10 @@ trait BasicDatabaseConfig {
   protected def getHosts(implicit dsn: DataSourceName): Try[Seq[String]] = {
     val path    = dsn.path + '.' + dsn.database + '.' + CF_SECTION_HOSTSPEC.format(dsn.hostspec)
     val section = config.get[Configuration](path).underlying
-    val opt     = section.getAnyRef(CF_HOSTSPEC_HOSTS) match {
+    val opt = section.getAnyRef(CF_HOSTSPEC_HOSTS) match {
       case v: String            => Seq(v)
       case v: java.util.List[_] => v.asScala.toList.map(_.toString)
-      case _ => throw new Exception(s"""Illegal value type of host setting. { path: $dsn }""")
+      case _                    => throw new Exception(s"""Illegal value type of host setting. { path: $dsn }""")
     }
     Try(opt)
   }

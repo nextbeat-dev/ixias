@@ -9,6 +9,7 @@
 package ixias.play.api.mvc
 
 import play.api.data.{ Form, Mapping }
+import play.api.data.FormBinding.Implicits._
 import play.api.mvc.{ Request, Result }
 import play.api.mvc.Results.BadRequest
 import play.api.i18n.MessagesProvider
@@ -17,29 +18,28 @@ import play.api.i18n.MessagesProvider
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
 trait FormHelper {
 
-  /**
-   * To bind request data to a `T` component.
-   */
+  /** To bind request data to a `T` component.
+    */
   def bindFromRequest[T](mapping: Mapping[T])(implicit
     req:      Request[_],
     provider: MessagesProvider
   ): Either[Result, T]
 }
 
-/**
- * Default helper
- */
+/** Default helper
+  */
 object FormHelper extends FormHelper {
 
-  /**
-   * To bind request data to a `T` component.
-   */
+  /** To bind request data to a `T` component.
+    */
   def bindFromRequest[T](mapping: Mapping[T])(implicit
     req:      Request[_],
     provider: MessagesProvider
   ): Either[Result, T] =
-    Form(mapping).bindFromRequest().fold(
-      f => Left(BadRequest(f.errorsAsJson)),
-      v => Right(v)
-    )
+    Form(mapping)
+      .bindFromRequest()
+      .fold(
+        f => Left(BadRequest(f.errorsAsJson)),
+        v => Right(v)
+      )
 }
