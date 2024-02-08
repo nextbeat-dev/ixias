@@ -22,7 +22,7 @@ class UIAssets @javax.inject.Inject() (
   errorHandler:  HttpErrorHandler,
   meta:          DefaultAssetsMetadata,
   fileMimeTypes: FileMimeTypes
-) extends AssetsBuilder(errorHandler, meta) {
+) extends AssetsBuilder(errorHandler, meta, env) {
 
   import controllers.Assets._
 
@@ -58,7 +58,7 @@ class UIAssets @javax.inject.Inject() (
       case (prev, path) => prev match {
         case Some(_) => prev
         case None    => {
-          val fullPath = path + "/" + file
+          val fullPath = s"$path/$file"
           val resource = new java.io.File(fullPath)
           if (resource.isFile) Some(resource) else None
         }
@@ -67,7 +67,7 @@ class UIAssets @javax.inject.Inject() (
     resource match {
       case Some(file) => {
         val stream = new java.io.FileInputStream(file)
-        val source = akka.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
+        val source = org.apache.pekko.stream.scaladsl.StreamConverters.fromInputStream(() => stream)
         logger.info(s"serving $file")
         Ok.chunked(source)
           .as(fileMimeTypes.forFileName(file.toString).getOrElse("application/octet-stream"))

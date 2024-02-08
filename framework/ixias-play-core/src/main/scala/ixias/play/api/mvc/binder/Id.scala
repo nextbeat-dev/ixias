@@ -80,7 +80,7 @@ trait IdBindable extends Box {
     val Id = ixias.model.the[ixias.model.Identity[T]]
     new QueryStringBindable.Parsing[BoxCsv[T]](
       (s: String) => {
-        val ids: Seq[T] = s.split(",").map(tok =>
+        val ids: Seq[T] = s.split(",").toIndexedSeq.map(tok =>
           ctag.runtimeClass match {
             case x if    classOf[Int].isAssignableFrom(x) => Id(tok.toInt.asInstanceOf[T])
             case x if   classOf[Long].isAssignableFrom(x) => Id(tok.toLong.asInstanceOf[T])
