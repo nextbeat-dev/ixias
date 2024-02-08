@@ -29,7 +29,7 @@
 package ixias.util
 
 import com.typesafe.config._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.duration.{ Duration, FiniteDuration, _ }
 import java.time.{ Duration => JavaDuration }
 
