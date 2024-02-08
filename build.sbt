@@ -27,6 +27,21 @@ ThisBuild / githubWorkflowBuild ++= Seq(
   )
 )
 
+ThisBuild / githubWorkflowAddedJobs ++= Seq(
+  WorkflowJob(
+    "scalafmt",
+    "Scalafmt",
+    githubWorkflowJobSetup.value.toList ::: List(
+      WorkflowStep.Run(
+        List("sbt scalafmtCheckAll 'project /' scalafmtSbtCheck"),
+        name = Some("Scalafmt check"),
+      )
+    ),
+    scalas = List(scala213),
+    javas = List(JavaSpec.temurin(java8)),
+  )
+)
+
 // IxiaS Core Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
