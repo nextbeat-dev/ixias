@@ -9,7 +9,7 @@ import sbt._
 
 object Dependencies {
 
-  val play = "org.playframework" %% "play" % "3.0.0"
+  val play     = "org.playframework" %% "play"      % "3.0.0"
   val playJson = "org.playframework" %% "play-json" % "3.0.0"
 
   val connectorJava = "mysql" % "mysql-connector-java" % "8.0.33"
@@ -50,13 +50,13 @@ object Dependencies {
 
   val awsSdkVersion = "1.12.129"
   object aws {
-    val s3 = "com.amazonaws" % "aws-java-sdk-s3" % awsSdkVersion
-    val sns = "com.amazonaws" % "aws-java-sdk-sns" % awsSdkVersion
+    val s3         = "com.amazonaws" % "aws-java-sdk-s3"         % awsSdkVersion
+    val sns        = "com.amazonaws" % "aws-java-sdk-sns"        % awsSdkVersion
     val cloudfront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsSdkVersion
   }
 
   val qldb = "software.amazon.qldb" % "amazon-qldb-driver-java" % "1.0.1"
 
-  val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion"  % "2.10.0"
-  val jacksonModule = "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.10.0"
+  val jacksonDataformat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-ion" % "2.10.0"
+  val jacksonModule     = "com.fasterxml.jackson.module"    %% "jackson-module-scala"   % "2.10.0"
 }
