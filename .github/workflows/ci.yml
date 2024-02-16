@@ -54,7 +54,7 @@ jobs:
         run: sbt '++ ${{ matrix.scala }}' test
 
       - name: Compress target directories
-        run: tar cf targets.tar framework/ixias-aws-sns/target target/ixias-aws/target framework/ixias-mail/target docs/target framework/ixias-aws-s3/target framework/ixias-play-auth/target target/ixias-play/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-core/target target project/target
+        run: tar cf targets.tar framework/ixias-aws-sns/target framework/ixias-mail/target docs/target framework/ixias-aws-s3/target framework/ixias-play-auth/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-core/target target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v3
