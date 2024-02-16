@@ -118,13 +118,14 @@ lazy val docs = (project in file("docs"))
 // IxiaS Meta Packages
 //~~~~~~~~~~~~~~~~~~~~~
 lazy val ixias = IxiaSProject("ixias", ".")
-  .aggregate(ixiasCore, ixiasSlick, ixiasMail, ixiasAws, ixiasPlay, docs)
-  .dependsOn(ixiasCore, ixiasMail)
-
-lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
-  .aggregate(ixiasAwsSns, ixiasAwsS3)
-  .dependsOn(ixiasAwsSns, ixiasAwsS3)
-
-lazy val ixiasPlay = IxiaSProject("ixias-play", "target/ixias-play")
-  .aggregate(ixiasPlayCore, ixiasPlayAuth)
-  .dependsOn(ixiasPlayCore, ixiasPlayAuth)
+  .aggregate(
+    ixiasCore,
+    ixiasSlick,
+    ixiasMail,
+    ixiasAwsSns,
+    ixiasAwsS3,
+    ixiasPlayCore,
+    ixiasPlayAuth,
+    docs
+  )
+  .dependsOn(ixiasCore)
