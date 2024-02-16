@@ -13,9 +13,9 @@ import ixias.model.Entity
 // The type of file resource.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 case class FileResource(
-                         fid:     File.Id,
-                         content: Option[File]
-                       ) {
+  fid:     File.Id,
+  content: Option[File]
+) {
   def join(file: Option[File.EmbeddedId]): FileResource =
     this.copy(content = file.collect {
       case e if e.id == this.fid => e.v
@@ -30,6 +30,6 @@ case class FileResource(
 // The companion object
 //~~~~~~~~~~~~~~~~~~~~~~
 object FileResource {
-  def apply(fid:  File.Id)                          = new FileResource(fid,     None)
+  def apply(fid:  File.Id)                          = new FileResource(fid, None)
   def apply(file: Entity.EmbeddedId[File.Id, File]) = new FileResource(file.id, Some(file.v))
 }

@@ -19,25 +19,26 @@ import ixias.aws.s3.backend.{ AmazonS3Config, DataSourceName }
 // The file representation for Amazon S3.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 case class File(
-                 val id:           Option[File.Id],             // Id
-                 val region:       String,                      // AWS region
-                 val bucket:       String,                      // The bucket of S3
-                 val key:          String,                      // The file key.
-                 val typedef:      String,                      // The file-type.
-                 val imageSize:    Option[File.ImageSize],      // If file-type is image. image size is setted.
-                 val presignedUrl: Option[java.net.URL] = None, // The presigned Url to accessing on Image
-                 val updatedAt:    LocalDateTime        = NOW,  // The Datetime when a data was updated.
-                 val createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
-               ) extends EntityModel[File.Id] {
+  val id:           Option[File.Id], // Id
+  val region:       String, // AWS region
+  val bucket:       String, // The bucket of S3
+  val key:          String, // The file key.
+  val typedef:      String, // The file-type.
+  val imageSize:    Option[File.ImageSize], // If file-type is image. image size is setted.
+  val presignedUrl: Option[java.net.URL] = None, // The presigned Url to accessing on Image
+  val updatedAt:    LocalDateTime        = NOW,  // The Datetime when a data was updated.
+  val createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
+) extends EntityModel[File.Id] {
 
-  lazy val httpsUrl = s"${Protocol.HTTPS.toString()}://${httpsUrn}"
+  lazy val httpsUrl = s"${ Protocol.HTTPS.toString() }://${ httpsUrn }"
   lazy val httpsUrn = presignedUrl match {
-    case None      => s"cdn-${bucket}/${key}?d=${(updatedAt.get(MILLI_OF_SECOND)/1000).toHexString}"
-    case Some(url) => s"cdn-${bucket}/${key}?d=${(updatedAt.get(MILLI_OF_SECOND)/1000).toHexString}&${url.getQuery}"
+    case None => s"cdn-${ bucket }/${ key }?d=${ (updatedAt.get(MILLI_OF_SECOND) / 1000).toHexString }"
+    case Some(url) =>
+      s"cdn-${ bucket }/${ key }?d=${ (updatedAt.get(MILLI_OF_SECOND) / 1000).toHexString }&${ url.getQuery }"
   }
-  lazy val httpsUrlOrigin = s"${Protocol.HTTPS.toString()}://${httpsUrnOrigin}"
+  lazy val httpsUrlOrigin = s"${ Protocol.HTTPS.toString() }://${ httpsUrnOrigin }"
   lazy val httpsUrnOrigin = presignedUrl match {
-    case None      => s"s3-${region}.amazonaws.com/${bucket}/${key}"
+    case None      => s"s3-${ region }.amazonaws.com/${ bucket }/${ key }"
     case Some(url) => url.toString.drop(url.getProtocol.length + 3)
   }
 
@@ -55,17 +56,18 @@ case class File(
 object File {
 
   // --[ File ID ]--------------------------------------------------------------
-  val  Id         = the[Identity[Id]]
+  val Id = the[Identity[Id]]
   type Id         = Long @@ File
-  type WithNoId   = Entity.WithNoId   [Id, File]
-  type EmbeddedId = Entity.EmbeddedId [Id, File]
+  type WithNoId   = Entity.WithNoId[Id, File]
+  type EmbeddedId = Entity.EmbeddedId[Id, File]
 
   // --[ Type Alias ]-----------------------------------------------------------
   object Config extends AmazonS3Config
 
   // --[ Create a new object ]--------------------------------------------------
-  def apply(key: String, typedef: String, size: Option[ImageSize])
-           (implicit dns: DataSourceName): Try[Entity.WithNoId[File.Id, File]] =
+  def apply(key: String, typedef: String, size: Option[ImageSize])(implicit
+    dns: DataSourceName
+  ): Try[Entity.WithNoId[File.Id, File]] =
     for {
       region <- Config.getAWSRegion
       bucket <- Config.getBucketName
@@ -84,7 +86,7 @@ object File {
     /** Change image size with keep aspect ratio. */
     def changeScale(rate: Float): ImageSize =
       this.copy(
-        width  = ( width.toFloat * rate).toInt,
+        width  = (width.toFloat * rate).toInt,
         height = (height.toFloat * rate).toInt
       )
 
