@@ -11,7 +11,6 @@ package ixias.aws.sns.backend
 import scala.concurrent.{ ExecutionContextExecutor, Future }
 import scala.util.{ Failure, Success }
 import ixias.util.Logger
-import ixias.persistence.dbio.Execution
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.services.sns.{ AmazonSNS, AmazonSNSClientBuilder }
 
@@ -23,7 +22,8 @@ object AmazonSNSBackend extends AmazonSNSConfig {
   protected lazy val logger: Logger = Logger.apply
 
   /** The Execution Context */
-  protected implicit val ctx: ExecutionContextExecutor = Execution.Implicits.trampoline
+  // TODO: AWSパッケージ改修時に修正
+  protected implicit val ctx: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
   /** Get a Client to manage Amazon SNS. */
   def getClient(implicit dsn: DataSourceName): Future[AmazonSNS] = {

@@ -12,13 +12,11 @@ import scala.util.{ Try, Success, Failure }
 import scala.concurrent.{ Future, ExecutionContext }
 import com.amazonaws.services.sns.model.PublishResult
 
-import ixias.persistence.lifted.Aliases
-import ixias.persistence.dbio.Execution
 import ixias.util.Logging
 
 // Amazon SNS
 //~~~~~~~~~~~~
-trait AmazonSNS extends Aliases with Logging {
+trait AmazonSNS extends Logging {
 
   // --[ Alias ]----------------------------------------------------------------
   /** The data source name */
@@ -31,7 +29,7 @@ trait AmazonSNS extends Aliases with Logging {
   protected val backend = ixias.aws.sns.backend.AmazonSNSBackend
 
   /** The Execution Context */
-  protected implicit val ctx: ExecutionContext = Execution.Implicits.trampoline
+  protected implicit def ctx: ExecutionContext
 
   // --[ Methods ]--------------------------------------------------------------
   /** Sends a message to a topic's subscribed endpoints.
