@@ -74,6 +74,15 @@ lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
   .settings(libraryDependencies += aws.sns)
   .dependsOn(ixiasCore)
 
+lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
+  .settings(
+    libraryDependencies ++= Seq(
+      aws.s3,
+      aws.cloudfront
+    )
+  )
+  .dependsOn(ixiasSlick)
+
 // IxiaS Play Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
 lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-core")
@@ -113,8 +122,8 @@ lazy val ixias = IxiaSProject("ixias", ".")
   .dependsOn(ixiasCore, ixiasMail)
 
 lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
-  .aggregate(ixiasCore, ixiasAwsSns)
-  .dependsOn(ixiasCore, ixiasAwsSns)
+  .aggregate(ixiasAwsSns, ixiasAwsS3)
+  .dependsOn(ixiasAwsSns, ixiasAwsS3)
 
 lazy val ixiasPlay = IxiaSProject("ixias-play", "target/ixias-play")
   .aggregate(ixiasPlayCore, ixiasPlayAuth)
