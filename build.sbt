@@ -54,9 +54,7 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
     libraryDependencies ++= Seq(
       shapeless,
       typesafeConfig,
-      slick,
       playJson,
-      hikariCP,
       keyczar,
       uapScala,
       commonsCodec,
@@ -65,6 +63,14 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       logbackClassic % Test
     ) ++ cats ++ specs2
   )
+
+lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
+  .settings(libraryDependencies ++= Seq(
+    slick,
+    hikariCP,
+    connectorJava % Test,
+  ))
+  .dependsOn(ixiasCore)
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   .settings(
@@ -78,25 +84,6 @@ lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
 
 lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
   .settings(libraryDependencies += aws.sns)
-  .dependsOn(ixiasCore)
-
-lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
-  .settings(
-    libraryDependencies ++= Seq(
-      aws.s3,
-      aws.cloudfront
-    )
-  )
-  .dependsOn(ixiasCore)
-
-lazy val ixiasAwsQLDB = IxiaSProject("ixias-aws-qldb", "framework/ixias-aws-qldb")
-  .settings(
-    libraryDependencies ++= Seq(
-      qldb,
-      jacksonDataformat,
-      jacksonModule
-    )
-  )
   .dependsOn(ixiasCore)
 
 // IxiaS Play Libraries
@@ -128,7 +115,7 @@ lazy val docs = (project in file("docs"))
     ghpagesNoJekyll                     := true
   )
   .settings(commonSettings)
-  .dependsOn(ixiasCore, ixiasMail, ixiasAwsSns, ixiasAwsS3, ixiasPlayCore, ixiasPlayAuth)
+  .dependsOn(ixiasCore, ixiasSlick, ixiasMail, ixiasAwsSns, ixiasPlayCore, ixiasPlayAuth)
   .enablePlugins(MdocPlugin, SitePreviewPlugin, ParadoxSitePlugin, GhpagesPlugin)
 
 // IxiaS Meta Packages
@@ -138,8 +125,8 @@ lazy val ixias = IxiaSProject("ixias", ".")
   .dependsOn(ixiasCore, ixiasMail)
 
 lazy val ixiasAws = IxiaSProject("ixias-aws", "target/ixias-aws")
-  .aggregate(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
-  .dependsOn(ixiasCore, ixiasAwsSns, ixiasAwsS3, ixiasAwsQLDB)
+  .aggregate(ixiasCore, ixiasAwsSns)
+  .dependsOn(ixiasCore, ixiasAwsSns)
 
 lazy val ixiasPlay = IxiaSProject("ixias-play", "target/ixias-play")
   .aggregate(ixiasPlayCore, ixiasPlayAuth)
