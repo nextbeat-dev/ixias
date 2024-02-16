@@ -11,12 +11,13 @@ package ixias.play.api.mvc
 import play.api.mvc._
 import cats.data.EitherT
 import cats.instances.future._
+import ixias.model.Cursor
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.implicitConversions
 
 trait BaseExtensionMethods { self: BaseControllerHelpers =>
-  val Cursor     = ixias.persistence.model.Cursor
+  val Cursor     = Cursor
   val AttrHelper = ixias.play.api.mvc.RequestHeaderAttrHelper
   val FormHelper: ixias.play.api.mvc.FormHelper = ixias.play.api.mvc.FormHelper
   val JsonHelper: ixias.play.api.mvc.JsonHelper = ixias.play.api.mvc.JsonHelper

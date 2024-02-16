@@ -8,6 +8,7 @@
 
 package ixias.util.json
 
+import ixias.model.Cursor
 import play.api.libs.json._
 import play.api.libs.json.EnvWrites
 
@@ -22,18 +23,6 @@ trait JsonEnvWrites extends EnvWrites {
   /** Serializer for Seq[ixias.util.EnumBitFlags]
     */
   implicit def enumBitFlags[E <: ixias.util.EnumBitFlags]: Writes[E] = (o: E) => JsNumber(o.code)
-
-  /** Serializer for ixias.persistence.model.Cursor
-    */
-  implicit object CursorWrites extends Writes[ixias.persistence.model.Cursor] {
-    def writes(cursor: ixias.persistence.model.Cursor) =
-      JsObject(
-        Seq(
-          Some("offset" -> JsNumber(cursor.offset)),
-          cursor.limit.map("limit" -> JsNumber(_))
-        ).flatten
-      )
-  }
 
   /** Serializer for java.time.YearMonth
     */
