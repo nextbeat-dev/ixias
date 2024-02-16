@@ -8,7 +8,6 @@
 
 package ixias.util.json
 
-import ixias.model.Cursor
 import play.api.libs.json._
 import play.api.libs.json.EnvWrites
 
