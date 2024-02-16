@@ -8,15 +8,14 @@
 
 package ixias.play.api.mvc.binder
 
-import ixias.model
 import play.api.mvc.QueryStringBindable
 import ixias.play.api.mvc.QueryStringHelper
 
 trait CursorBindable {
 
   // --[ Alias ]----------------------------------------------------------------
-  val Cursor = model.Cursor
-  type Cursor = model.Cursor
+  val Cursor = ixias.model.Cursor
+  type Cursor = ixias.model.Cursor
 
   // -- [ QueryStringBindable ] ------------------------------------------------
   /** QueryString binder for `Cursor`
