@@ -17,7 +17,7 @@ import ixias.slick.model.DataSourceName
 import ixias.slick.reader.DatabaseConfigReader
 
 /** Build the Configuration of HikariCP.
- */
+  */
 trait HikariConfigBuilder extends DatabaseConfigReader {
 
   implicit def dsn: DataSourceName
@@ -144,7 +144,9 @@ trait HikariConfigBuilder extends DatabaseConfigReader {
   /** Method to retrieve transaction isolation information from the conf file. */
   protected def getTransactionIsolation: Option[String] =
     readValue(_.get[Option[String]](TRANSACTION_ISOLATION)).map { v =>
-      if (v == "TRANSACTION_NONE" || v == "TRANSACTION_READ_UNCOMMITTED" || v == "TRANSACTION_READ_COMMITTED" || v == "TRANSACTION_REPEATABLE_READ" || v == "TRANSACTION_SERIALIZABLE") {
+      if (
+        v == "TRANSACTION_NONE" || v == "TRANSACTION_READ_UNCOMMITTED" || v == "TRANSACTION_READ_COMMITTED" || v == "TRANSACTION_REPEATABLE_READ" || v == "TRANSACTION_SERIALIZABLE"
+      ) {
         v
       } else {
         throw new IllegalArgumentException(

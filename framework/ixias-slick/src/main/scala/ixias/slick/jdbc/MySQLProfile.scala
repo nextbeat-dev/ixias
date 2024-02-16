@@ -9,7 +9,7 @@
 package ixias.slick.jdbc
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalTime, LocalDate, LocalDateTime, YearMonth, Duration}
+import java.time.{ LocalTime, LocalDate, LocalDateTime, YearMonth, Duration }
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
@@ -25,9 +25,9 @@ trait MySQLProfile extends SlickMySQLProfile {
 
   override val columnTypes: self.JdbcTypes = new CustomMySQLJdbcTypes
 
-  /**
-   * Copied from https://github.com/slick/slick/blob/v3.3.2/slick/src/main/scala/slick/jdbc/MySQLProfile.scala#L323-L345
-   */
+  /** Copied from
+    * https://github.com/slick/slick/blob/v3.3.2/slick/src/main/scala/slick/jdbc/MySQLProfile.scala#L323-L345
+    */
   @inline
   private def stringToMySqlString(value: String): String =
     value match {
@@ -37,15 +37,15 @@ trait MySQLProfile extends SlickMySQLProfile {
         sb append '\''
         for (c <- value) c match {
           case '\'' => sb append "\\'"
-          case '"' => sb append "\\\""
-          case 0 => sb append "\\0"
-          case 26 => sb append "\\Z"
+          case '"'  => sb append "\\\""
+          case 0    => sb append "\\0"
+          case 26   => sb append "\\Z"
           case '\b' => sb append "\\b"
           case '\n' => sb append "\\n"
           case '\r' => sb append "\\r"
           case '\t' => sb append "\\t"
           case '\\' => sb append "\\\\"
-          case _ => sb append c
+          case _    => sb append c
         }
         sb append '\''
         sb.toString
@@ -87,11 +87,14 @@ trait MySQLProfile extends SlickMySQLProfile {
 
     // --[ Ixias Enum ]-----------------------------------------------------------
     // Short <-> ixias.util.EnumStatus
-    implicit def ixiasEnumStatusColumnType[T <: ixias.util.EnumStatus](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] =
+    implicit def ixiasEnumStatusColumnType[T <: ixias.util.EnumStatus](implicit
+      ctag: reflect.ClassTag[T]
+    ): JdbcType[T] with BaseTypedType[T] =
       MappedColumnType.base[T, Short](
         enum => enum.code,
         code => {
-          val clazz  = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
+          val clazz =
+            Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
           val module = clazz.getField("MODULE$").get(null)
           val method = clazz.getMethod("apply", classOf[Short])
           val `enum` = method.invoke(module, code.asInstanceOf[AnyRef])
@@ -100,7 +103,9 @@ trait MySQLProfile extends SlickMySQLProfile {
       )
 
     // Long <-> Seq[ixias.util.EnumBitFlags]
-    implicit def ixiasEnumBitsetSeqColumnType[T <: ixias.util.EnumBitFlags](implicit ctag: reflect.ClassTag[T]): JdbcType[Seq[T]] with BaseTypedType[Seq[T]] = {
+    implicit def ixiasEnumBitsetSeqColumnType[T <: ixias.util.EnumBitFlags](implicit
+      ctag: reflect.ClassTag[T]
+    ): JdbcType[Seq[T]] with BaseTypedType[Seq[T]] = {
       val clazz  = Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
       val module = clazz.getField("MODULE$").get(null)
       MappedColumnType.base[Seq[T], Long](
@@ -119,19 +124,23 @@ trait MySQLProfile extends SlickMySQLProfile {
 
     // --[ Ixias Id ]-------------------------------------------------------------
     // Long <-> ixias.model.@@[Long, _]
-    implicit def ixiasIdAsLongColumnType[T <: ixias.model.@@[Long, _]](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] = {
+    implicit def ixiasIdAsLongColumnType[T <: ixias.model.@@[Long, _]](implicit
+      ctag: reflect.ClassTag[T]
+    ): JdbcType[T] with BaseTypedType[T] = {
       val Id = ixias.model.the[ixias.model.Identity[T]]
       MappedColumnType.base[T, Long](
-        id    => id.asInstanceOf[Long],
+        id => id.asInstanceOf[Long],
         value => Id(value.asInstanceOf[T])
       )
     }
 
     // String <-> ixias.model.@@[String, _]
-    implicit def ixiasIdAsStringColumnType[T <: ixias.model.@@[String, _]](implicit ctag: reflect.ClassTag[T]): JdbcType[T] with BaseTypedType[T] = {
+    implicit def ixiasIdAsStringColumnType[T <: ixias.model.@@[String, _]](implicit
+      ctag: reflect.ClassTag[T]
+    ): JdbcType[T] with BaseTypedType[T] = {
       val Id = ixias.model.the[ixias.model.Identity[T]]
       MappedColumnType.base[T, String](
-        id    => id.asInstanceOf[String],
+        id => id.asInstanceOf[String],
         value => Id(value.asInstanceOf[T])
       )
     }
@@ -148,21 +157,21 @@ trait MySQLProfile extends SlickMySQLProfile {
     implicit val javaLocalDateColumnType: JdbcType[LocalDate] with BaseTypedType[LocalDate] =
       MappedColumnType.base[java.time.LocalDate, java.sql.Date](
         ld => java.sql.Date.valueOf(ld),
-        d  => d.toLocalDate()
+        d => d.toLocalDate()
       )
 
     // java.sql.Date <-> java.time.YearMonth
     implicit val javaYearMonthColumnType: JdbcType[YearMonth] with BaseTypedType[YearMonth] =
       MappedColumnType.base[java.time.YearMonth, java.sql.Date](
         ld => java.sql.Date.valueOf(ld.atDay(1)),
-        d  => java.time.YearMonth.from(d.toLocalDate())
+        d => java.time.YearMonth.from(d.toLocalDate())
       )
 
     // java.sql.Time <-> java.time.LocalTime
     implicit val javaLocalTimeColumnType: JdbcType[LocalTime] with BaseTypedType[LocalTime] =
       MappedColumnType.base[java.time.LocalTime, java.sql.Time](
         lt => java.sql.Time.valueOf(lt),
-        t  => t.toLocalTime()
+        t => t.toLocalTime()
       )
 
     // java.sql.Time <-> java.time.Duration
@@ -185,7 +194,7 @@ trait MySQLProfile extends SlickMySQLProfile {
         }
         def map(d: Duration): String = "%02d:%02d:%02d".format(
           d.toHours,
-          d.toMinutes % 60,
+          d.toMinutes  % 60,
           d.getSeconds % 60
         )
       }

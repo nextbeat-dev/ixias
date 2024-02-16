@@ -51,11 +51,13 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
   )
 
 lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
-  .settings(libraryDependencies ++= Seq(
-    slick,
-    hikariCP,
-    connectorJava % Test,
-  ))
+  .settings(
+    libraryDependencies ++= Seq(
+      slick,
+      hikariCP,
+      connectorJava % Test
+    )
+  )
   .dependsOn(ixiasCore)
 
 lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")

@@ -8,11 +8,10 @@
 
 package ixias.slick.lifted
 
-/**
- * Aliases for lifted embedding features. This trait can be mixed into aliasing
- * objects which simplify the use of the lifted embedding.
- */
+/** Aliases for lifted embedding features. This trait can be mixed into aliasing objects which simplify the use of the
+  * lifted embedding.
+  */
 trait Aliases {
-  val  Cursor = ixias.model.Cursor
+  val Cursor = ixias.model.Cursor
   type Cursor = ixias.model.Cursor
 }

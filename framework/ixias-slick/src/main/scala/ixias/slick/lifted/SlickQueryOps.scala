@@ -8,8 +8,8 @@
 
 package ixias.slick.lifted
 
-import slick.ast.{Library, TypedType}
-import slick.lifted.{FunctionSymbolExtensionMethods, Query, Rep}
+import slick.ast.{ Library, TypedType }
+import slick.lifted.{ FunctionSymbolExtensionMethods, Query, Rep }
 import ixias.model.Cursor
 
 import scala.language.implicitConversions
@@ -23,8 +23,8 @@ final case class SlickQueryTransformer[E, U, C[_]](self: Query[E, U, C]) extends
 }
 
 final case class SlickQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](
-                                                                              self: Query[Rep[T], U, C]
-                                                                            ) extends AnyVal {
+  self: Query[Rep[T], U, C]
+) extends AnyVal {
   def distinctLength(implicit tm: TypedType[Int]): Rep[Int] =
     FunctionSymbolExtensionMethods
       .functionSymbolExtensionMethods(Library.CountDistinct)
@@ -32,7 +32,10 @@ final case class SlickQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](
 }
 
 trait SlickQueryOps {
-  implicit def toQueryTransformer[E, U, C[_]](a: Query[E, U, C]): SlickQueryTransformer[E, U, C] = SlickQueryTransformer(a)
+  implicit def toQueryTransformer[E, U, C[_]](a: Query[E, U, C]): SlickQueryTransformer[E, U, C] =
+    SlickQueryTransformer(a)
 
-  implicit def toQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](a: Query[Rep[T], U, Seq]): SlickQueryTransformerId[T, U, Seq] = SlickQueryTransformerId(a)
+  implicit def toQueryTransformerId[T <: ixias.model.@@[_, _], U, C[_]](
+    a: Query[Rep[T], U, Seq]
+  ): SlickQueryTransformerId[T, U, Seq] = SlickQueryTransformerId(a)
 }

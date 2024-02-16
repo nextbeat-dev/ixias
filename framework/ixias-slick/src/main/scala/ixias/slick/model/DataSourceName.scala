@@ -8,18 +8,18 @@
 package ixias.slick.model
 
 case class DataSourceName(
-                           path:     String,
-                           hostspec: String,
-                           database: String
-                         ) {
+  path:     String,
+  hostspec: String,
+  database: String
+) {
 
   /** Compares two DSN structurally */
   override final def equals(other: Any): Boolean = other match {
     case that: DataSourceName =>
-      (that _equal this)               &&
-        (this.path     == that.path)     &&
-        (this.hostspec == that.hostspec) &&
-        (this.database == that.database)
+      (that _equal this) &&
+      (this.path == that.path) &&
+      (this.hostspec == that.hostspec) &&
+      (this.database == that.database)
     case _ => false
   }
 
@@ -28,6 +28,7 @@ case class DataSourceName(
   /** Returns the hash code for this `DataSourceName`. */
   override final def hashCode: Int =
     31 ^ 3 * path.## + 31 ^ 2 * hostspec.## + 31 ^ 1 * database.##
+
   /** The String representation of the `DataSourceName` companion object. */
   override final def toString: String = "%s://%s/%s".format(path, hostspec, database)
 }

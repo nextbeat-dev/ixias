@@ -12,7 +12,7 @@ import play.api.mvc._
 import cats.data.EitherT
 import cats.instances.future._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.implicitConversions
 
 trait BaseExtensionMethods { self: BaseControllerHelpers =>

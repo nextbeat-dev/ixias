@@ -18,14 +18,18 @@ trait SlickRepository[K <: @@[_, _], M <: EntityModel[K]] extends ConverterOps w
   implicit def ec: ExecutionContext
 
   /** The type of entity when it has not id. */
-  type EntityWithNoId   = Entity[K, M, IdStatus.Empty]
+  type EntityWithNoId = Entity[K, M, IdStatus.Empty]
 
   /** The type of entity when it has embedded id */
   type EntityEmbeddedId = Entity[K, M, IdStatus.Exists]
 
-  implicit def toFutureModelToEntityOpt(m: Future[Option[M]])(implicit conv: Option[M] => Option[EntityEmbeddedId]): Future[Option[EntityEmbeddedId]] =
+  implicit def toFutureModelToEntityOpt(m: Future[Option[M]])(implicit
+    conv: Option[M] => Option[EntityEmbeddedId]
+  ): Future[Option[EntityEmbeddedId]] =
     m.map(conv)
 
-  implicit def toFutureModelToEntitySeq(m: Future[Seq[M]])(implicit conv: Seq[M] => Seq[EntityEmbeddedId]): Future[Seq[EntityEmbeddedId]] =
+  implicit def toFutureModelToEntitySeq(m: Future[Seq[M]])(implicit
+    conv: Seq[M] => Seq[EntityEmbeddedId]
+  ): Future[Seq[EntityEmbeddedId]] =
     m.map(conv)
 }

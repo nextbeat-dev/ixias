@@ -18,10 +18,10 @@ import ixias.slick.jdbc.MySQLProfile.api._
 trait DatabaseBuilder {
 
   private def buildAsyncExecutor(maximumPoolSize: Int) = AsyncExecutor(
-    name = "AsyncExecutor.ixias",
-    minThreads = maximumPoolSize,
-    maxThreads = maximumPoolSize,
-    queueSize = 1000,
+    name           = "AsyncExecutor.ixias",
+    minThreads     = maximumPoolSize,
+    maxThreads     = maximumPoolSize,
+    queueSize      = 1000,
     maxConnections = maximumPoolSize
   )
 

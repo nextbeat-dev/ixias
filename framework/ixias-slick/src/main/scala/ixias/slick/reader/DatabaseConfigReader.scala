@@ -35,9 +35,8 @@ trait DatabaseConfigReader {
   /** The configuration */
   protected val config: Configuration = Configuration()
 
-  /**
-   * Get a value by specified key.
-   */
+  /** Get a value by specified key.
+    */
   final protected def readValue[A](f: Configuration => Option[A])(implicit dsn: DataSourceName): Option[A] =
     Seq(
       dsn.path + "." + dsn.database + "." + SECTION_HOST_SPEC.format(dsn.hostspec),
@@ -45,9 +44,10 @@ trait DatabaseConfigReader {
       dsn.path + "." + SECTION_HOST_SPEC.format(dsn.hostspec),
       dsn.path
     ).foldLeft[Option[A]](None) {
-      case (prev, path) => prev.orElse {
-        config.get[Option[Configuration]](path).flatMap(f)
-      }
+      case (prev, path) =>
+        prev.orElse {
+          config.get[Option[Configuration]](path).flatMap(f)
+        }
     }
 
   // --[ Methods ]--------------------------------------------------------------
@@ -80,12 +80,12 @@ trait DatabaseConfigReader {
 
   /** Get host list to connect to database. */
   protected def getHosts(implicit dsn: DataSourceName): Try[Seq[String]] = {
-    val path = dsn.path + '.' + dsn.database + '.' + SECTION_HOST_SPEC.format(dsn.hostspec)
+    val path    = dsn.path + '.' + dsn.database + '.' + SECTION_HOST_SPEC.format(dsn.hostspec)
     val section = config.get[Configuration](path).underlying
     val opt = section.getAnyRef(HOSTS) match {
-      case v: String => Seq(v)
+      case v: String            => Seq(v)
       case v: java.util.List[_] => v.asScala.toList.map(_.toString)
-      case _ => throw new Exception(s"""Illegal value type of host setting. { path: $dsn }""")
+      case _                    => throw new Exception(s"""Illegal value type of host setting. { path: $dsn }""")
     }
     Try(opt)
   }
