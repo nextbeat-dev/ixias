@@ -15,7 +15,7 @@ import org.apache.commons.mail.{ HtmlEmail, MultiPartEmail, EmailAttachment, Def
 
 // Send an email via SMTP protocol
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class EmailClientViaSMTP extends EmailClient with EmailConfig {
 
   /** Send an email with the provided data.

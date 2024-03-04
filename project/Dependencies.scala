@@ -30,7 +30,7 @@ object Dependencies {
 
   val slf4jApi = "org.slf4j" % "slf4j-api" % "2.0.9"
 
-  val guice = "com.google.inject" % "guice" % "4.1.0"
+  val guice = "com.google.inject" % "guice" % "7.0.0"
 
   val twilio = "com.twilio.sdk" % "twilio-java-sdk" % "6.3.0"
 
