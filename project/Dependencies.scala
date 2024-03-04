@@ -26,7 +26,7 @@ object Dependencies {
 
   val uapScala = "org.uaparser" %% "uap-scala" % "0.16.0"
 
-  val commonsCodec = "commons-codec" % "commons-codec" % "1.10"
+  val commonsCodec = "commons-codec" % "commons-codec" % "1.16.0"
 
   val slf4jApi = "org.slf4j" % "slf4j-api" % "1.7.21"
 
