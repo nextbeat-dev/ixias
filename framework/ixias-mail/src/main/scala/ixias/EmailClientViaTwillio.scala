@@ -9,7 +9,7 @@
 package ixias.mail
 
 import java.util.ArrayList
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 import scala.util.{ Success, Failure }
 import scala.concurrent.{ Future, ExecutionContext }
 
