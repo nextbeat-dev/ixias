@@ -39,7 +39,7 @@ object Dependencies {
   val cats: Seq[ModuleID] = Seq(
     "cats-kernel",
     "cats-core"
-  ).map("org.typelevel" %% _ % "2.1.1")
+  ).map("org.typelevel" %% _ % "2.10.0")
 
   val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.1.3"
 
