@@ -33,7 +33,7 @@ trait CursorBindable {
         key + ".offset" -> Option(value.offset),
         key + ".limit"  -> value.limit
       ).collect({
-        case (key, Some(v)) if v > 0 => "%s=%d".format(key, v)
+        case (_key, Some(v)) if v > 0 => "%s=%d".format(_key, v)
       }).mkString("&")
 
     /** Bind a query string parameter.

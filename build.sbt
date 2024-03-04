@@ -24,7 +24,7 @@ ThisBuild / githubWorkflowAddedJobs ++= Seq(
       )
     ),
     scalas = List(scala213),
-    javas  = List(JavaSpec.temurin(java8))
+    javas  = List(JavaSpec.temurin(java11))
   )
 )
 
