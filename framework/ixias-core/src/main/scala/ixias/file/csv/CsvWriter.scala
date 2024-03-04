@@ -123,17 +123,17 @@ object CsvWriter {
   val defaultEncoding = "UTF-16LE"
 
   // Create a new writer from a file name.
-  def apply(file: String)(implicit format: CsvFormat): CsvWriter = apply(file, false, defaultEncoding)(format)
+  def apply(file: String)(implicit format: CsvFormat): CsvWriter = apply(file, append = false, defaultEncoding)(format)
   def apply(file: String, encoding: String)(implicit format: CsvFormat): CsvWriter =
-    apply(file, false, encoding)(format)
+    apply(file, append = false, encoding)(format)
   def apply(file: String, append: Boolean)(implicit format: CsvFormat): CsvWriter =
     apply(file, append, defaultEncoding)(format)
   def apply(file: String, append: Boolean, encoding: String)(implicit format: CsvFormat): CsvWriter =
     apply(new File(file), append, encoding)(format)
 
   // Create a new writer from a file resouce.
-  def apply(file: File)(implicit format: CsvFormat): CsvWriter = apply(file, false, defaultEncoding)(format)
-  def apply(file: File, encoding: String)(implicit format: CsvFormat): CsvWriter = apply(file, false, encoding)(format)
+  def apply(file: File)(implicit format: CsvFormat): CsvWriter = apply(file, append = false, defaultEncoding)(format)
+  def apply(file: File, encoding: String)(implicit format: CsvFormat): CsvWriter = apply(file, append = false, encoding)(format)
   def apply(file: File, append: Boolean)(implicit format: CsvFormat): CsvWriter =
     apply(file, append, defaultEncoding)(format)
   def apply(file: File, append: Boolean, encoding: String)(implicit format: CsvFormat): CsvWriter =
