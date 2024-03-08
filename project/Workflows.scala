@@ -21,6 +21,15 @@ object Workflows {
     name = Some("Create S3 object")
   )
 
+  val settingsSES: WorkflowStep.Run = WorkflowStep.Run(
+    commands = List(
+      "aws ses verify-email-identity --email-address \"test@nextbeat.net\" --endpoint-url=http://localhost:4566"
+    ),
+    env =
+      Map("AWS_ACCESS_KEY_ID" -> "dummy", "AWS_SECRET_ACCESS_KEY" -> "dummy", "AWS_DEFAULT_REGION" -> "ap-northeast-1"),
+    name = Some("Create SES object")
+  )
+
   val waitForContainerStart: WorkflowStep.Run = WorkflowStep.Run(
     commands = List(
       "set -x",
