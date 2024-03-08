@@ -55,6 +55,7 @@ object Dependencies {
     val core       = "com.amazonaws" % "aws-java-sdk-core"       % awsSdkVersion
     val s3         = "com.amazonaws" % "aws-java-sdk-s3"         % awsSdkVersion
     val sns        = "com.amazonaws" % "aws-java-sdk-sns"        % awsSdkVersion
+    val ses        = "com.amazonaws" % "aws-java-sdk-ses"        % awsSdkVersion
     val cloudfront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsSdkVersion
   }
 }
