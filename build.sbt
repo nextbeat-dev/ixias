@@ -75,7 +75,7 @@ lazy val ixiasAws = IxiaSProject("ixias-aws-core", "framework/ixias-aws/core")
   .dependsOn(ixiasCore)
 
 lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws/sns")
-  .settings(libraryDependencies += aws.sns)
+  .settings(libraryDependencies ++= Seq(aws.sns, munit))
   .dependsOn(ixiasAws)
 
 lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws/s3")
