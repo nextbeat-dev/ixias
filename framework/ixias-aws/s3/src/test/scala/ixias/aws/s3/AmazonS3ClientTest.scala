@@ -7,8 +7,6 @@ import java.util.Date
 import munit.FunSuite
 
 import com.amazonaws.HttpMethod
-import com.amazonaws.services.s3.model._
-
 import ixias.aws.s3.AmazonS3Client
 
 class AmazonS3ClientTest extends FunSuite {

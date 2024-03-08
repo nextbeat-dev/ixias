@@ -1,6 +1,6 @@
 package ixias.aws.s3
 
-import scala.util.{ Success, Failure }
+import scala.util.Success
 
 import munit.FunSuite
 
