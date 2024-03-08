@@ -32,9 +32,9 @@ object BuildSettings {
 
   /** These settings are used by all projects. */
   val commonSettings = Seq(
-    organization := "net.ixias",
-    homepage     := Some(url("https://nextbeat-dev.github.io/ixias/")),
-    scalaVersion := scala213,
+    organization       := "net.ixias",
+    homepage           := Some(url("https://nextbeat-dev.github.io/ixias/")),
+    scalaVersion       := scala213,
     crossScalaVersions := Seq(scala213, scala3),
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
