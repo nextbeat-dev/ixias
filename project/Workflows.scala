@@ -18,7 +18,7 @@ object Workflows {
     ),
     env =
       Map("AWS_ACCESS_KEY_ID" -> "dummy", "AWS_SECRET_ACCESS_KEY" -> "dummy", "AWS_DEFAULT_REGION" -> "ap-northeast-1"),
-    name = Some("Create SNS topic")
+    name = Some("Create S3 object")
   )
 
   val waitForContainerStart: WorkflowStep.Run = WorkflowStep.Run(

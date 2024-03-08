@@ -16,14 +16,14 @@ class AmazonS3ClientTest extends FunSuite {
 
   private val s3Client = AmazonS3Client("aws.s3://dummy_bucket")
 
-  private val file = new File(s"$currentPath/framework/ixias-aws/s3/src/test/resources/file/Test.txt")
+  private val file = new File(s"$currentPath/src/test/resources/file/Test.txt")
 
   test("AmazonS3Client upload object Success") {
     assertEquals(s3Client.upload("dummy", "test", file).isSuccess, true)
   }
 
   test("AmazonS3Client upload object Failure") {
-    assertEquals(s3Client.upload("hogehoge", "test", file).isSuccess, true)
+    assertEquals(s3Client.upload("hogehoge", "test", file).isFailure, true)
   }
 
   test("AmazonS3Client generatePreSignedUrl object Success") {
