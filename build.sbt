@@ -103,6 +103,7 @@ lazy val docs = (project in file("docs"))
     paradoxProperties ++= Map(
       "org"          -> organization.value,
       "scalaVersion" -> scalaVersion.value,
+      "awsSDKVersion" -> awsSdkVersion,
       "version"      -> version.value.takeWhile(_ != '+')
     ),
     Compile / paradox / sourceDirectory := mdocOut.value,
