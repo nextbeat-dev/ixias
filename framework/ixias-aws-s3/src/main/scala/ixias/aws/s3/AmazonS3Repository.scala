@@ -10,26 +10,47 @@ package ixias.aws.s3
 
 import scala.concurrent.Future
 
+import com.amazonaws.HttpMethod
 import com.amazonaws.services.s3.model.S3ObjectInputStream
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
 
 import ixias.aws.s3.model.File
 import ixias.aws.s3.persistence.SlickResource
-import ixias.aws.s3.backend.AmazonS3Backend
+import ixias.slick.SlickRepository
 
 import ixias.slick.jdbc.MySQLProfile.api._
 
 // S3 management repository
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
+trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResource with AmazonS3Config {
 
   def master: Database
   def slave:  Database
+
+  protected val client: AmazonS3Client = AmazonS3Client(dsn)
 
   // --[ Methods ]--------------------------------------------------------------
   /** Get file object.
     */
   def get(id: File.Id): Future[Option[EntityEmbeddedId]] =
     slave.run[Option[File]](fileTable.filter(_.id === id).result.headOption)
+
+  private def genPreSignedUrlForAccess(file: File.EmbeddedId): Future[java.net.URL] =
+    Future.fromTry(client.action { s3 =>
+      val req = new GeneratePresignedUrlRequest(file.v.bucket, file.v.key)
+      req.setMethod(HttpMethod.GET)
+      req.setExpiration(getPresignedUrlTimeoutForGet)
+      s3.generatePresignedUrl(req)
+    })
+
+  private def genPreSignedUrlForUpload(file: File.EmbeddedId): Future[java.net.URL] =
+    Future.fromTry(client.action { s3 =>
+      val req = new GeneratePresignedUrlRequest(file.v.bucket, file.v.key)
+      req.setMethod(HttpMethod.PUT)
+      req.setContentType(file.v.typedef)
+      req.setExpiration(getPresignedUrlTimeoutForPut)
+      s3.generatePresignedUrl(req)
+    })
 
   /** Get file object with a pre-signed URL for accessing an Amazon S3 resource.
     */
@@ -38,8 +59,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
       case None => Future.successful(None)
       case Some(file) =>
         for {
-          client <- getClient
-          url    <- client.genPresignedUrlForAccess(file.v)
+          url    <- genPreSignedUrlForAccess(file.v)
         } yield Some(file.map(_.copy(presignedUrl = Some(url))))
     }
 
@@ -50,8 +70,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
       case None => Future.successful(None)
       case Some(file) =>
         for {
-          client   <- getClient
-          s3object <- client.load(file.v)
+          s3object <- Future.fromTry(client.load(file.v.bucket, file.v.key))
         } yield Some((file, s3object.getObjectContent))
     }
 
@@ -64,11 +83,10 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
     */
   def filterWithPresigned(ids: Seq[File.Id]): Future[Seq[EntityEmbeddedId]] =
     for {
-      client   <- getClient
       fileSeq1 <- filter(ids)
       fileSeq2 <- Future.sequence(fileSeq1.map { file =>
                     for {
-                      url <- client.genPresignedUrlForAccess(file.v)
+                      url <- genPreSignedUrlForAccess(file.v)
                     } yield file.v.copy(presignedUrl = Some(url))
                   })
     } yield fileSeq2
@@ -77,8 +95,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
     */
   def add(file: File#WithNoId, content: java.io.File): Future[File.Id] =
     for {
-      client <- getClient
-      _      <- client.upload(file.v, content)
+      _      <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
       Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
@@ -89,19 +106,17 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
     */
   def addViaPresignedUrl(file: File#WithNoId): Future[(File.Id, String)] =
     for {
-      client <- getClient
-      url    <- client.genPresignedUrlForUpload(file.v)
+      url    <- genPreSignedUrlForUpload(file.v)
       Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
-    } yield (File.Id(fid), url.toString())
+    } yield (File.Id(fid), url.toString)
 
   /** Update the file information. At the same time upload a specified file to S3.
     */
   def update(file: EntityEmbeddedId, content: java.io.File): Future[Option[EntityEmbeddedId]] =
     for {
-      client <- getClient
-      _      <- client.upload(file.v, content)
+      _      <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
       old <- master.run {
                for {
                  old <- fileTable.filter(_.id === file.id).result.headOption
@@ -115,8 +130,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
     */
   def updateViaPresignedUrl(file: EntityEmbeddedId): Future[(Option[EntityEmbeddedId], String)] =
     for {
-      client <- getClient
-      url    <- client.genPresignedUrlForUpload(file.v)
+      url    <- genPreSignedUrlForUpload(file.v)
       old <- master.run {
                for {
                  old <- fileTable.filter(_.id === file.id).result.headOption
@@ -168,7 +182,7 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
                  }
       _ <- fileOpt match {
              case None       => Future.successful(())
-             case Some(file) => getClient.map(_.remove(file))
+             case Some(file) => Future.fromTry(client.remove(file.bucket, file.key))
            }
     } yield fileOpt
 
@@ -183,6 +197,6 @@ trait AmazonS3Repository extends AmazonS3Backend with SlickResource {
                      _      <- rows.delete
                    } yield oldSeq
                  }
-      _ <- getClient.map(_.bulkRemove(fileSeq.head.bucket, fileSeq))
+      _ <- Future.fromTry(client.bulkRemove(fileSeq.head.bucket, fileSeq.map(_.key): _*))
     } yield fileSeq
 }
