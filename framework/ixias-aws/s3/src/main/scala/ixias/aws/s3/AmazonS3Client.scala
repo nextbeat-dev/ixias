@@ -21,40 +21,60 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
 
   /** Gets the object stored in Amazon S3 under the specified bucket and key. */
   def load(bucketName: String, key: String): Try[S3Object] =
-    action(_.getObject(new GetObjectRequest(
-      bucketName,
-      key
-    )))
+    action(
+      _.getObject(
+        new GetObjectRequest(
+          bucketName,
+          key
+        )
+      )
+    )
 
   /** Uploads a new object to the specified Amazon S3 bucket. */
   def upload(s3Object: S3Object): Try[PutObjectResult] =
-    action(_.putObject(new PutObjectRequest(
-      s3Object.getBucketName,
-      s3Object.getKey,
-      s3Object.getObjectContent,
-      s3Object.getObjectMetadata
-    )))
+    action(
+      _.putObject(
+        new PutObjectRequest(
+          s3Object.getBucketName,
+          s3Object.getKey,
+          s3Object.getObjectContent,
+          s3Object.getObjectMetadata
+        )
+      )
+    )
 
   /** Uploads a new object to the specified Amazon S3 bucket. */
   def upload(bucketName: String, key: String, content: File): Try[PutObjectResult] =
-    action(_.putObject(new PutObjectRequest(
-      bucketName,
-      key,
-      content
-    )))
+    action(
+      _.putObject(
+        new PutObjectRequest(
+          bucketName,
+          key,
+          content
+        )
+      )
+    )
 
   /** Deletes the specified object in the specified bucket. */
   def remove(bucketName: String, key: String): Try[Unit] =
-    action(_.deleteObject(new DeleteObjectRequest(
-      bucketName,
-      key
-    )))
+    action(
+      _.deleteObject(
+        new DeleteObjectRequest(
+          bucketName,
+          key
+        )
+      )
+    )
 
   /** Deletes the file object list in the specified bucket. */
   def bulkRemove(bucketName: String, keys: String*): Try[DeleteObjectsResult] =
-    action(_.deleteObjects(new DeleteObjectsRequest(
-      bucketName
-    ).withKeys(keys: _*)))
+    action(
+      _.deleteObjects(
+        new DeleteObjectsRequest(
+          bucketName
+        ).withKeys(keys: _*)
+      )
+    )
 
   /** Generate a signed URL. */
   def generatePreSignedUrl(
