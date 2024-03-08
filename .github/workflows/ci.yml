@@ -47,14 +47,20 @@ jobs:
           java-version: 17
           cache: sbt
 
+      - name: Start up LocalStack on Docker
+        run: docker compose up -d
+
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}' githubWorkflowCheck
 
       - name: Build project
         run: sbt '++ ${{ matrix.scala }}' test
 
+      - name: Stop LocalStack on Docker
+        run: docker compose down
+
       - name: Compress target directories
-        run: tar cf targets.tar framework/ixias-aws-sns/target framework/ixias-mail/target docs/target framework/ixias-aws-s3/target framework/ixias-play-auth/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-core/target target project/target
+        run: tar cf targets.tar framework/ixias-aws/sns/target framework/ixias-mail/target framework/ixias-aws/core/target docs/target framework/ixias-aws/s3/target framework/ixias-play-auth/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-aws-s3/target framework/ixias-core/target target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v3
