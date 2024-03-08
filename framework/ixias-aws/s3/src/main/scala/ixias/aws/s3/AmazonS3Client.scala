@@ -132,3 +132,15 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     }
   }
 }
+
+object AmazonS3Client {
+  def apply(dataSourceName: String): AmazonS3Client =
+    new AmazonS3Client {
+      override implicit val dsn: DataSourceName = DataSourceName(dataSourceName)
+    }
+
+  def apply(dataSourceName: DataSourceName): AmazonS3Client =
+    new AmazonS3Client {
+      override implicit val dsn: DataSourceName = dataSourceName
+    }
+}
