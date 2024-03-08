@@ -59,7 +59,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
       case None => Future.successful(None)
       case Some(file) =>
         for {
-          url    <- genPreSignedUrlForAccess(file.v)
+          url <- genPreSignedUrlForAccess(file.v)
         } yield Some(file.map(_.copy(presignedUrl = Some(url))))
     }
 
@@ -95,7 +95,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
     */
   def add(file: File#WithNoId, content: java.io.File): Future[File.Id] =
     for {
-      _      <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
+      _ <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
       Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
@@ -106,7 +106,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
     */
   def addViaPresignedUrl(file: File#WithNoId): Future[(File.Id, String)] =
     for {
-      url    <- genPreSignedUrlForUpload(file.v)
+      url <- genPreSignedUrlForUpload(file.v)
       Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
@@ -116,7 +116,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
     */
   def update(file: EntityEmbeddedId, content: java.io.File): Future[Option[EntityEmbeddedId]] =
     for {
-      _      <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
+      _ <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
       old <- master.run {
                for {
                  old <- fileTable.filter(_.id === file.id).result.headOption
@@ -130,7 +130,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
     */
   def updateViaPresignedUrl(file: EntityEmbeddedId): Future[(Option[EntityEmbeddedId], String)] =
     for {
-      url    <- genPreSignedUrlForUpload(file.v)
+      url <- genPreSignedUrlForUpload(file.v)
       old <- master.run {
                for {
                  old <- fileTable.filter(_.id === file.id).result.headOption
