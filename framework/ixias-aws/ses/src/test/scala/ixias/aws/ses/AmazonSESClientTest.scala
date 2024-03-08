@@ -10,7 +10,8 @@ class AmazonSESClientTest extends FunSuite {
   private val sesClient: AmazonSESClient = AmazonSESClient("aws.ses://dummy")
 
   test("Testing the AmazonSESClient send Email request Success") {
-    val body    = new Body().withText(new Content().withCharset("UTF-8").withData("This email was sent through Amazon SES"))
+    val body =
+      new Body().withText(new Content().withCharset("UTF-8").withData("This email was sent through Amazon SES"))
     val subject = new Content().withCharset("UTF-8").withData("Amazon SES test (AWS SDK for Java)")
     val message = new Message().withBody(body).withSubject(subject)
     val request = new SendEmailRequest()
