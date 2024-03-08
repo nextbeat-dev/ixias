@@ -101,10 +101,10 @@ lazy val docs = (project in file("docs"))
     mdocIn         := baseDirectory.value / "src" / "main" / "mdoc",
     paradoxTheme   := Some(builtinParadoxTheme("generic")),
     paradoxProperties ++= Map(
-      "org"          -> organization.value,
-      "scalaVersion" -> scalaVersion.value,
+      "org"           -> organization.value,
+      "scalaVersion"  -> scalaVersion.value,
       "awsSDKVersion" -> awsSdkVersion,
-      "version"      -> version.value.takeWhile(_ != '+')
+      "version"       -> version.value.takeWhile(_ != '+')
     ),
     Compile / paradox / sourceDirectory := mdocOut.value,
     Compile / paradoxRoots              := List("index.html"),
