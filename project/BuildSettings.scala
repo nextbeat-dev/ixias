@@ -12,6 +12,8 @@ import sbtrelease.ReleasePlugin.autoImport._
 
 import scala.sys.process._
 
+import ScalaVersions._
+
 object BuildSettings {
 
   private val branch  = "git branch".lineStream_!.find(_.head == '*').map(_.drop(2)).getOrElse("")
@@ -32,7 +34,8 @@ object BuildSettings {
   val commonSettings = Seq(
     organization := "net.ixias",
     homepage     := Some(url("https://nextbeat-dev.github.io/ixias/")),
-    scalaVersion := ScalaVersions.scala213,
+    scalaVersion := scala213,
+    crossScalaVersions := Seq(scala213, scala3),
     resolvers ++= Seq(
       "Nextbeat Releases" at "https://s3-ap-northeast-1.amazonaws.com/maven.ixias.net/releases"
     ),
