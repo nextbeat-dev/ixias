@@ -12,6 +12,15 @@ object Workflows {
     name = Some("Create SNS topic")
   )
 
+  val settingsS3: WorkflowStep.Run = WorkflowStep.Run(
+    commands = List(
+      "aws s3api create-bucket --bucket \"dummy\" --create-bucket-configuration \"LocationConstraint=ap-northeast-1\" --endpoint-url \"http://localhost:4566\" --region ap-northeast-1"
+    ),
+    env =
+      Map("AWS_ACCESS_KEY_ID" -> "dummy", "AWS_SECRET_ACCESS_KEY" -> "dummy", "AWS_DEFAULT_REGION" -> "ap-northeast-1"),
+    name = Some("Create SNS topic")
+  )
+
   val waitForContainerStart: WorkflowStep.Run = WorkflowStep.Run(
     commands = List(
       "set -x",
