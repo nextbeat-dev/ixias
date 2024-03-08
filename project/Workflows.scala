@@ -23,7 +23,7 @@ object Workflows {
 
   val settingsSES: WorkflowStep.Run = WorkflowStep.Run(
     commands = List(
-      "aws ses verify-email-identity --email-address \"test@nextbeat.net\" --endpoint-url=http://localhost:4566"
+      "aws ses verify-email-identity --email-address \"takahiko.tominaga@nextbeat.net\" --endpoint-url=http://localhost:4566"
     ),
     env =
       Map("AWS_ACCESS_KEY_ID" -> "dummy", "AWS_SECRET_ACCESS_KEY" -> "dummy", "AWS_DEFAULT_REGION" -> "ap-northeast-1"),
