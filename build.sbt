@@ -9,9 +9,12 @@ import ScalaVersions._
 import JavaVersions._
 import Dependencies._
 import BuildSettings._
+import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
+ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun)
+ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
   WorkflowJob(
