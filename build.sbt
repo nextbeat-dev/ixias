@@ -13,7 +13,7 @@ import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
-ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun)
+ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun, settingsSns)
 ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
@@ -82,7 +82,7 @@ lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws/sns")
   .dependsOn(ixiasAws)
 
 lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws/s3")
-  .settings(libraryDependencies += aws.s3)
+  .settings(libraryDependencies ++= Seq(aws.s3, munit))
   .dependsOn(ixiasAws)
 
 lazy val ixiasAwsS3Lib = IxiaSProject("ixias-aws-s3-lib", "framework/ixias-aws-s3")
