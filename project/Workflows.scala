@@ -12,6 +12,11 @@ object Workflows {
     name = Some("Create SNS topic")
   )
 
+  val waitForContainerStart: WorkflowStep.Run = WorkflowStep.Run(
+    commands = List("set -x", "until [ \"$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)\" = 'healthy' ]; do", "  sleep 10s", "done"),
+    name     = Some("Wait for LocalStack to start")
+  )
+
   val dockerRun: WorkflowStep.Run = WorkflowStep.Run(
     commands = List("docker compose up -d"),
     name     = Some("Start up LocalStack on Docker")
