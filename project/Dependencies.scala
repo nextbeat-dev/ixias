@@ -48,10 +48,14 @@ object Dependencies {
     "specs2-matcher-extra"
   ).map("org.specs2" %% _ % "4.5.1" % Test)
 
+  val munit = "org.scalameta" %% "munit" % "0.7.29" % Test
+
   val awsSdkVersion = "1.12.671"
   object aws {
+    val core       = "com.amazonaws" % "aws-java-sdk-core"       % awsSdkVersion
     val s3         = "com.amazonaws" % "aws-java-sdk-s3"         % awsSdkVersion
     val sns        = "com.amazonaws" % "aws-java-sdk-sns"        % awsSdkVersion
+    val ses        = "com.amazonaws" % "aws-java-sdk-ses"        % awsSdkVersion
     val cloudfront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsSdkVersion
   }
 }

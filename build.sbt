@@ -9,9 +9,12 @@ import ScalaVersions._
 import JavaVersions._
 import Dependencies._
 import BuildSettings._
+import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
+ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun, waitForContainerStart, settingsSns, settingsS3, settingsSES)
+ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
   WorkflowJob(
@@ -70,11 +73,23 @@ lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   )
   .dependsOn(ixiasCore)
 
-lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
-  .settings(libraryDependencies += aws.sns)
+lazy val ixiasAws = IxiaSProject("ixias-aws-core", "framework/ixias-aws/core")
+  .settings(libraryDependencies += aws.core)
   .dependsOn(ixiasCore)
 
-lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
+lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws/sns")
+  .settings(libraryDependencies ++= Seq(aws.sns, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws/s3")
+  .settings(libraryDependencies ++= Seq(aws.s3, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsSes = IxiaSProject("ixias-aws-ses", "framework/ixias-aws/ses")
+  .settings(libraryDependencies ++= Seq(aws.ses, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsS3Lib = IxiaSProject("ixias-aws-s3-lib", "framework/ixias-aws-s3")
   .settings(
     libraryDependencies ++= Seq(
       aws.s3,
@@ -122,8 +137,11 @@ lazy val ixias = IxiaSProject("ixias", ".")
     ixiasCore,
     ixiasSlick,
     ixiasMail,
+    ixiasAws,
     ixiasAwsSns,
     ixiasAwsS3,
+    ixiasAwsSes,
+    ixiasAwsS3Lib,
     ixiasPlayCore,
     ixiasPlayAuth,
     docs
