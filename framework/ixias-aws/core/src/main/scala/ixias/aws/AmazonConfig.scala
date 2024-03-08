@@ -21,17 +21,17 @@ private[ixias] trait AmazonConfig {
   // --[ Methods ]--------------------------------------------------------------
   /** Gets the AWS access key ID for this credentials object.
     */
-  protected def getAWSAccessKeyId(implicit dsn: DataSourceName): Try[String] =
-    Try(readValue(_.get[Option[String]](CF_ACCESS_KEY)).get)
+  protected def getAWSAccessKeyId(implicit dsn: DataSourceName): Option[String] =
+    readValue(_.get[Option[String]](CF_ACCESS_KEY))
 
   /** Gets the AWS secret access key for this credentials object.
     */
-  protected def getAWSSecretKey(implicit dsn: DataSourceName): Try[String] =
-    Try(readValue(_.get[Option[String]](CF_SECRET_KEY)).get)
+  protected def getAWSSecretKey(implicit dsn: DataSourceName): Option[String] =
+    readValue(_.get[Option[String]](CF_SECRET_KEY))
 
   /** Gets the AWS credentials object.
     */
-  protected def getAWSCredentials(implicit dsn: DataSourceName): Try[AWSCredentials] =
+  protected def getAWSCredentials(implicit dsn: DataSourceName): Option[AWSCredentials] =
     for {
       accessKey <- getAWSAccessKeyId
       secretKey <- getAWSSecretKey
