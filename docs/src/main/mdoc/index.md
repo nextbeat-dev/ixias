@@ -3,6 +3,7 @@
  * [Enum](02-Enum.md)
  * [Slick](03-Slick.md)
  * [Play Framework](./04-Play-Framework.md)
+ * [AWS](./05-AWS.md)
 @@@
 
 # IxiaS
