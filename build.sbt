@@ -71,6 +71,7 @@ lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   .dependsOn(ixiasCore)
 
 lazy val ixiasAws = IxiaSProject("ixias-aws", "framework/ixias-aws")
+  .settings(libraryDependencies += aws.core)
   .dependsOn(ixiasCore)
 
 lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
