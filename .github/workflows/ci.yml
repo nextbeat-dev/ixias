@@ -50,6 +50,13 @@ jobs:
       - name: Start up LocalStack on Docker
         run: docker compose up -d
 
+      - name: Wait for LocalStack to start
+        run: |
+          set -x
+          until [ "$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)" = 'healthy' ]; do
+            sleep 10s
+          done
+
       - name: Create SNS topic
         env:
           AWS_ACCESS_KEY_ID: dummy
