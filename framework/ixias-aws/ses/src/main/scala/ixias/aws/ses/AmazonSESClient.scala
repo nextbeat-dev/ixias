@@ -70,3 +70,15 @@ trait AmazonSESClient extends AmazonSESConfig with Logging {
     }
   }
 }
+
+object AmazonSESClient {
+  def apply(dataSourceName: String): AmazonSESClient =
+    new AmazonSESClient {
+      override implicit val dsn: DataSourceName = DataSourceName(dataSourceName)
+    }
+
+  def apply(dataSourceName: DataSourceName): AmazonSESClient =
+    new AmazonSESClient {
+      override implicit val dsn: DataSourceName = dataSourceName
+    }
+}
