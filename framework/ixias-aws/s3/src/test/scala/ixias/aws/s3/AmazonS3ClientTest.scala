@@ -13,7 +13,7 @@ import ixias.aws.s3.AmazonS3Client
 
 class AmazonS3ClientTest extends FunSuite {
 
-  private val path = Paths.get("")
+  private val path        = Paths.get("")
   private val currentPath = path.toAbsolutePath
 
   private val s3Client = AmazonS3Client("aws.s3://dummy_bucket")
@@ -29,7 +29,8 @@ class AmazonS3ClientTest extends FunSuite {
   }
 
   test("AmazonS3Client generatePreSignedUrl object Success") {
-    val url = s3Client.generatePreSignedUrl("dummy", "test", HttpMethod.GET, new Date(System.currentTimeMillis() + 100000L))
+    val url =
+      s3Client.generatePreSignedUrl("dummy", "test", HttpMethod.GET, new Date(System.currentTimeMillis() + 100000L))
     assertEquals(url.isSuccess, true)
   }
 
