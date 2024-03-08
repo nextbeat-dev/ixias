@@ -19,38 +19,31 @@ private[ixias] trait AmazonConfig {
   protected val config: Configuration = Configuration()
 
   // --[ Methods ]--------------------------------------------------------------
-  /**
-   * Gets the AWS access key ID for this credentials object.
-   */
+  /** Gets the AWS access key ID for this credentials object.
+    */
   protected def getAWSAccessKeyId(implicit dsn: DataSourceName): Try[String] =
     Try(readValue(_.get[Option[String]](CF_ACCESS_KEY)).get)
 
-  /**
-   * Gets the AWS secret access key for this credentials object.
-   */
+  /** Gets the AWS secret access key for this credentials object.
+    */
   protected def getAWSSecretKey(implicit dsn: DataSourceName): Try[String] =
     Try(readValue(_.get[Option[String]](CF_SECRET_KEY)).get)
 
-  /**
-   * Gets the AWS credentials object.
-   */
+  /** Gets the AWS credentials object.
+    */
   protected def getAWSCredentials(implicit dsn: DataSourceName): Try[AWSCredentials] =
     for {
       accessKey <- getAWSAccessKeyId
       secretKey <- getAWSSecretKey
     } yield new BasicAWSCredentials(accessKey, secretKey)
 
-  /**
-   * Gets a region enum corresponding to the given region name.
-   */
+  /** Gets a region enum corresponding to the given region name.
+    */
   protected def getAWSRegion(implicit dsn: DataSourceName): Try[Regions] =
-    Try(Regions.fromName(readValue(
-      _.get[Option[String]](CF_REGION)).get
-    ))
+    Try(Regions.fromName(readValue(_.get[Option[String]](CF_REGION)).get))
 
-  /**
-   * Get a value by specified key.
-   */
+  /** Get a value by specified key.
+    */
   protected def readValue[A](f: Configuration => Option[A])(implicit dsn: DataSourceName): Option[A] =
     (Seq(
       dsn.name.map(name => dsn.path + "." + dsn.resource + "." + name),
