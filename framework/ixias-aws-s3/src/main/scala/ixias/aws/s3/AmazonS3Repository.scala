@@ -22,7 +22,7 @@ import ixias.slick.jdbc.MySQLProfile.api._
 
 // S3 management repository
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResource with AmazonS3Config {
+trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResource {
 
   def master: Database
   def slave:  Database

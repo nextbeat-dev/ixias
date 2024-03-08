@@ -13,13 +13,12 @@ import java.time.LocalDateTime
 import ixias.slick.jdbc.MySQLProfile.api._
 
 import ixias.aws.s3.model.File
-import ixias.aws.s3.backend.AmazonS3Config
+import ixias.aws.s3.AmazonS3Config
 
-trait SlickResource {
-  self: AmazonS3Config =>
+trait SlickResource extends AmazonS3Config {
 
-  val DataSourceName = ixias.aws.s3.backend.DataSourceName
-  type DataSourceName = ixias.aws.s3.backend.DataSourceName
+  val DataSourceName = ixias.aws.DataSourceName
+  type DataSourceName = ixias.aws.DataSourceName
   implicit val dsn: DataSourceName
 
   protected class FileTable(tag: Tag) extends Table[File](tag, getMetaTableName) {
