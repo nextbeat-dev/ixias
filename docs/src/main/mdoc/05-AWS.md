@@ -173,7 +173,7 @@ SNSのConfigで設定できる値は以下の通りです。
 SNSへの操作を行うためには、`AmazonSNSClient`を使用します。
 
 ```scala
-val s3Client = AmazonSNSClient("aws://sns/test_topic") // or AmazonS3Client(DataSourceName("aws://sns/test_topic"))
+val snsClient = AmazonSNSClient("aws://sns/test_topic") // or AmazonS3Client(DataSourceName("aws://sns/test_topic"))
 ```
 
 この`AmazonSNSClient`を使用してSNSの操作を行います。
@@ -205,3 +205,46 @@ libraryDependencies ++= Seq(
 )
 ```
 @@@
+
+SESへの操作を行うためには、`AmazonSESClient`を使用します。
+
+```scala
+val sesClient = AmazonSESClient("aws.ses://dummy") // or AmazonSESClient(DataSourceName("aws.ses://dummy"))
+```
+
+この`AmazonSESClient`を使用してSESの操作を行います。
+現在のバージョンでは以下の操作をサポートしています。
+
+| 操作                          | 関数                   | 備考                                |
+|-----------------------------|----------------------|-----------------------------------|
+| 電子メール・メッセージ送信               | `sendEmail`          |                                   |
+| Eメール・テンプレートを使ってEメール・メッセージ送信 | `sendTemplatedEmail` |                                   |
+| バウンスメッセージ送信                 | `sendBounce`         | この操作は、メールを受信してから24時間後までしか使用できません。 |
+
+`sendEmail`関数では、以下のようにメールを送信することができます。
+
+```scala
+val body =
+  new Body().withText(new Content().withCharset("UTF-8").withData("This email was sent through Amazon SES"))
+val subject = new Content().withCharset("UTF-8").withData("Amazon SES test (AWS SDK for Java)")
+val message = new Message().withBody(body).withSubject(subject)
+val request = new SendEmailRequest()
+  .withDestination(new Destination().withToAddresses("takahiko.tominaga@nextbeat.net"))
+  .withMessage(message)
+  .withSource("takahiko.tominaga@nextbeat.net")
+
+sesClient.sendEmail(request)
+```
+
+サポートされている操作以外の操作を行う場合は、`AmazonSESClient`の`action`メンバを使用して操作を行います。
+
+```scala
+val result = sesClient.action { client =>
+  // ここに操作を記述
+}
+```
+
+actionメンバに渡される関数の引数は`AmazonSimpleEmailService`クラスのインスタンスです。
+そのため、公式AWS SDKの`AmazonSimpleEmailService`クラスでサポートされている操作を行うことができます。
+
+サポートされている操作の詳細については、[公式AWS SDKのAmazonSimpleEmailServiceクラスのドキュメント](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/simpleemail/AmazonSimpleEmailService.html)を参照してください。
