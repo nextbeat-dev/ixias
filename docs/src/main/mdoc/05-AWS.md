@@ -163,6 +163,37 @@ libraryDependencies ++= Seq(
 ```
 @@@
 
+SNSのConfigで設定できる値は以下の通りです。
+
+| キー    | 型       | 必須 | 備考                   |
+|-------|---------|----|----------------------|
+| topic | String  | ✅  | SNSトピック名             |
+| skip  | Boolean | ❌  | SNSプッシュ処理をスキップするかの設定 |
+
+SNSへの操作を行うためには、`AmazonSNSClient`を使用します。
+
+```scala
+val s3Client = AmazonSNSClient("aws://sns/test_topic") // or AmazonS3Client(DataSourceName("aws://sns/test_topic"))
+```
+
+この`AmazonSNSClient`を使用してSNSの操作を行います。
+現在のバージョンでは以下の操作をサポートしています。
+
+| 操作   | 関数        | 備考 |
+|------|-----------|----|
+| 送信処理 | `publish` |    |
+
+`publish`関数ではサブスクリプションフィルターを使用することもできます。
+
+```scala
+val client = AmazonSNSClient("aws.sns://topic")
+val messageAttributeValue = new MessageAttributeValue()
+messageAttributeValue.setDataType("Number")
+messageAttributeValue.setStringValue("1")
+
+client.publish("Test", Map("filterType" -> messageAttributeValue))
+```
+
 ## AWS SES
 
 プロジェクトに以下の依存関係を設定する必要があります。
