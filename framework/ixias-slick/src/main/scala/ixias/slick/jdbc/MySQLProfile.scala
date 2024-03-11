@@ -23,7 +23,7 @@ import ixias.slick.lifted._
 trait MySQLProfile extends SlickMySQLProfile {
   self =>
 
-  override val columnTypes: self.JdbcTypes = new CustomMySQLJdbcTypes
+  override val columnTypes: self.MySQLJdbcTypes = new CustomMySQLJdbcTypes
 
   /** Copied from
     * https://github.com/slick/slick/blob/v3.3.2/slick/src/main/scala/slick/jdbc/MySQLProfile.scala#L323-L345
@@ -51,7 +51,7 @@ trait MySQLProfile extends SlickMySQLProfile {
         sb.toString
     }
 
-  private class CustomMySQLJdbcTypes extends self.JdbcTypes {
+  private class CustomMySQLJdbcTypes extends self.MySQLJdbcTypes {
     private val formatter =
       new DateTimeFormatterBuilder()
         .append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -83,7 +83,7 @@ trait MySQLProfile extends SlickMySQLProfile {
 
   trait SlickColumnTypeOps {
 
-    self: API =>
+    self: JdbcAPI =>
 
     // --[ Ixias Enum ]-----------------------------------------------------------
     // Short <-> ixias.util.EnumStatus
@@ -200,8 +200,8 @@ trait MySQLProfile extends SlickMySQLProfile {
       }
   }
 
-  override val api: API with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps =
-    new API with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps {}
+  override val api: JdbcAPI with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps =
+    new JdbcAPI with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps {}
 }
 
 object MySQLProfile extends MySQLProfile
