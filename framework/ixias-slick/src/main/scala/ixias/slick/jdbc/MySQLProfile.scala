@@ -200,7 +200,8 @@ trait MySQLProfile extends SlickMySQLProfile {
       }
   }
 
-  override val api: JdbcAPI with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps =
+  override val api
+    : JdbcAPI with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps =
     new JdbcAPI with Aliases with ConverterOps with SlickColumnTypeOps with SlickColumnType with SlickQueryOps {}
 }
 
