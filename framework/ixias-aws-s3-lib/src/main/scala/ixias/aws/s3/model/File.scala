@@ -8,26 +8,30 @@
 
 package ixias.aws.s3.model
 
-import scala.util.Try
 import java.time.LocalDateTime
 import java.time.temporal.ChronoField._
+
+import scala.util.Try
+
 import com.amazonaws.Protocol
 import com.amazonaws.services.s3.model.S3Object
+
 import ixias.model._
-import ixias.aws.s3.backend.{ AmazonS3Config, DataSourceName }
+import ixias.aws.DataSourceName
+import ixias.aws.s3.AmazonS3Config
 
 // The file representation for Amazon S3.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 case class File(
-  val id:           Option[File.Id], // Id
-  val region:       String, // AWS region
-  val bucket:       String, // The bucket of S3
-  val key:          String, // The file key.
-  val typedef:      String, // The file-type.
-  val imageSize:    Option[File.ImageSize], // If file-type is image. image size is setted.
-  val presignedUrl: Option[java.net.URL] = None, // The presigned Url to accessing on Image
-  val updatedAt:    LocalDateTime        = NOW,  // The Datetime when a data was updated.
-  val createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
+  id:           Option[File.Id], // Id
+  region:       String, // AWS region
+  bucket:       String, // The bucket of S3
+  key:          String, // The file key.
+  typedef:      String, // The file-type.
+  imageSize:    Option[File.ImageSize], // If file-type is image. image size is setted.
+  presignedUrl: Option[java.net.URL] = None, // The presigned Url to accessing on Image
+  updatedAt:    LocalDateTime        = NOW,  // The Datetime when a data was updated.
+  createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
 ) extends EntityModel[File.Id] {
 
   lazy val httpsUrl = s"${ Protocol.HTTPS.toString() }://${ httpsUrn }"
@@ -53,7 +57,7 @@ case class File(
 
 // The companion object
 //~~~~~~~~~~~~~~~~~~~~~~
-object File {
+object File extends AmazonS3Config {
 
   // --[ File ID ]--------------------------------------------------------------
   val Id = the[Identity[Id]]
@@ -61,16 +65,13 @@ object File {
   type WithNoId   = Entity.WithNoId[Id, File]
   type EmbeddedId = Entity.EmbeddedId[Id, File]
 
-  // --[ Type Alias ]-----------------------------------------------------------
-  object Config extends AmazonS3Config
-
   // --[ Create a new object ]--------------------------------------------------
   def apply(key: String, typedef: String, size: Option[ImageSize])(implicit
     dns: DataSourceName
   ): Try[Entity.WithNoId[File.Id, File]] =
     for {
-      region <- Config.getAWSRegion
-      bucket <- Config.getBucketName
+      region <- getAWSRegion
+      bucket <- getBucketName
     } yield Entity.WithNoId[File.Id, File](
       new File(None, region.getName, bucket, key, typedef, size)
     )
