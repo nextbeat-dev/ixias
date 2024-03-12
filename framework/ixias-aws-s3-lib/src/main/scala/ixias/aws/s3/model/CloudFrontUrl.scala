@@ -10,6 +10,8 @@ package ixias.aws.s3.model
 
 import play.api.libs.json._
 
+import ixias.aws.DataSourceName
+
 /** Clound front URL
   */
 case class CloudFrontUrl(
@@ -19,7 +21,7 @@ case class CloudFrontUrl(
   responsive: Boolean                          = false,
   format:     Option[UrlSigner.Request.Format] = None,
   custom:     Seq[(String, String)]            = Nil
-)(implicit val dsn: ixias.aws.s3.backend.DataSourceName) {
+)(implicit val dsn: DataSourceName) {
   import UrlSigner.Request.Ratio
 
   /** Generate request of file resizing

@@ -14,7 +14,8 @@ import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
 import ixias.util.Enum
-import ixias.aws.s3.backend.{ AmazonS3Config, DataSourceName }
+import ixias.aws.DataSourceName
+import ixias.aws.s3.AmazonS3Config
 
 import com.amazonaws.util.DateUtils
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner
