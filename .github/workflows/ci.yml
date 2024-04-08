@@ -47,14 +47,50 @@ jobs:
           java-version: 17
           cache: sbt
 
+      - name: Start up LocalStack on Docker
+        run: docker compose up -d
+
+      - name: Wait for LocalStack to start
+        run: |
+          set -x
+          until [ "$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)" = 'healthy' ]; do
+            sleep 10s
+          done
+
+      - name: Create SNS topic
+        env:
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          AWS_DEFAULT_REGION: ap-northeast-1
+        run: |
+          aws sns create-topic --name testSNS --endpoint-url http://localhost:4566 --region ap-northeast-1
+          aws sns subscribe --topic-arn arn:aws:sns:ap-northeast-1:000000000000:testSNS --protocol lambda --notification-endpoint arn:aws:lambda:ap-northeast-1:000000000000:function:testFunction --endpoint-url http://localhost:4566 --region ap-northeast-1
+
+      - name: Create S3 object
+        env:
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          AWS_DEFAULT_REGION: ap-northeast-1
+        run: 'aws s3api create-bucket --bucket "dummy" --create-bucket-configuration "LocationConstraint=ap-northeast-1" --endpoint-url "http://localhost:4566" --region ap-northeast-1'
+
+      - name: Create SES object
+        env:
+          AWS_ACCESS_KEY_ID: dummy
+          AWS_SECRET_ACCESS_KEY: dummy
+          AWS_DEFAULT_REGION: ap-northeast-1
+        run: 'aws ses verify-email-identity --email-address "takahiko.tominaga@nextbeat.net" --endpoint-url=http://localhost:4566'
+
       - name: Check that workflows are up to date
         run: sbt '++ ${{ matrix.scala }}' githubWorkflowCheck
 
       - name: Build project
         run: sbt '++ ${{ matrix.scala }}' test
 
+      - name: Stop LocalStack on Docker
+        run: docker compose down
+
       - name: Compress target directories
-        run: tar cf targets.tar framework/ixias-aws-sns/target framework/ixias-mail/target docs/target framework/ixias-aws-s3/target framework/ixias-play-auth/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-core/target target project/target
+        run: tar cf targets.tar framework/ixias-aws/sns/target framework/ixias-mail/target framework/ixias-aws/core/target framework/ixias-aws/ses/target docs/target framework/ixias-aws/s3/target framework/ixias-play-auth/target framework/ixias-slick/target framework/ixias-play-core/target framework/ixias-aws-s3-lib/target framework/ixias-core/target target project/target
 
       - name: Upload target directories
         uses: actions/upload-artifact@v3

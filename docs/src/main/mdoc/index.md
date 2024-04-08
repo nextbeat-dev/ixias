@@ -3,6 +3,8 @@
  * [Enum](02-Enum.md)
  * [Slick](03-Slick.md)
  * [Play Framework](./04-Play-Framework.md)
+ * [AWS](./05-AWS.md)
+ * [Image Resource](./06-Image-Resource.md)
 @@@
 
 # IxiaS
@@ -46,7 +48,9 @@ libraryDependencies ++= Seq(
 
   // そして、必要に応じてこれらを加える
   "$org$" %% "ixias-slick" % "$version$", // Slickを使用したDBアクセス
-  "$org$" %% "ixias-aws"   % "$version$", // AWS SDKのラッパー
+  "$org$" %% "ixias-aws-sns" % "$version$", // AWS SNS SDKのラッパー
+  "$org$" %% "ixias-aws-s3" % "$version$", // AWS S3 SDKのラッパー
+  "$org$" %% "ixias-aws-ses" % "$version$", // AWS SES SDKのラッパー
 )
 ```
 @@@
