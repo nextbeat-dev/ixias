@@ -97,4 +97,9 @@ object AmazonSNSClient {
     new AmazonSNSClient {
       override implicit val dsn: DataSourceName = DataSourceName(key)
     }
+
+  def apply(dataSourceName: DataSourceName): AmazonSNSClient =
+    new AmazonSNSClient {
+      override implicit val dsn: DataSourceName = dataSourceName
+    }
 }
