@@ -26,6 +26,7 @@ trait BasicDatabaseConfig {
   protected val CF_HOSTSPEC_DATABASE = "database"
   protected val CF_HOSTSPEC_SCHEMA   = "schema"
   protected val CF_HOSTSPEC_READONLY = "readonly"
+  protected val CF_REWRITE_BATCHED_STATEMENTS = "rewrite_batched_statements"
 
   /** The configuration */
   protected val config = Configuration()
@@ -83,4 +84,8 @@ trait BasicDatabaseConfig {
     }
     Try(opt)
   }
+
+  /** Get the flag for rewriteBatchedStatements. */
+  protected def getRewriteBatchedStatements(implicit dsn: DataSourceName): Boolean =
+    readValue(_.get[Option[Boolean]](CF_REWRITE_BATCHED_STATEMENTS)).getOrElse(false)
 }

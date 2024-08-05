@@ -55,6 +55,9 @@ case class SlickBackend[P <: JdbcProfile](val driver: P)
         getHostSpecMaxPoolSize       map hconf.setMaximumPoolSize
         getHostSpecConnectionTimeout map hconf.setConnectionTimeout
         getHostSpecIdleTimeout       map hconf.setIdleTimeout
+        if (getRewriteBatchedStatements) {
+          hconf.addDataSourceProperty("rewriteBatchedStatements", true)
+        }
         HikariCPDataSource(new HikariDataSource(hconf), hconf)
       }
     }
