@@ -65,10 +65,10 @@ trait AmazonSESClient extends AmazonSESConfig with Logging {
         case Some(value) =>
           builder.endpointOverride(value)
         case None =>
-          builder.region(region)
       }
       builder
         .credentialsProvider(credentialsProvider)
+        .region(region)
         .build()
     }
   }

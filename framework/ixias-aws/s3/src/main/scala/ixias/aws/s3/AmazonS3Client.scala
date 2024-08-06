@@ -168,10 +168,10 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
         case Some(value) =>
           builder.endpointOverride(value)
         case None =>
-          builder.region(region)
       }
       builder
         .credentialsProvider(credentialsProvider)
+        .region(region)
         .forcePathStyle(pathStyleAccessEnabled)
         .build()
     }
