@@ -4,7 +4,7 @@ import scala.util.Success
 
 import munit.FunSuite
 
-import com.amazonaws.regions.Regions
+import software.amazon.awssdk.regions.Region
 
 import ixias.aws.DataSourceName
 
@@ -26,6 +26,6 @@ class AmazonS3ConfigTest extends FunSuite with AmazonS3Config {
   }
 
   test("AmazonS3Config#getAWSRegion") {
-    assertEquals(getAWSRegion, Success(Regions.AP_NORTHEAST_1))
+    assertEquals(getAWSRegion, Success(Region.AP_NORTHEAST_1))
   }
 }

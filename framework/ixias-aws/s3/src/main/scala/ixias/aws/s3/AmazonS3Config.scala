@@ -1,10 +1,9 @@
 package ixias.aws.s3
 
+import java.net.URI
+
 import scala.util.Try
 import scala.concurrent.duration.Duration
-
-import com.amazonaws.regions.Regions
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
 
 import ixias.aws._
 
@@ -30,10 +29,8 @@ trait AmazonS3Config extends AmazonConfig {
     readValue(_.get[Option[Boolean]](CF_S3_PATH_STYLE_ACCESS_ENABLED)).getOrElse(true)
 
   /** Gets the AWS Endpoint */
-  protected def getAWSEndpoint(region: Regions)(implicit dsn: DataSourceName): Option[EndpointConfiguration] =
-    readValue(_.get[Option[String]](CF_S3_ENDPOINT)).map(
-      new EndpointConfiguration(_, region.getName)
-    )
+  protected def getAWSEndpoint()(implicit dsn: DataSourceName): Option[URI] =
+    readValue(_.get[Option[String]](CF_S3_ENDPOINT)).map(URI.create)
 
   /** Gets the table name which is containing META-INFO of storage object.
     */
