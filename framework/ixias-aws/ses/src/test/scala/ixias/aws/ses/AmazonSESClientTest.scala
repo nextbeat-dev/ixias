@@ -2,8 +2,7 @@ package ixias.aws.ses
 
 import munit.FunSuite
 
-import com.amazonaws.services.simpleemail.model._
-import com.amazonaws.services.simpleemail.model.SendEmailRequest
+import software.amazon.awssdk.services.ses.model._
 
 class AmazonSESClientTest extends FunSuite {
 
@@ -11,13 +10,14 @@ class AmazonSESClientTest extends FunSuite {
 
   test("Testing the AmazonSESClient send Email request Success") {
     val body =
-      new Body().withText(new Content().withCharset("UTF-8").withData("This email was sent through Amazon SES"))
-    val subject = new Content().withCharset("UTF-8").withData("Amazon SES test (AWS SDK for Java)")
-    val message = new Message().withBody(body).withSubject(subject)
-    val request = new SendEmailRequest()
-      .withDestination(new Destination().withToAddresses("takahiko.tominaga@nextbeat.net"))
-      .withMessage(message)
-      .withSource("takahiko.tominaga@nextbeat.net")
+      Body.builder().text(Content.builder().charset("UTF-8").data("This email was sent through Amazon SES").build()).build()
+    val subject = Content.builder().charset("UTF-8").data("Amazon SES test (AWS SDK for Java)").build()
+    val message = Message.builder().body(body).subject(subject).build()
+    val request = SendEmailRequest.builder()
+      .destination(Destination.builder().toAddresses("takahiko.tominaga@nextbeat.net").build())
+      .message(message)
+      .source("takahiko.tominaga@nextbeat.net")
+      .build()
 
     assertEquals(sesClient.sendEmail(request).isSuccess, true)
   }
