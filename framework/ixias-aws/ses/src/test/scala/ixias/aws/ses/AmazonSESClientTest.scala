@@ -23,6 +23,10 @@ class AmazonSESClientTest extends FunSuite {
       .source("takahiko.tominaga@nextbeat.net")
       .build()
 
-    assertEquals(sesClient.sendEmail(request).isSuccess, true)
+    val result = sesClient.sendEmail(request)
+
+    println(result)
+
+    assertEquals(result.isSuccess, true)
   }
 }
