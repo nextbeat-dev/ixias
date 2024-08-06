@@ -84,6 +84,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     key:        String,
     expiration: Date
   ): Try[URL] = {
+    val duration = java.time.Duration.ofMillis(expiration.getTime - System.currentTimeMillis())
     action { client =>
       {
         val presigner = S3Presigner.builder().s3Client(client).build()
@@ -95,7 +96,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
         val presignRequest = PutObjectPresignRequest
           .builder()
           .putObjectRequest(objectRequest)
-          // .signatureDuration(Duration)
+          .signatureDuration(duration)
           .build()
         val presignedRequest = presigner.presignPutObject(presignRequest)
         presignedRequest.url()
@@ -108,6 +109,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     key:        String,
     expiration: Date
   ): Try[URL] = {
+    val duration = java.time.Duration.ofMillis(expiration.getTime - System.currentTimeMillis())
     action { client =>
       {
         val presigner = S3Presigner.builder().s3Client(client).build()
@@ -119,7 +121,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
         val presignRequest = GetObjectPresignRequest
           .builder()
           .getObjectRequest(objectRequest)
-          // .signatureDuration(Duration)
+          .signatureDuration(duration)
           .build()
         val presignedRequest = presigner.presignGetObject(presignRequest)
         presignedRequest.url()
