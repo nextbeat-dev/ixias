@@ -151,7 +151,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     } yield result
 
   private lazy val getClient: Try[S3Client] = {
-    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.builder().build())) { credentials =>
+    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.create())) { credentials =>
       getClient(StaticCredentialsProvider.create(credentials))
     }
   }

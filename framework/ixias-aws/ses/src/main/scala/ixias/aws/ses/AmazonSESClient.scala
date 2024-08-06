@@ -48,7 +48,7 @@ trait AmazonSESClient extends AmazonSESConfig with Logging {
     } yield result
 
   private lazy val getClient: Try[SesClient] = {
-    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.builder().build())) { credentials =>
+    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.create())) { credentials =>
       getClient(StaticCredentialsProvider.create(credentials))
     }
   }

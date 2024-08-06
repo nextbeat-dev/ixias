@@ -73,7 +73,7 @@ trait AmazonSNSClient extends AmazonSNSConfig with Logging {
   }
 
   private lazy val getClient: Try[SnsClient] = {
-    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.builder().build())) { credentials =>
+    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.create())) { credentials =>
       getClient(StaticCredentialsProvider.create(credentials))
     }
   }
