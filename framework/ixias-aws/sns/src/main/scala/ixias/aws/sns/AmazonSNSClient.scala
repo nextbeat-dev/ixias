@@ -3,9 +3,9 @@ package ixias.aws.sns
 import scala.util.Try
 import scala.jdk.CollectionConverters._
 
-import com.amazonaws.auth.{ AWSCredentialsProvider, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain }
-import com.amazonaws.services.sns.model.{ PublishResult, MessageAttributeValue, PublishRequest }
-import com.amazonaws.services.sns.{ AmazonSNS, AmazonSNSClientBuilder }
+import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, StaticCredentialsProvider, DefaultCredentialsProvider }
+import software.amazon.awssdk.services.sns.model._
+import software.amazon.awssdk.services.sns.SnsClient
 
 import ixias.util.Logging
 import ixias.aws.DataSourceName
@@ -23,17 +23,17 @@ trait AmazonSNSClient extends AmazonSNSConfig with Logging {
     *   client.publish("Test")
     * }}}
     */
-  def publish(message: String): Try[PublishResult] =
+  def publish(message: String): Try[PublishResponse] =
     if (isSkip) {
       getTopicARN map { topic =>
         logger.info("AWS-SNS :: skip to publish a message. topic = %s, message = %s".format(topic, message))
-        new PublishResult()
+        PublishResponse.builder().build()
       }
     } else
       for {
         client <- getClient
         topic  <- getTopicARN
-      } yield client.publish(topic, message)
+      } yield client.publish(PublishRequest.builder().topicArn(topic).message(message).build())
 
   /** Sends a message with subscription filter to a topic's subscribed endpoints.
     *
@@ -47,46 +47,51 @@ trait AmazonSNSClient extends AmazonSNSConfig with Logging {
     *   client.publish("Test", Map("filterType" -> messageAttributeValue))
     * }}}
     */
-  def publish(message: String, attributes: Map[String, MessageAttributeValue] = Map.empty): Try[PublishResult] = {
+  def publish(message: String, attributes: Map[String, MessageAttributeValue] = Map.empty): Try[PublishResponse] = {
     if (isSkip) {
       getTopicARN map { topic =>
         logger.info("AWS-SNS :: skip to publish a message. topic = %s, message = %s".format(topic, message))
-        new PublishResult()
+        PublishResponse.builder().build()
       }
     } else {
       for {
         client <- getClient
         topic  <- getTopicARN
       } yield {
-        val publishRequest = new PublishRequest(topic, message)
-        publishRequest.setMessageAttributes(attributes.asJava)
+        val publishRequest = PublishRequest
+          .builder
+          .topicArn(topic)
+          .message(message)
+          .messageAttributes(attributes.asJava)
+          .build()
         client.publish(publishRequest)
       }
     }
   }
 
-  private lazy val getClient: Try[AmazonSNS] = {
-    getAWSCredentials.fold(getClient(new DefaultAWSCredentialsProviderChain())) { credentials =>
-      getClient(new AWSStaticCredentialsProvider(credentials))
+  private lazy val getClient: Try[SnsClient] = {
+    getAWSCredentials.fold(getClient(DefaultCredentialsProvider.builder().build())) { credentials =>
+      getClient(StaticCredentialsProvider.create(credentials))
     }
   }
 
-  private def getClient(credentialsProvider: AWSCredentialsProvider): Try[AmazonSNS] = {
+  private def getClient(credentialsProvider: AwsCredentialsProvider): Try[SnsClient] = {
     logger.debug("Get a AWS Client dsn=%s hash=%s".format(dsn, dsn.hashCode))
     for {
       region <- getAWSRegion
     } yield {
-      val builder  = AmazonSNSClientBuilder.standard
-      val endpoint = getAWSEndpoint(region)
+      val builder  = SnsClient.builder()
+      val endpoint = getAWSEndpoint()
 
-      if (endpoint.nonEmpty) {
-        builder.withEndpointConfiguration(endpoint.get)
-      } else {
-        builder.withRegion(region)
+      endpoint match {
+        case Some(value) =>
+          builder.endpointOverride(value)
+        case None =>
+          builder.region(region)
       }
 
       builder
-        .withCredentials(credentialsProvider)
+        .credentialsProvider(credentialsProvider)
         .build
     }
   }

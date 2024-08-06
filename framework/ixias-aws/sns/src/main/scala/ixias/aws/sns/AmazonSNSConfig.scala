@@ -1,9 +1,8 @@
 package ixias.aws.sns
 
-import scala.util.Try
+import java.net.URI
 
-import com.amazonaws.regions.Regions
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
+import scala.util.Try
 
 import ixias.util.Configuration
 import ixias.aws._
@@ -19,10 +18,8 @@ trait AmazonSNSConfig extends AmazonConfig {
   // --[ Methods ]--------------------------------------------------------------
   /** Gets the AWS Endpoint
     */
-  protected def getAWSEndpoint(region: Regions)(implicit dsn: DataSourceName): Option[EndpointConfiguration] =
-    readValue(_.get[Option[String]](CF_SNS_ENDPOINT)).map(
-      new EndpointConfiguration(_, region.getName)
-    )
+  protected def getAWSEndpoint()(implicit dsn: DataSourceName): Option[URI] =
+    readValue(_.get[Option[String]](CF_SNS_ENDPOINT)).map(URI.create)
 
   /** Gets the flag to invoke SNS process.
     */
