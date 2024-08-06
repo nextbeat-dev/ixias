@@ -85,12 +85,7 @@ trait AmazonSNSClient extends AmazonSNSConfig with Logging {
     } yield {
       val builder  = SnsClient.builder()
       val endpoint = getAWSEndpoint()
-
-      endpoint match {
-        case Some(value) =>
-          builder.endpointOverride(value)
-        case None =>
-      }
+      endpoint.foreach(value => builder.endpointOverride(value))
 
       builder
         .credentialsProvider(credentialsProvider)

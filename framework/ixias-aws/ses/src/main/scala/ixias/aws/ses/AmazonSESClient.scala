@@ -60,12 +60,7 @@ trait AmazonSESClient extends AmazonSESConfig with Logging {
     } yield {
       val builder  = SesClient.builder()
       val endpoint = getAWSEndpoint()
-
-      endpoint match {
-        case Some(value) =>
-          builder.endpointOverride(value)
-        case None =>
-      }
+      endpoint.foreach(value => builder.endpointOverride(value))
       builder
         .credentialsProvider(credentialsProvider)
         .region(region)

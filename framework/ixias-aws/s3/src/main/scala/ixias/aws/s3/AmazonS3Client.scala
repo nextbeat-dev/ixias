@@ -85,9 +85,11 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     expiration: Date
   ): Try[URL] = {
     val duration = java.time.Duration.ofMillis(expiration.getTime - System.currentTimeMillis())
-    action { client =>
+    for {
+      region <- getAWSRegion
+      result <- action { client =>
       {
-        val presigner = S3Presigner.builder().s3Client(client).build()
+        val presigner = S3Presigner.builder().s3Client(client).region(region).build()
         val objectRequest = PutObjectRequest
           .builder()
           .bucket(bucketName)
@@ -101,7 +103,8 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
         val presignedRequest = presigner.presignPutObject(presignRequest)
         presignedRequest.url()
       }
-    }
+      }
+    } yield result
   }
 
   def generateGetPreSignedUrl(
@@ -164,11 +167,7 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
       val builder                = S3Client.builder()
       val endpoint               = getAWSEndpoint()
       val pathStyleAccessEnabled = getPathStyleAccessEnabled
-      endpoint match {
-        case Some(value) =>
-          builder.endpointOverride(value)
-        case None =>
-      }
+      endpoint.foreach(value => builder.endpointOverride(value))
       builder
         .credentialsProvider(credentialsProvider)
         .region(region)
