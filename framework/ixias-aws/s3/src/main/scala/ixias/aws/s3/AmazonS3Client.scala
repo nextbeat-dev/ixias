@@ -85,26 +85,20 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     expiration: Date
   ): Try[URL] = {
     val duration = java.time.Duration.ofMillis(expiration.getTime - System.currentTimeMillis())
-    for {
-      region <- getAWSRegion
-      result <- action { client =>
-                  {
-                    val presigner = S3Presigner.builder().s3Client(client).region(region).build()
-                    val objectRequest = PutObjectRequest
-                      .builder()
-                      .bucket(bucketName)
-                      .key(key)
-                      .build()
-                    val presignRequest = PutObjectPresignRequest
-                      .builder()
-                      .putObjectRequest(objectRequest)
-                      .signatureDuration(duration)
-                      .build()
-                    val presignedRequest = presigner.presignPutObject(presignRequest)
-                    presignedRequest.url()
-                  }
-                }
-    } yield result
+    getPersigner.map { presigner =>
+      val objectRequest = PutObjectRequest
+        .builder()
+        .bucket(bucketName)
+        .key(key)
+        .build()
+      val presignRequest = PutObjectPresignRequest
+        .builder()
+        .putObjectRequest(objectRequest)
+        .signatureDuration(duration)
+        .build()
+      val presignedRequest = presigner.presignPutObject(presignRequest)
+      presignedRequest.url()
+    }
   }
 
   def generateGetPreSignedUrl(
@@ -113,22 +107,19 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     expiration: Date
   ): Try[URL] = {
     val duration = java.time.Duration.ofMillis(expiration.getTime - System.currentTimeMillis())
-    action { client =>
-      {
-        val presigner = S3Presigner.builder().s3Client(client).build()
-        val objectRequest = GetObjectRequest
-          .builder()
-          .bucket(bucketName)
-          .key(key)
-          .build()
-        val presignRequest = GetObjectPresignRequest
-          .builder()
-          .getObjectRequest(objectRequest)
-          .signatureDuration(duration)
-          .build()
-        val presignedRequest = presigner.presignGetObject(presignRequest)
-        presignedRequest.url()
-      }
+    getPersigner.map { presigner =>
+      val objectRequest = GetObjectRequest
+        .builder()
+        .bucket(bucketName)
+        .key(key)
+        .build()
+      val presignRequest = GetObjectPresignRequest
+        .builder()
+        .getObjectRequest(objectRequest)
+        .signatureDuration(duration)
+        .build()
+      val presignedRequest = presigner.presignGetObject(presignRequest)
+      presignedRequest.url()
     }
   }
 
@@ -153,11 +144,10 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
       result <- access(client)
     } yield result
 
-  private lazy val getClient: Try[S3Client] = {
+  private lazy val getClient: Try[S3Client] =
     getAWSCredentials.fold(getClient(DefaultCredentialsProvider.create())) { credentials =>
       getClient(StaticCredentialsProvider.create(credentials))
     }
-  }
 
   private def getClient(credentialsProvider: AwsCredentialsProvider): Try[S3Client] = {
     logger.debug("Get a AWS Client dsn=%s hash=%s".format(dsn, dsn.hashCode))
@@ -172,6 +162,27 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
         .credentialsProvider(credentialsProvider)
         .region(region)
         .forcePathStyle(pathStyleAccessEnabled)
+        .build()
+    }
+  }
+
+  private lazy val getPersigner: Try[S3Presigner] =
+    getAWSCredentials.fold(getPresigner(DefaultCredentialsProvider.create())) { credentials =>
+      getPresigner(StaticCredentialsProvider.create(credentials))
+    }
+
+  private def getPresigner(credentialsProvider: AwsCredentialsProvider): Try[S3Presigner] = {
+    logger.debug("Get a AWS Presigner dsn=%s hash=%s".format(dsn, dsn.hashCode))
+    for {
+      region <- getAWSRegion
+    } yield {
+      val builder                = S3Presigner.builder()
+      val endpoint               = getAWSEndpoint()
+      val pathStyleAccessEnabled = getPathStyleAccessEnabled
+      endpoint.foreach(value => builder.endpointOverride(value))
+      builder
+        .credentialsProvider(credentialsProvider)
+        .region(region)
         .build()
     }
   }
