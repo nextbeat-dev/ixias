@@ -2,7 +2,11 @@ package ixias.aws.ses
 
 import scala.util.Try
 
-import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, StaticCredentialsProvider, DefaultCredentialsProvider }
+import software.amazon.awssdk.auth.credentials.{
+  AwsCredentialsProvider,
+  StaticCredentialsProvider,
+  DefaultCredentialsProvider
+}
 import software.amazon.awssdk.services.ses.model._
 import software.amazon.awssdk.services.ses.SesClient
 

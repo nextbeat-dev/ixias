@@ -3,7 +3,11 @@ package ixias.aws.sns
 import scala.util.Try
 import scala.jdk.CollectionConverters._
 
-import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, StaticCredentialsProvider, DefaultCredentialsProvider }
+import software.amazon.awssdk.auth.credentials.{
+  AwsCredentialsProvider,
+  StaticCredentialsProvider,
+  DefaultCredentialsProvider
+}
 import software.amazon.awssdk.services.sns.model._
 import software.amazon.awssdk.services.sns.SnsClient
 
@@ -58,8 +62,7 @@ trait AmazonSNSClient extends AmazonSNSConfig with Logging {
         client <- getClient
         topic  <- getTopicARN
       } yield {
-        val publishRequest = PublishRequest
-          .builder
+        val publishRequest = PublishRequest.builder
           .topicArn(topic)
           .message(message)
           .messageAttributes(attributes.asJava)

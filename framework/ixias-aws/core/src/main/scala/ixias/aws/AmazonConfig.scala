@@ -35,7 +35,8 @@ private[ixias] trait AmazonConfig {
     for {
       accessKey <- getAWSAccessKeyId
       secretKey <- getAWSSecretKey
-    } yield AwsBasicCredentials.builder()
+    } yield AwsBasicCredentials
+      .builder()
       .accessKeyId(accessKey)
       .secretAccessKey(secretKey)
       .build()

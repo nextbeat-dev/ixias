@@ -7,7 +7,11 @@ import java.util.Date
 import scala.util.Try
 
 import software.amazon.awssdk.core.ResponseInputStream
-import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, StaticCredentialsProvider, DefaultCredentialsProvider }
+import software.amazon.awssdk.auth.credentials.{
+  AwsCredentialsProvider,
+  StaticCredentialsProvider,
+  DefaultCredentialsProvider
+}
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model._
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
@@ -65,7 +69,8 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
           .builder()
           .bucket(bucketName)
           .delete(
-            Delete.builder()
+            Delete
+              .builder()
               .objects(keys.map(key => ObjectIdentifier.builder().key(key).build()): _*)
               .build()
           )
@@ -79,21 +84,23 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     key:        String,
     expiration: Date
   ): Try[URL] = {
-    action { client => {
-      val presigner = S3Presigner.builder().s3Client(client).build()
-      val objectRequest = PutObjectRequest
-        .builder()
-        .bucket(bucketName)
-        .key(key)
-        .build()
-      val presignRequest = PutObjectPresignRequest
-        .builder()
-        .putObjectRequest(objectRequest)
-        //.signatureDuration(Duration)
-        .build()
-      val presignedRequest = presigner.presignPutObject(presignRequest)
-      presignedRequest.url()
-    }}
+    action { client =>
+      {
+        val presigner = S3Presigner.builder().s3Client(client).build()
+        val objectRequest = PutObjectRequest
+          .builder()
+          .bucket(bucketName)
+          .key(key)
+          .build()
+        val presignRequest = PutObjectPresignRequest
+          .builder()
+          .putObjectRequest(objectRequest)
+          // .signatureDuration(Duration)
+          .build()
+        val presignedRequest = presigner.presignPutObject(presignRequest)
+        presignedRequest.url()
+      }
+    }
   }
 
   def generateGetPreSignedUrl(
@@ -101,20 +108,23 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     key:        String,
     expiration: Date
   ): Try[URL] = {
-    action { client => {
-      val presigner = S3Presigner.builder().s3Client(client).build()
-      val objectRequest = GetObjectRequest.builder()
-        .bucket(bucketName)
-        .key(key)
-        .build()
-      val presignRequest = GetObjectPresignRequest
-        .builder()
-        .getObjectRequest(objectRequest)
-        //.signatureDuration(Duration)
-        .build()
-      val presignedRequest = presigner.presignGetObject(presignRequest)
-      presignedRequest.url()
-    }}
+    action { client =>
+      {
+        val presigner = S3Presigner.builder().s3Client(client).build()
+        val objectRequest = GetObjectRequest
+          .builder()
+          .bucket(bucketName)
+          .key(key)
+          .build()
+        val presignRequest = GetObjectPresignRequest
+          .builder()
+          .getObjectRequest(objectRequest)
+          // .signatureDuration(Duration)
+          .build()
+        val presignedRequest = presigner.presignGetObject(presignRequest)
+        presignedRequest.url()
+      }
+    }
   }
 
   /** Method to retrieve AmazonS3 client information so that it can be executed with any type. */

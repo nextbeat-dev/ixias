@@ -8,7 +8,7 @@
 
 package ixias.aws.s3.model
 
-import java.net.{URL, URI}
+import java.net.{ URL, URI }
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -99,13 +99,16 @@ object UrlSigner extends AmazonS3Config {
 
     // - Generate Signed-URL
     val resourcePath = generateResourcePath(domain, file.v.key)
-    val cannedSignerRequest = CannedSignerRequest.builder()
+    val cannedSignerRequest = CannedSignerRequest
+      .builder()
       .resourceUrl(resourcePath + "?" + resize.queryString)
       .keyPairId(keyPairId)
       .privateKey(loadPrivateKey(new java.io.File(pkFilePath).toPath))
-      .expirationDate(DateUtils.parseIso8601Date(
-        ZonedDateTime.now.plus(timeout).toInstant.toString
-      ))
+      .expirationDate(
+        DateUtils.parseIso8601Date(
+          ZonedDateTime.now.plus(timeout).toInstant.toString
+        )
+      )
       .build()
 
     new URL({
