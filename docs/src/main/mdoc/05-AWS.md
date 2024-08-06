@@ -2,7 +2,7 @@
 
 この章では、IxiaSが提供するAWS SDKを使用して、AWSのサービスを操作する方法について説明します。
 
-IxiaSが提供するAWS SDKは[aws-sdk-java](https://github.com/aws/aws-sdk-java)をラップしたものです。
+IxiaSが提供するAWS SDKは[aws-sdk-java](https://github.com/aws/aws-sdk-java-v2)をラップしたものです。
 
 現在IxiaSがラップしているAWS SDKは以下の通りです。
 
@@ -12,7 +12,7 @@ IxiaSが提供するAWS SDKは[aws-sdk-java](https://github.com/aws/aws-sdk-java
 | SNS  | `ixias-aws-sns` |
 | SES  | `ixias-aws-ses` |
 
-現在のバージョンは **AWS SDK $awsSDKVersion$** に対応しています。
+現在のバージョンは **AWS SDK Java v2 $awsSDKVersion$** に対応しています。
 
 IxiaSが提供するAWS SDKでは設定をConfig経由で設定します。
 
@@ -146,10 +146,10 @@ val result = s3Client.action { client =>
 }
 ```
 
-actionメンバに渡される関数の引数は`AmazonS3`クラスのインスタンスです。
-そのため、公式AWS SDKの`AmazonS3`クラスでサポートされている操作を行うことができます。
+actionメンバに渡される関数の引数は`S3Client`クラスのインスタンスです。
+そのため、公式AWS SDKの`S3Client`クラスでサポートされている操作を行うことができます。
 
-サポートされている操作の詳細については、[公式AWS SDKのAmazonS3クラスのドキュメント](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3.html)を参照してください。
+サポートされている操作の詳細については、[公式AWS SDKのS3Clientクラスのドキュメント](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/S3Client.html)を参照してください。
 
 ## AWS SNS
 
@@ -187,9 +187,12 @@ val snsClient = AmazonSNSClient("aws://sns/test_topic") // or AmazonS3Client(Dat
 
 ```scala
 val client = AmazonSNSClient("aws.sns://topic")
-val messageAttributeValue = new MessageAttributeValue()
-messageAttributeValue.setDataType("Number")
-messageAttributeValue.setStringValue("1")
+val messageAttributeValue =
+  MessageAttributeValue
+    .builder()
+    .dataType("Number")
+    .stringValue("1")
+    .build()
 
 client.publish("Test", Map("filterType" -> messageAttributeValue))
 ```
@@ -225,13 +228,18 @@ val sesClient = AmazonSESClient("aws.ses://dummy") // or AmazonSESClient(DataSou
 
 ```scala
 val body =
-  new Body().withText(new Content().withCharset("UTF-8").withData("This email was sent through Amazon SES"))
-val subject = new Content().withCharset("UTF-8").withData("Amazon SES test (AWS SDK for Java)")
-val message = new Message().withBody(body).withSubject(subject)
-val request = new SendEmailRequest()
-  .withDestination(new Destination().withToAddresses("takahiko.tominaga@nextbeat.net"))
-  .withMessage(message)
-  .withSource("takahiko.tominaga@nextbeat.net")
+  Body
+    .builder()
+    .text(Content.builder().charset("UTF-8").data("This email was sent through Amazon SES").build())
+    .build()
+val subject = Content.builder().charset("UTF-8").data("Amazon SES test (AWS SDK for Java)").build()
+val message = Message.builder().body(body).subject(subject).build()
+val request = SendEmailRequest
+  .builder()
+  .destination(Destination.builder().toAddresses("takahiko.tominaga@nextbeat.net").build())
+  .message(message)
+  .source("takahiko.tominaga@nextbeat.net")
+  .build()
 
 sesClient.sendEmail(request)
 ```
@@ -244,7 +252,7 @@ val result = sesClient.action { client =>
 }
 ```
 
-actionメンバに渡される関数の引数は`AmazonSimpleEmailService`クラスのインスタンスです。
-そのため、公式AWS SDKの`AmazonSimpleEmailService`クラスでサポートされている操作を行うことができます。
+actionメンバに渡される関数の引数は`SesClient`クラスのインスタンスです。
+そのため、公式AWS SDKの`SesClient`クラスでサポートされている操作を行えます。
 
-サポートされている操作の詳細については、[公式AWS SDKのAmazonSimpleEmailServiceクラスのドキュメント](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/simpleemail/AmazonSimpleEmailService.html)を参照してください。
+サポートされている操作の詳細については、[公式AWS SDKのSesClientクラスのドキュメント](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/ses/SesClient.html)を参照してください。
