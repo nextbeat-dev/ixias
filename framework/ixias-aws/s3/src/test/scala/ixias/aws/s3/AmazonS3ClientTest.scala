@@ -28,6 +28,9 @@ class AmazonS3ClientTest extends FunSuite {
   test("AmazonS3Client generatePreSignedUrl object Success") {
     val url =
       s3Client.generateGetPreSignedUrl("dummy", "test", new Date(System.currentTimeMillis() + 100000L))
+    println("=====================")
+    println(url)
+    println("=====================")
     assertEquals(url.isSuccess, true)
   }
 

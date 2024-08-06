@@ -25,8 +25,6 @@ class AmazonSESClientTest extends FunSuite {
 
     val result = sesClient.sendEmail(request)
 
-    println(result)
-
     assertEquals(result.isSuccess, true)
   }
 }
