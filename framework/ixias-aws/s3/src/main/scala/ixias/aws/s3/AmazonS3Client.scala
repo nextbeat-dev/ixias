@@ -88,22 +88,22 @@ trait AmazonS3Client extends AmazonS3Config with Logging {
     for {
       region <- getAWSRegion
       result <- action { client =>
-      {
-        val presigner = S3Presigner.builder().s3Client(client).region(region).build()
-        val objectRequest = PutObjectRequest
-          .builder()
-          .bucket(bucketName)
-          .key(key)
-          .build()
-        val presignRequest = PutObjectPresignRequest
-          .builder()
-          .putObjectRequest(objectRequest)
-          .signatureDuration(duration)
-          .build()
-        val presignedRequest = presigner.presignPutObject(presignRequest)
-        presignedRequest.url()
-      }
-      }
+                  {
+                    val presigner = S3Presigner.builder().s3Client(client).region(region).build()
+                    val objectRequest = PutObjectRequest
+                      .builder()
+                      .bucket(bucketName)
+                      .key(key)
+                      .build()
+                    val presignRequest = PutObjectPresignRequest
+                      .builder()
+                      .putObjectRequest(objectRequest)
+                      .signatureDuration(duration)
+                      .build()
+                    val presignedRequest = presigner.presignPutObject(presignRequest)
+                    presignedRequest.url()
+                  }
+                }
     } yield result
   }
 
