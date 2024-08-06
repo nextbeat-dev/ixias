@@ -11,11 +11,11 @@ IxiaSとはNextbeat旧CTOの衣笠が開発したOSSであり、社内のScala�
 > 主にS3の使用方法に注意が必要です。
 > 以前のバージョンではオブジェクトのアップロードやダウンロードを行う際にバケット指定でオブジェクトも指定可能でした。
 > ```scala
-> client.getObject(new GetObjectRequest("bucket/key", "key")))
+> GetObjectRequest.builder.bucket("bucket/key").key("key").build()
 > ```
-> しかし、バージョン `v2.1.1`以降ではこれがエラーとなり、バケット名に`/`を使用してオブジェクトを指定することができなくなりました。
+> しかし、バージョン `v2.1.1`以降ではこれがエラーとなり、バケット名に`/`を使用してオブジェクトを指定できなくなりました。
 > ```scala
-> client.getObject(new GetObjectRequest("bucket", "key/key")))
+> GetObjectRequest.builder.bucket("bucket").key("key/key").build()
 > ```
 > そのため`v2.1.1`以前を使用しているユーザーで`v2.1.1`以上にバージョンを更新する際は注意してください。
 
