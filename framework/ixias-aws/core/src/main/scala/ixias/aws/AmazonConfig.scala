@@ -2,8 +2,8 @@ package ixias.aws
 
 import scala.util.Try
 
-import com.amazonaws.regions.Regions
-import com.amazonaws.auth.{ AWSCredentials, BasicAWSCredentials }
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.auth.credentials.{ AwsCredentials, AwsBasicCredentials }
 
 import ixias.util.Configuration
 
@@ -31,16 +31,19 @@ private[ixias] trait AmazonConfig {
 
   /** Gets the AWS credentials object.
     */
-  protected def getAWSCredentials(implicit dsn: DataSourceName): Option[AWSCredentials] =
+  protected def getAWSCredentials(implicit dsn: DataSourceName): Option[AwsCredentials] =
     for {
       accessKey <- getAWSAccessKeyId
       secretKey <- getAWSSecretKey
-    } yield new BasicAWSCredentials(accessKey, secretKey)
+    } yield AwsBasicCredentials.builder()
+      .accessKeyId(accessKey)
+      .secretAccessKey(secretKey)
+      .build()
 
   /** Gets a region enum corresponding to the given region name.
     */
-  protected def getAWSRegion(implicit dsn: DataSourceName): Try[Regions] =
-    Try(Regions.fromName(readValue(_.get[Option[String]](CF_REGION)).get))
+  protected def getAWSRegion(implicit dsn: DataSourceName): Try[Region] =
+    Try(Region.of(readValue(_.get[Option[String]](CF_REGION)).get))
 
   /** Get a value by specified key.
     */
