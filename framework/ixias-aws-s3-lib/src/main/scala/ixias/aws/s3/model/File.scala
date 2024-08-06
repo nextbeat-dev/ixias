@@ -13,8 +13,7 @@ import java.time.temporal.ChronoField._
 
 import scala.util.Try
 
-import com.amazonaws.Protocol
-import com.amazonaws.services.s3.model.S3Object
+import software.amazon.awssdk.services.s3.model._
 
 import ixias.model._
 import ixias.aws.DataSourceName
@@ -34,25 +33,20 @@ case class File(
   createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
 ) extends EntityModel[File.Id] {
 
-  lazy val httpsUrl = s"${ Protocol.HTTPS.toString() }://${ httpsUrn }"
+  lazy val httpsUrl = s"${ Protocol.HTTPS.toString }://${ httpsUrn }"
   lazy val httpsUrn = presignedUrl match {
     case None => s"cdn-${ bucket }/${ key }?d=${ (updatedAt.get(MILLI_OF_SECOND) / 1000).toHexString }"
     case Some(url) =>
       s"cdn-${ bucket }/${ key }?d=${ (updatedAt.get(MILLI_OF_SECOND) / 1000).toHexString }&${ url.getQuery }"
   }
-  lazy val httpsUrlOrigin = s"${ Protocol.HTTPS.toString() }://${ httpsUrnOrigin }"
+  lazy val httpsUrlOrigin = s"${ Protocol.HTTPS.toString }://${ httpsUrnOrigin }"
   lazy val httpsUrnOrigin = presignedUrl match {
     case None      => s"s3-${ region }.amazonaws.com/${ bucket }/${ key }"
     case Some(url) => url.toString.drop(url.getProtocol.length + 3)
   }
 
   /** Build a empty S3 object. */
-  def emptyS3Object: S3Object = {
-    val s3object = new S3Object
-    s3object.setBucketName(bucket)
-    s3object.setKey(key)
-    s3object
-  }
+  def emptyS3Object: S3Object = S3Object.builder().key(key).build()
 }
 
 // The companion object
@@ -73,7 +67,7 @@ object File extends AmazonS3Config {
       region <- getAWSRegion
       bucket <- getBucketName
     } yield Entity.WithNoId[File.Id, File](
-      new File(None, region.getName, bucket, key, typedef, size)
+      new File(None, region.id(), bucket, key, typedef, size)
     )
 
   // --[ The iamage size ]------------------------------------------------------

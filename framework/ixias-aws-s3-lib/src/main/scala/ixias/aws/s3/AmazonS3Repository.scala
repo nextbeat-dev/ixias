@@ -10,9 +10,8 @@ package ixias.aws.s3
 
 import scala.concurrent.Future
 
-import com.amazonaws.HttpMethod
-import com.amazonaws.services.s3.model.S3ObjectInputStream
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest
+import software.amazon.awssdk.core.ResponseInputStream
+import software.amazon.awssdk.services.s3.model.GetObjectResponse
 
 import ixias.aws.s3.model.File
 import ixias.aws.s3.persistence.SlickResource
@@ -36,21 +35,10 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
     slave.run[Option[File]](fileTable.filter(_.id === id).result.headOption)
 
   private def genPreSignedUrlForAccess(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.action { s3 =>
-      val req = new GeneratePresignedUrlRequest(file.v.bucket, file.v.key)
-      req.setMethod(HttpMethod.GET)
-      req.setExpiration(getPresignedUrlTimeoutForGet)
-      s3.generatePresignedUrl(req)
-    })
+    Future.fromTry(client.generateGetPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForGet))
 
   private def genPreSignedUrlForUpload(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.action { s3 =>
-      val req = new GeneratePresignedUrlRequest(file.v.bucket, file.v.key)
-      req.setMethod(HttpMethod.PUT)
-      req.setContentType(file.v.typedef)
-      req.setExpiration(getPresignedUrlTimeoutForPut)
-      s3.generatePresignedUrl(req)
-    })
+    Future.fromTry(client.generateUploadPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForPut))
 
   /** Get file object with a pre-signed URL for accessing an Amazon S3 resource.
     */
@@ -65,13 +53,13 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
 
   /** Get file object as `Entity` with a input stream for it.
     */
-  def getWithContent(id: File.Id): Future[Option[(EntityEmbeddedId, S3ObjectInputStream)]] =
+  def getWithContent(id: File.Id): Future[Option[(EntityEmbeddedId, ResponseInputStream[GetObjectResponse])]] =
     get(id) flatMap {
       case None => Future.successful(None)
       case Some(file) =>
         for {
           s3object <- Future.fromTry(client.load(file.v.bucket, file.v.key))
-        } yield Some((file, s3object.getObjectContent))
+        } yield Some((file, s3object))
     }
 
   /** Finds file objects by set of file ids.
