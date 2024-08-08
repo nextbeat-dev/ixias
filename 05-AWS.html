@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>AWS · IxiaS</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Documentation for IxiaS'/>
+<link rel="canonical" href="https://nextbeat-dev.github.io/ixias/05-AWS.html"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/warnOldVersion.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<script type="text/javascript" src="js/snippets.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.3.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+  <li><a href="05-AWS.html" class="active page">AWS</a></li>
+  <li><a href="06-Image-Resource.html" class="page">Image Resource</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">IxiaS</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.3.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+  <li><a href="05-AWS.html" class="active page">AWS</a></li>
+  <li><a href="06-Image-Resource.html" class="page">Image Resource</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<span id="version-warning"></span>
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">IxiaS</a></li>
+  <li>AWS</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#aws" name="aws" class="anchor"><span class="anchor-link"></span></a>AWS</h1>
+<p>この章では、IxiaSが提供するAWS SDKを使用して、AWSのサービスを操作する方法について説明します。</p>
+<p>IxiaSが提供するAWS SDKは<a href="https://github.com/aws/aws-sdk-java-v2">aws-sdk-java</a>をラップしたものです。</p>
+<p>現在IxiaSがラップしているAWS SDKは以下の通りです。</p>
+<table>
+  <thead>
+    <tr>
+      <th align="center">サービス </th>
+      <th align="center">パッケージ </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">S3 </td>
+      <td align="center"><code>ixias-aws-s3</code> </td>
+    </tr>
+    <tr>
+      <td align="center">SNS </td>
+      <td align="center"><code>ixias-aws-sns</code> </td>
+    </tr>
+    <tr>
+      <td align="center">SES </td>
+      <td align="center"><code>ixias-aws-ses</code> </td>
+    </tr>
+  </tbody>
+</table>
+<p>現在のバージョンは <strong>AWS SDK Java v2 2.26.30</strong> に対応しています。</p>
+<p>IxiaSが提供するAWS SDKでは設定をConfig経由で設定します。</p>
+<p>共通で設定できる値は以下の通りです。</p>
+<table>
+  <thead>
+    <tr>
+      <th>キー </th>
+      <th>型 </th>
+      <th>必須 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>access_key_id </td>
+      <td>String </td>
+      <td>❌ </td>
+      <td>AWSクレデンシャル情報 </td>
+    </tr>
+    <tr>
+      <td>secret_access_key </td>
+      <td>String </td>
+      <td>❌ </td>
+      <td>AWSクレデンシャル情報 </td>
+    </tr>
+    <tr>
+      <td>region </td>
+      <td>String </td>
+      <td>✅ </td>
+      <td>リージョン情報 </td>
+    </tr>
+    <tr>
+      <td>endpoint </td>
+      <td>String </td>
+      <td>❌ </td>
+      <td>送信先エンドポイント (主にLocalStack) </td>
+    </tr>
+  </tbody>
+</table>
+<p>AWS SDKではデフォルトでIAMロールの権限を使用して操作を行いますが、クレデンシャル情報を設定することでIAMロールを使用せずに操作を行うことができます。 IAMユーザーを使用して操作を行う場合は、<code>access_key_id</code>と<code>secret_access_key</code>を両方設定する必要があります。</p>
+<p>※ IAMユーザーの鍵情報を使用して操作を行うことは非推奨です。なるべき実行サービスのIAMロールに権限を付与して操作を行うことを推奨します。</p>
+<p>AWS SKDはConfigからの設定取得を<code>DataSourceName</code>というクラスを使用して行います。</p>
+<p><code>DataSourceName</code>は以下のように設定します。</p>
+<pre class="prettyprint"><code class="language-scala">val dsn = DataSourceName(&quot;{path}://{resource}/{name}&quot;)
+</code></pre>
+<p><code>DataSourceName</code>へ渡す引数の文字列はConfigから読み取る値のパスを指定します。</p>
+<p>現状は2種類の正規表現に合致する文字列を指定する必要があります。</p>
+<ul>
+  <li><code>&quot;&quot;&quot;^([.\w]+)://(\w+?)$&quot;&quot;&quot;.r</code></li>
+  <li><code>&quot;&quot;&quot;^([.\w]+)://(\w+?)/(\w+)$$&quot;&quot;&quot;.r</code></li>
+</ul>
+<p>それぞれの正規表現に合致する文字列は以下の通りです。</p>
+<ul>
+  <li><code>{path}</code>は設定ファイルのパスを指定します。</li>
+  <li><code>{resource}</code>は設定ファイルのリソース名を指定します。</li>
+  <li><code>{name}</code>は設定ファイル内の設定名を指定します。</li>
+</ul>
+<p>例えば、以下のS3用の設定ファイルがある場合</p>
+<pre class="prettyprint"><code class="language-txt">aws.s3 {
+  access_key_id     = &quot;dummy&quot;
+  secret_access_key = &quot;dummy&quot;
+  region            = &quot;ap-northeast-1&quot;
+  endpoint          = &quot;http://localhost:4566&quot;
+
+  dummy_bucket {
+    bucket_name = &quot;dummy&quot;
+  }
+}
+</code></pre>
+<p><code>DataSourceName</code>は以下のように設定します。</p>
+<pre class="prettyprint"><code class="language-scala">val dsn = DataSourceName(&quot;aws.s3://dummy_bucket&quot;)
+</code></pre>
+<p><code>DataSourceName</code>の<code>path</code>は<code>.</code>繋ぎで設定することができ、最初の値で設定を共有することができます。 例えば<code>aws</code>のプレフィクスを付けて設定を行なっている場合、以下の設定は全てのAWS SDKで共通の設定として認識されます。</p>
+<pre class="prettyprint"><code class="language-txt">aws {
+  access_key_id     = &quot;dummy&quot;
+  secret_access_key = &quot;dummy&quot;
+  region            = &quot;ap-northeast-1&quot;
+  endpoint          = &quot;http://localhost:4566&quot;
+}
+</code></pre>
+<p>サービスごとに個別の設定を行う場合は、最初の例と同じように<code>aws.{サービス名}</code>のようにサービス名をキーとして設定します。 例として、S3の設定を行った場合以下の設定は<code>aws.s3</code>内でのみ使用される設定となります。</p>
+<pre class="prettyprint"><code class="language-txt">aws.s3 {
+  access_key_id     = &quot;dummy&quot;
+  secret_access_key = &quot;dummy&quot;
+  region            = &quot;ap-northeast-1&quot;
+  endpoint          = &quot;http://localhost:4566&quot;
+}
+</code></pre>
+<h2><a href="#aws-s3" name="aws-s3" class="anchor"><span class="anchor-link"></span></a>AWS S3</h2>
+<p>プロジェクトに以下の依存関係を設定する必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">libraryDependencies ++= Seq(
+  &quot;net.ixias&quot; %% &quot;ixias-aws-s3&quot; % &quot;2.3.0&quot;
+)
+</code></pre>
+<p>以降のコード例では、以下のimportを想定しています。</p>
+<pre class="prettyprint"><code class="language-scala">import ixias.aws.s3._
+</code></pre>
+<p>S3のConfigで設定できる値は以下の通りです。</p>
+<table>
+  <thead>
+    <tr>
+      <th>キー </th>
+      <th>型 </th>
+      <th>必須 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>bucket_name </td>
+      <td>String </td>
+      <td>✅ </td>
+      <td>操作を行うバケット名 </td>
+    </tr>
+    <tr>
+      <td>path_style_access_enabled </td>
+      <td>Boolean </td>
+      <td>❌ </td>
+      <td>すべてのリクエストにパス形式のアクセスを使うようにするための設定 </td>
+    </tr>
+  </tbody>
+</table>
+<p>S3への操作を行うためには、<code>AmazonS3Client</code>を使用します。</p>
+<pre class="prettyprint"><code class="language-scala">val s3Client = AmazonS3Client(&quot;aws.s3://bucket&quot;) // or AmazonS3Client(DataSourceName(&quot;aws.s3://bucket&quot;))
+</code></pre>
+<p>この<code>AmazonS3Client</code>を使用してS3の操作を行います。 現在のバージョンでは以下の操作をサポートしています。</p>
+<table>
+  <thead>
+    <tr>
+      <th>操作 </th>
+      <th>関数 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>オブジェクトの取得 </td>
+      <td><code>load</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>オブジェクトのアップロード </td>
+      <td><code>upload</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>オブジェクトの削除 </td>
+      <td><code>remove</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>オブジェクトの一括削除 </td>
+      <td><code>bulkRemove</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>署名付きURLの取得 </td>
+      <td><code>generatePreSignedUrl</code> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+<p>サポートされている操作以外の操作を行う場合は、<code>AmazonS3Client</code>の<code>action</code>メンバを使用して操作を行います。</p>
+<pre class="prettyprint"><code class="language-scala">val result = s3Client.action { client =&gt;
+  // ここに操作を記述
+}
+</code></pre>
+<p>actionメンバに渡される関数の引数は<code>S3Client</code>クラスのインスタンスです。 そのため、公式AWS SDKの<code>S3Client</code>クラスでサポートされている操作を行うことができます。</p>
+<p>サポートされている操作の詳細については、<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/S3Client.html">公式AWS SDKのS3Clientクラスのドキュメント</a>を参照してください。</p>
+<h2><a href="#aws-sns" name="aws-sns" class="anchor"><span class="anchor-link"></span></a>AWS SNS</h2>
+<p>プロジェクトに以下の依存関係を設定する必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">libraryDependencies ++= Seq(
+  &quot;net.ixias&quot; %% &quot;ixias-aws-sns&quot; % &quot;2.3.0&quot;
+)
+</code></pre>
+<p>SNSのConfigで設定できる値は以下の通りです。</p>
+<table>
+  <thead>
+    <tr>
+      <th>キー </th>
+      <th>型 </th>
+      <th>必須 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>topic </td>
+      <td>String </td>
+      <td>✅ </td>
+      <td>SNSトピック名 </td>
+    </tr>
+    <tr>
+      <td>skip </td>
+      <td>Boolean </td>
+      <td>❌ </td>
+      <td>SNSプッシュ処理をスキップするかの設定 </td>
+    </tr>
+  </tbody>
+</table>
+<p>SNSへの操作を行うためには、<code>AmazonSNSClient</code>を使用します。</p>
+<pre class="prettyprint"><code class="language-scala">val snsClient = AmazonSNSClient(&quot;aws://sns/test_topic&quot;) // or AmazonS3Client(DataSourceName(&quot;aws://sns/test_topic&quot;))
+</code></pre>
+<p>この<code>AmazonSNSClient</code>を使用してSNSの操作を行います。 現在のバージョンでは以下の操作をサポートしています。</p>
+<table>
+  <thead>
+    <tr>
+      <th>操作 </th>
+      <th>関数 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>送信処理 </td>
+      <td><code>publish</code> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+<p><code>publish</code>関数ではサブスクリプションフィルターを使用することもできます。</p>
+<pre class="prettyprint"><code class="language-scala">val client = AmazonSNSClient(&quot;aws.sns://topic&quot;)
+val messageAttributeValue =
+  MessageAttributeValue
+    .builder()
+    .dataType(&quot;Number&quot;)
+    .stringValue(&quot;1&quot;)
+    .build()
+
+client.publish(&quot;Test&quot;, Map(&quot;filterType&quot; -&gt; messageAttributeValue))
+</code></pre>
+<h2><a href="#aws-ses" name="aws-ses" class="anchor"><span class="anchor-link"></span></a>AWS SES</h2>
+<p>プロジェクトに以下の依存関係を設定する必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">libraryDependencies ++= Seq(
+  &quot;net.ixias&quot; %% &quot;ixias-aws-ses&quot; % &quot;2.3.0&quot;
+)
+</code></pre>
+<p>SESへの操作を行うためには、<code>AmazonSESClient</code>を使用します。</p>
+<pre class="prettyprint"><code class="language-scala">val sesClient = AmazonSESClient(&quot;aws.ses://dummy&quot;) // or AmazonSESClient(DataSourceName(&quot;aws.ses://dummy&quot;))
+</code></pre>
+<p>この<code>AmazonSESClient</code>を使用してSESの操作を行います。 現在のバージョンでは以下の操作をサポートしています。</p>
+<table>
+  <thead>
+    <tr>
+      <th>操作 </th>
+      <th>関数 </th>
+      <th>備考 </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>電子メール・メッセージ送信 </td>
+      <td><code>sendEmail</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>Eメール・テンプレートを使ってEメール・メッセージ送信 </td>
+      <td><code>sendTemplatedEmail</code> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>バウンスメッセージ送信 </td>
+      <td><code>sendBounce</code> </td>
+      <td>この操作は、メールを受信してから24時間後までしか使用できません。 </td>
+    </tr>
+  </tbody>
+</table>
+<p><code>sendEmail</code>関数では、以下のようにメールを送信することができます。</p>
+<pre class="prettyprint"><code class="language-scala">val body =
+  Body
+    .builder()
+    .text(Content.builder().charset(&quot;UTF-8&quot;).data(&quot;This email was sent through Amazon SES&quot;).build())
+    .build()
+val subject = Content.builder().charset(&quot;UTF-8&quot;).data(&quot;Amazon SES test (AWS SDK for Java)&quot;).build()
+val message = Message.builder().body(body).subject(subject).build()
+val request = SendEmailRequest
+  .builder()
+  .destination(Destination.builder().toAddresses(&quot;takahiko.tominaga@nextbeat.net&quot;).build())
+  .message(message)
+  .source(&quot;takahiko.tominaga@nextbeat.net&quot;)
+  .build()
+
+sesClient.sendEmail(request)
+</code></pre>
+<p>サポートされている操作以外の操作を行う場合は、<code>AmazonSESClient</code>の<code>action</code>メンバを使用して操作を行います。</p>
+<pre class="prettyprint"><code class="language-scala">val result = sesClient.action { client =&gt;
+  // ここに操作を記述
+}
+</code></pre>
+<p>actionメンバに渡される関数の引数は<code>SesClient</code>クラスのインスタンスです。 そのため、公式AWS SDKの<code>SesClient</code>クラスでサポートされている操作を行えます。</p>
+<p>サポートされている操作の詳細については、<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/ses/SesClient.html">公式AWS SDKのSesClientクラスのドキュメント</a>を参照してください。</p>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/nextbeat-dev/ixias/tree/v2.3.0/docs/target/mdoc/05-AWS.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="06-Image-Resource.html">Image Resource</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="05-AWS.html#aws" class="header">AWS</a>
+  <ul>
+    <li><a href="05-AWS.html#aws-s3" class="header">AWS S3</a></li>
+    <li><a href="05-AWS.html#aws-sns" class="header">AWS SNS</a></li>
+    <li><a href="05-AWS.html#aws-ses" class="header">AWS SES</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2024</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '2.3.0', 'https://nextbeat-dev.github.io/ixias/')});</script>
+
+
+</html>

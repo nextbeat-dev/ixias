@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Image Resource · IxiaS</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Documentation for IxiaS'/>
+<link rel="canonical" href="https://nextbeat-dev.github.io/ixias/06-Image-Resource.html"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/warnOldVersion.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<script type="text/javascript" src="js/snippets.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.3.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+  <li><a href="05-AWS.html" class="page">AWS</a></li>
+  <li><a href="06-Image-Resource.html" class="active page">Image Resource</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">IxiaS</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>IxiaS
+</a>
+<div class="version-number">
+2.3.0
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="01-Entity-Model.html" class="page">Entity Model</a></li>
+  <li><a href="02-Enum.html" class="page">Enum</a></li>
+  <li><a href="03-Slick.html" class="page">Slick</a></li>
+  <li><a href="04-Play-Framework.html" class="page">Play Framework</a></li>
+  <li><a href="05-AWS.html" class="page">AWS</a></li>
+  <li><a href="06-Image-Resource.html" class="active page">Image Resource</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<span id="version-warning"></span>
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">IxiaS</a></li>
+  <li>Image Resource</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#image-resource" name="image-resource" class="anchor"><span class="anchor-link"></span></a>Image Resource</h1>
+<p>この章では、IxiaSが提供する画像管理を使用して、AWS S3への画像操作とその画像をアプリケーションで管理する方法について説明します。</p>
+<p>プロジェクトに以下の依存関係を設定する必要があります。</p>
+<pre class="prettyprint"><code class="language-scala">libraryDependencies ++= Seq(
+  &quot;net.ixias&quot; %% &quot;ixias-aws-s3-lib&quot; % &quot;2.3.0&quot;
+)
+</code></pre>
+<p>以降のコード例では、以下のimportを想定しています。</p>
+<pre class="prettyprint"><code class="language-scala">import ixias.aws.s3.model._
+import ixias.aws.s3.AmazonS3Repository
+</code></pre>
+<p>AmazonS3Repositoryは、AWS S3とのインタラクションを管理するためのScalaトレイトです。このトレイトは、ファイルのアップロード、ダウンロード、削除など、AWS S3との主要な操作を抽象化します。 以下に、AmazonS3Repositoryの主要なメソッドとその使用方法を示します。 </p>
+<p>AmazonS3Repositoryのインスタンスを作成する必要があります。これは通常、アプリケーションの初期化時に行います。</p>
+<pre class="prettyprint"><code class="language-scala">val s3Repo = new AmazonS3Repository {
+  def master: Database = ???
+  def slave:  Database = ???
+}
+</code></pre>
+<p>ここで、masterとslaveはデータベース接続を表します。これらはアプリケーションの設定から適切に取得する必要があります。</p>
+<h2><a href="#ファイルの取得" name="ファイルの取得" class="anchor"><span class="anchor-link"></span></a>ファイルの取得</h2>
+<p>AmazonS3Repositoryの<code>get(id: File.Id)</code>メソッドを使用して、指定したIDのファイルを取得します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val fileId = File.Id(1L)
+val fileOptFuture = s3Repo.get(fileId)
+</code></pre>
+<p>このコードは、指定したIDのファイルを非同期に取得します。結果は<code>Future[Option[EntityEmbeddedId]]</code>型で返され、ファイルが見つかった場合はそのファイルを含むOption、見つからなかった場合はNoneを含むFutureを返します。</p>
+<h3><a href="#ファイルの一覧取得" name="ファイルの一覧取得" class="anchor"><span class="anchor-link"></span></a>ファイルの一覧取得</h3>
+<p>AmazonS3Repositoryの<code>filter</code>メソッドを使用して、ファイルの一覧を取得します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val ids = Seq(File.Id(1L), File.Id(2L), File.Id(3L))
+val filesFuture = s3Repo.filter(ids)
+</code></pre>
+<p>このコードは、指定したIDのファイルを非同期に取得します。結果は<code>Future[Seq[EntityEmbeddedId]]</code>型で返され、ファイルが見つかった場合はそのファイルを含むSeq、見つからなかった場合は空のSeqを含むFutureを返します。</p>
+<h3><a href="#署名付きurlを取得" name="署名付きurlを取得" class="anchor"><span class="anchor-link"></span></a>署名付きURLを取得</h3>
+<p>AmazonS3Repositoryの<code>getWithPresigned</code>メソッドを使用して、指定したIDのファイルにアクセスするための署名付きURLを取得します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val fileId = File.Id(1L)
+val urlFuture = s3Repo.getWithPresigned(fileId)
+</code></pre>
+<p>このコードは、指定したIDのファイルにアクセスするための署名付きURLを非同期に取得します。結果は<code>Future[Option[String]]</code>型で返され、URLが見つかった場合はそのURLを含むOption、見つからなかった場合はNoneを含むFutureを返します。</p>
+<h2><a href="#ファイルの作成" name="ファイルの作成" class="anchor"><span class="anchor-link"></span></a>ファイルの作成</h2>
+<p>AmazonS3Repositoryの<code>add(file: File#WithNoId, content: java.io.File)</code>メソッドを使用して、新しいファイルを作成します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val file = new File(...).toWithNoId
+val content = new java.io.File(&quot;path/to/your/file&quot;)
+val fileIdFuture = s3Repo.add(file, content)
+</code></pre>
+<p>このコードは、指定したファイル情報と内容で新しいファイルを非同期に作成します。結果は<code>Future[File.Id]</code>型で返され、作成したファイルのIDを含むFutureを返します。</p>
+<h3><a href="#データベース内にのみファイル情報を作成" name="データベース内にのみファイル情報を作成" class="anchor"><span class="anchor-link"></span></a>データベース内にのみファイル情報を作成</h3>
+<p>AWS S3上にファイルをアップロードせず、データベース内にのみファイル情報を作成したい場合は、<code>addViaPresignedUrl</code>メソッドを使用します。</p>
+<p>このメソッドはデータベース内にのみファイル情報を作成し、AWS S3上にファイルをアップロードするための署名付きURLを返します。 AWS S3上へはこのメソッドを呼び出した後、指定されたURL経由でファイルをアップロードします。</p>
+<pre class="prettyprint"><code class="language-scala">val file = new File(...).toWithNoId
+val presignedUrlFuture: Future[(File.Id, String)] = s3Repo.addViaPresignedUrl(file)
+</code></pre>
+<h2><a href="#ファイルの更新" name="ファイルの更新" class="anchor"><span class="anchor-link"></span></a>ファイルの更新</h2>
+<p>AmazonS3Repositoryの<code>update(file: EntityEmbeddedId, content: java.io.File)</code>メソッドを使用して、既存のファイルを更新します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val file = new File(...).toEmbeddedId
+val content = new java.io.File(&quot;path/to/your/file&quot;)
+val updatedFileOptFuture = s3Repo.update(file, content)
+</code></pre>
+<p>このコードは、指定したファイル情報と内容で既存のファイルを非同期に更新します。結果は<code>Future[Option[EntityEmbeddedId]]</code>型で返され、更新したファイルを含むOption、見つからなかった場合はNoneを含むFutureを返します。</p>
+<h3><a href="#データベース内にのみファイル情報を更新" name="データベース内にのみファイル情報を更新" class="anchor"><span class="anchor-link"></span></a>データベース内にのみファイル情報を更新</h3>
+<p>AWS S3上のファイルを更新せず、データベース内にのみファイル情報を更新したい場合は、<code>updateViaPresignedUrl</code>メソッドを使用します。</p>
+<p>このメソッドはデータベース内にのみファイル情報を更新し、AWS S3上にファイルをアップロードするための署名付きURLを返します。 AWS S3上へはこのメソッドを呼び出した後、指定されたURL経由でファイルをアップロードします。</p>
+<pre class="prettyprint"><code class="language-scala">val file = new File(...).toEmbeddedId
+val presignedUrlFuture: Future[(Option[EntityEmbeddedId], String)] = s3Repo.updateViaPresignedUrl(file)
+</code></pre>
+<h2><a href="#ファイルの削除" name="ファイルの削除" class="anchor"><span class="anchor-link"></span></a>ファイルの削除</h2>
+<p>AmazonS3Repositoryの<code>erase(id: File.Id)</code>メソッドを使用して、既存のファイルを削除します。以下にその使用例を示します。</p>
+<pre class="prettyprint"><code class="language-scala">val fileId = File.Id(1L)
+val erasedFileOptFuture = s3Repo.erase(fileId)
+</code></pre>
+<p>このコードは、指定したIDのファイルを非同期に削除します。結果は<code>Future[Option[EntityEmbeddedId]]</code>型で返され、削除したファイルを含むOption、見つからなかった場合はNoneを含むFutureを返します。</p>
+<p><code>erase</code>メソッドはデータベース内のファイル情報を削除しつつ、AWS S3上のファイルも削除します。</p>
+<p>データベース内のファイル情報のみを削除したい場合は、<code>remove</code>メソッドを使用します。</p>
+<pre class="prettyprint"><code class="language-scala">val fileId = File.Id(1L)
+val removedFileOptFuture = s3Repo.remove(fileId)
+</code></pre>
+<h3><a href="#一括削除" name="一括削除" class="anchor"><span class="anchor-link"></span></a>一括削除</h3>
+<p>AmazonS3Repositoryの<code>bulkRemove</code>メソッド、<code>bulkErase</code>メソッドを使用して、複数のファイルを一括で削除します。以下にその使用例を示します。</p>
+<p><code>bulkRemove</code>はデータベース内のファイル情報のみを削除し、AWS S3上のファイルは削除しません。</p>
+<pre class="prettyprint"><code class="language-scala">val fileIds = Seq(File.Id(1L), File.Id(2L), File.Id(3L))
+val removedFilesOptFuture = s3Repo.bulkRemove(fileIds)
+</code></pre>
+<p><code>bulkErase</code>はデータベース内のファイル情報とAWS S3上のファイルを削除します。</p>
+<pre class="prettyprint"><code class="language-scala">val fileIds = Seq(File.Id(1L), File.Id(2L), File.Id(3L))
+val erasedFilesOptFuture = s3Repo.bulkErase(fileIds)
+</code></pre>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/nextbeat-dev/ixias/tree/v2.3.0/docs/target/mdoc/06-Image-Resource.md">here</a>.
+</div>
+
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="06-Image-Resource.html#image-resource" class="header">Image Resource</a>
+  <ul>
+    <li><a href="06-Image-Resource.html#ファイルの取得" class="header">ファイルの取得</a></li>
+    <li><a href="06-Image-Resource.html#ファイルの作成" class="header">ファイルの作成</a></li>
+    <li><a href="06-Image-Resource.html#ファイルの更新" class="header">ファイルの更新</a></li>
+    <li><a href="06-Image-Resource.html#ファイルの削除" class="header">ファイルの削除</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2024</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '2.3.0', 'https://nextbeat-dev.github.io/ixias/')});</script>
+
+
+</html>
