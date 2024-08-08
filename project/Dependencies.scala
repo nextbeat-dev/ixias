@@ -15,6 +15,7 @@ object Dependencies {
   val connectorJava = "com.mysql" % "mysql-connector-j" % "8.3.0"
 
   val shapeless = "com.chuusai" %% "shapeless" % "2.3.10"
+  val shapeless3 = "org.typelevel" %% "shapeless3-deriving" % "3.4.0"
 
   val typesafeConfig = "com.typesafe" % "config" % "1.4.3"
 
