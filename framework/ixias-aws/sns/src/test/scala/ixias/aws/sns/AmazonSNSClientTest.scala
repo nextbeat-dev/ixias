@@ -2,7 +2,7 @@ package ixias.aws.sns
 
 import munit.FunSuite
 
-import com.amazonaws.services.sns.model.MessageAttributeValue
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue
 
 class AmazonSNSClientTest extends FunSuite {
 
@@ -13,9 +13,7 @@ class AmazonSNSClientTest extends FunSuite {
   }
 
   test("Testing the AmazonSNSClient publish with subscription filter Success") {
-    val messageAttributeValue = new MessageAttributeValue()
-    messageAttributeValue.setDataType("Number")
-    messageAttributeValue.setStringValue("1")
+    val messageAttributeValue = MessageAttributeValue.builder().dataType("Number").stringValue("1").build()
     assertEquals(client.publish("hogehgoe", Map("key" -> messageAttributeValue)).isSuccess, true)
   }
 }

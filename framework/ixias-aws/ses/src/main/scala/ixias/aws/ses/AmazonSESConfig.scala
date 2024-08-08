@@ -1,7 +1,6 @@
 package ixias.aws.ses
 
-import com.amazonaws.regions.Regions
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration
+import java.net.URI
 
 import ixias.aws._
 
@@ -13,8 +12,6 @@ trait AmazonSESConfig extends AmazonConfig {
 
   // --[ Methods ]--------------------------------------------------------------
   /** Gets the AWS Endpoint */
-  protected def getAWSEndpoint(region: Regions)(implicit dsn: DataSourceName): Option[EndpointConfiguration] =
-    readValue(_.get[Option[String]](SES_ENDPOINT)).map(
-      new EndpointConfiguration(_, region.getName)
-    )
+  protected def getAWSEndpoint()(implicit dsn: DataSourceName): Option[URI] =
+    readValue(_.get[Option[String]](SES_ENDPOINT)).map(URI.create)
 }

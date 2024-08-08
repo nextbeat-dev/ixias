@@ -8,8 +8,10 @@
 
 package ixias.aws.s3.model
 
+import java.net.{ URL, URI }
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
+
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
@@ -17,9 +19,11 @@ import ixias.util.Enum
 import ixias.aws.DataSourceName
 import ixias.aws.s3.AmazonS3Config
 
-import com.amazonaws.util.DateUtils
-import com.amazonaws.services.cloudfront.CloudFrontUrlSigner
-import com.amazonaws.services.cloudfront.util.SignerUtils._
+import software.amazon.awssdk.core.Protocol
+import software.amazon.awssdk.utils.DateUtils
+import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities
+import software.amazon.awssdk.services.cloudfront.model._
+import software.amazon.awssdk.services.cloudfront.internal.utils.SigningUtils.loadPrivateKey
 
 /** The file resource definition to provide clients with a URL to display the image
   */
@@ -77,26 +81,38 @@ object UrlSigner extends AmazonS3Config {
   implicit def toFiniteDuration(d: FiniteDuration): java.time.Duration =
     java.time.Duration.ofNanos(d.toNanos)
 
+  private def generateResourcePath(domain: String, key: String): String = {
+    val uri = new URI(Protocol.HTTPS.toString, domain, "/" + key, null)
+    uri.toASCIIString
+  }
+
   /** Generate a signed URL that allows access to distribution and S3 objects by applying access restrictions specified
     * in a custom policy document.
     */
-  def getSigendCloudFrontUrl(file: File#EmbeddedId, resize: Request)(implicit dsn: DataSourceName): java.net.URL = {
+  def getSigendCloudFrontUrl(file: File#EmbeddedId, resize: Request)(implicit dsn: DataSourceName): URL = {
     val keyPairId  = readValue(_.get[Option[String]](CF_CLOUD_FRONT_KEY_PAIR_ID)).get
     val pkFilePath = readValue(_.get[Option[String]](CF_CLOUD_FRONT_PRIVATE_KEY_FILE)).get
     val domain     = readValue(_.get[Option[String]](CF_CLOUD_FRONT_DISTRIBUTION_DOMAIN)).get
     val timeout = readValue(_.get[Option[FiniteDuration]](CF_CLOUD_FRONT_SIGNED_URL_TIMEOUT))
       .getOrElse(FiniteDuration(30, TimeUnit.MINUTES))
+    val cloudFrontUtilities = CloudFrontUtilities.create()
+
     // - Generate Signed-URL
-    val resourcePath = generateResourcePath(Protocol.https, domain, file.v.key)
-    new java.net.URL({
-      CloudFrontUrlSigner.getSignedURLWithCannedPolicy(
-        resourcePath + "?" + resize.queryString,
-        keyPairId,
-        loadPrivateKey(new java.io.File(pkFilePath)),
-        DateUtils.parseISO8601Date(
+    val resourcePath = generateResourcePath(domain, file.v.key)
+    val cannedSignerRequest = CannedSignerRequest
+      .builder()
+      .resourceUrl(resourcePath + "?" + resize.queryString)
+      .keyPairId(keyPairId)
+      .privateKey(loadPrivateKey(new java.io.File(pkFilePath).toPath))
+      .expirationDate(
+        DateUtils.parseIso8601Date(
           ZonedDateTime.now.plus(timeout).toInstant.toString
         )
       )
+      .build()
+
+    new URL({
+      cloudFrontUtilities.getSignedUrlWithCannedPolicy(cannedSignerRequest).url()
     })
   }
 }

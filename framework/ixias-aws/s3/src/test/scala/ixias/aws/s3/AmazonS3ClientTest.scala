@@ -6,7 +6,6 @@ import java.util.Date
 
 import munit.FunSuite
 
-import com.amazonaws.HttpMethod
 import ixias.aws.s3.AmazonS3Client
 
 class AmazonS3ClientTest extends FunSuite {
@@ -28,7 +27,7 @@ class AmazonS3ClientTest extends FunSuite {
 
   test("AmazonS3Client generatePreSignedUrl object Success") {
     val url =
-      s3Client.generatePreSignedUrl("dummy", "test", HttpMethod.GET, new Date(System.currentTimeMillis() + 100000L))
+      s3Client.generateGetPreSignedUrl("dummy", "test", new Date(System.currentTimeMillis() + 100000L))
     assertEquals(url.isSuccess, true)
   }
 

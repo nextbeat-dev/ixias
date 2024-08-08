@@ -50,12 +50,12 @@ object Dependencies {
 
   val munit = "org.scalameta" %% "munit" % "0.7.29" % Test
 
-  val awsSdkVersion = "1.12.671"
+  val awsSdkVersion = "2.26.30"
   object aws {
-    val core       = "com.amazonaws" % "aws-java-sdk-core"       % awsSdkVersion
-    val s3         = "com.amazonaws" % "aws-java-sdk-s3"         % awsSdkVersion
-    val sns        = "com.amazonaws" % "aws-java-sdk-sns"        % awsSdkVersion
-    val ses        = "com.amazonaws" % "aws-java-sdk-ses"        % awsSdkVersion
-    val cloudfront = "com.amazonaws" % "aws-java-sdk-cloudfront" % awsSdkVersion
+    val core       = "software.amazon.awssdk" % "aws-core"   % awsSdkVersion
+    val s3         = "software.amazon.awssdk" % "s3"         % awsSdkVersion
+    val sns        = "software.amazon.awssdk" % "sns"        % awsSdkVersion
+    val ses        = "software.amazon.awssdk" % "ses"        % awsSdkVersion
+    val cloudfront = "software.amazon.awssdk" % "cloudfront" % awsSdkVersion
   }
 }
