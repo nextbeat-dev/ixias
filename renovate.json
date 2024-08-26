@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":preserveSemverRanges"
+  ],
+  "timezone": "Asia/Tokyo",
+  "labels": ["⛓\uFE0F dependencies"],
+  "assignees": ["takapi327"],
+  "schedule": [
+    "every 12 hour after 00:00 and before 23:59 every day"
+  ],
+  "dependencyDashboard": true,
+  "automerge": false,
+  "prHourlyLimit": 0,
+  "ignoreDeps": [],
+  "ignorePaths": [],
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["major"],
+      "prCreation": "immediate",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "groupName": "aws sdk",
+      "matchPackagePatterns": ["^software.amazon.awssdk"]
+    },
+    {
+      "groupName": "specs2",
+      "matchPackagePatterns": ["^org.specs2"]
+    },
+    {
+      "groupName": "cats",
+      "matchPackagePatterns": ["^cats"]
+    },
+    {
+      "groupName": "playframework",
+      "matchPackagePatterns": ["^org.playframework"]
+    }
+  ]
+}
