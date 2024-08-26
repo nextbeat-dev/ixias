@@ -50,7 +50,7 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       slf4jApi,
       connectorJava  % Test,
       logbackClassic % Test
-    ) ++ cats ++ specs2
+    ) ++ cats
   )
 
 lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
