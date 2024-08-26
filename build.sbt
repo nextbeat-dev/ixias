@@ -47,9 +47,7 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       keyczar,
       uapScala,
       commonsCodec,
-      slf4jApi,
-      connectorJava  % Test,
-      logbackClassic % Test
+      slf4jApi
     ) ++ cats
   )
 
