@@ -41,8 +41,6 @@ object Dependencies {
     "cats-core"
   ).map("org.typelevel" %% _ % "2.10.0")
 
-  val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.5.2"
-
   val munit = "org.scalameta" %% "munit" % "0.7.29" % Test
 
   val awsSdkVersion = "2.26.30"
