@@ -34,7 +34,7 @@ object Dependencies {
 
   val twilio = "com.twilio.sdk" % "twilio-java-sdk" % "6.3.0"
 
-  val commonsEmail = "org.apache.commons" % "commons-email" % "1.5"
+  val commonsEmail = "org.apache.commons" % "commons-email" % "1.6.0"
 
   val cats: Seq[ModuleID] = Seq(
     "cats-kernel",
