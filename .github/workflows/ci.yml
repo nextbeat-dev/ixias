@@ -47,6 +47,9 @@ jobs:
           java-version: 17
           cache: sbt
 
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+
       - name: Start up LocalStack on Docker
         run: docker compose up -d
 
@@ -105,7 +108,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.12.18]
+        scala: [2.12.19]
         java: [temurin@11]
     runs-on: ${{ matrix.os }}
     steps:
@@ -129,6 +132,9 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: sbt
+
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
 
       - name: Download target directories (2.13.13)
         uses: actions/download-artifact@v4
@@ -172,6 +178,9 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: sbt
+
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
 
       - name: Scalafmt check
         run: sbt scalafmtCheckAll 'project /' scalafmtSbtCheck
