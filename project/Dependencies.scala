@@ -41,13 +41,6 @@ object Dependencies {
     "cats-core"
   ).map("org.typelevel" %% _ % "2.10.0")
 
-  val logbackClassic = "ch.qos.logback" % "logback-classic" % "1.5.2"
-
-  val specs2: Seq[ModuleID] = Seq(
-    "specs2-core",
-    "specs2-matcher-extra"
-  ).map("org.specs2" %% _ % "4.5.1" % Test)
-
   val munit = "org.scalameta" %% "munit" % "0.7.29" % Test
 
   val awsSdkVersion = "2.26.30"
