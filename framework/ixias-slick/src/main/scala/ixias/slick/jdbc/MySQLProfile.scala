@@ -179,7 +179,7 @@ trait MySQLProfile extends SlickMySQLProfile {
       new MappedJdbcType[java.time.Duration, String] with slick.ast.BaseTypedType[java.time.Duration] {
         import java.util.TimeZone
         import java.time.Duration
-        override def sqlType: Int = java.sql.Types.VARCHAR
+        override def sqlType:                        Int    = java.sql.Types.VARCHAR
         override def valueToSQLLiteral(d: Duration): String = "{ t '" + map(d) + "' }"
         override def getValue(r: java.sql.ResultSet, idx: Int): Duration = {
           val v = r.getTimestamp(idx)
