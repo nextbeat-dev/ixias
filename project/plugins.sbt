@@ -5,7 +5,7 @@
  *  please view the LICENSE file that was distributed with this source code.
  */
 
-addSbtPlugin("com.github.gseitz"  % "sbt-release"        % "1.0.7")
+addSbtPlugin("com.github.gseitz"  % "sbt-release"        % "1.0.13")
 addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.19.0")
 addSbtPlugin("com.github.sbt"     % "sbt-github-actions" % "0.23.0")
 addSbtPlugin("com.github.sbt"     % "sbt-site-paradox"   % "1.5.0")
