@@ -19,10 +19,10 @@ import scala.util.Try
   * Public-Key Cryptography Standards (PKCS) series, specifically PKCS #5 v2.0,
   */
 sealed case class PBKDF2Data(
-  val algo:       String,
-  val salt:       Array[Byte],
-  val hash:       Array[Byte],
-  val iterations: Int
+  algo:       String,
+  salt:       Array[Byte],
+  hash:       Array[Byte],
+  iterations: Int
 )
 
 object PBKDF2 {
@@ -40,12 +40,10 @@ object PBKDF2 {
   /** Compares a given hash with a cleantext password. Also extracts the salt from the hash. */
   def compare(input: String, hash: String): Boolean =
     internals
-      .decode(hash)
-      .map {
+      .decode(hash).exists {
         case PBKDF2Data(algo, salt, hash, iterations) =>
           internals.compare(hash, internals.hash(input, salt, iterations, hash.length, algo))
       }
-      .getOrElse(false)
 
   /** Uses PBKDF2 and random salt generation to create a hash based on some input.
     *
@@ -90,7 +88,7 @@ object PBKDF2 {
   private object internals {
 
     /** The random number of iterations from a hash/salt-combination */
-    val iterations = (new Random()).nextInt(HASH_ITERATIONS_MAX - HASH_ITERATIONS_MIN) + HASH_ITERATIONS_MIN
+    val iterations: Int = (new Random()).nextInt(HASH_ITERATIONS_MAX - HASH_ITERATIONS_MIN) + HASH_ITERATIONS_MIN
 
     /** The random salt which is hashed together with the text as string */
     val salt: Array[Byte] = {
@@ -108,12 +106,11 @@ object PBKDF2 {
 
       // Calaculate hash value.
       val range = 1 to (length.toFloat / 20).ceil.toInt
-      range.iterator
-        .map(size => {
-          var loop  = 1
+      range.iterator.flatMap(size => {
+          var loop = 1
           val hmac1 = mac.doFinal(salt ++ bytes(size))
-          var hmac  = hmac1
-          val buff  = IntBuffer.allocate(hmac1.length / 4).put(ByteBuffer.wrap(hmac1).asIntBuffer).array.clone
+          var hmac = hmac1
+          val buff = IntBuffer.allocate(hmac1.length / 4).put(ByteBuffer.wrap(hmac1).asIntBuffer).array.clone
           while (loop < iterations) {
             hmac = mac.doFinal(hmac)
             xor(buff, hmac)
@@ -123,7 +120,6 @@ object PBKDF2 {
           r.asIntBuffer.put(buff)
           r.array
         })
-        .flatten
         .take(length)
         .toArray
     }
@@ -170,13 +166,13 @@ object PBKDF2 {
       Base64.getEncoder.withoutPadding.encodeToString(b).replace("+", ".")
 
     /** converto digital number to bytes data. */
-    def bytes(i: Int) = ByteBuffer.allocate(4).putInt(i).array
+    def bytes(i: Int): Array[Byte] = ByteBuffer.allocate(4).putInt(i).array
 
     /** Performs a logical XOR of this bit set with the bit set argument. */
     def xor(buff: Array[Int], a2: Array[Byte]): Unit = {
       var pos = 0
       val b2  = ByteBuffer.wrap(a2).asIntBuffer
-      val len = buff.array.size
+      val len = buff.array.length
       while (pos < len) {
         buff(pos) ^= b2.get(pos);
         pos += 1
