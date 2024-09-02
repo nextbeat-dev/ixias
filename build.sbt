@@ -47,7 +47,8 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       keyczar,
       uapScala,
       commonsCodec,
-      slf4jApi
+      slf4jApi,
+      munit
     ) ++ cats
   )
 
@@ -98,7 +99,7 @@ lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-c
   .dependsOn(ixiasCore)
 
 lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-auth")
-  .settings(libraryDependencies += play)
+  .settings(libraryDependencies ++= Seq(play, munit))
   .dependsOn(ixiasCore, ixiasPlayCore)
 
 lazy val docs = (project in file("docs"))

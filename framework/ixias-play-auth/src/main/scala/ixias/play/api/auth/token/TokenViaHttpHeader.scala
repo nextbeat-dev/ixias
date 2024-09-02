@@ -10,11 +10,11 @@ package ixias.play.api.auth.token
 
 import play.api.mvc.{ RequestHeader, Result }
 
-case class TokenViaHttpHeader(val name: String) extends Token {
+case class TokenViaHttpHeader(name: String) extends Token {
   import Token._
 
   // The configuration
-  def headerName = config.get[String](s"session.${ name }.headerName")
+  def headerName: String = config.get[String](s"session.$name.headerName")
 
   /** Put a specified security token to HTTP-Headers.
     */

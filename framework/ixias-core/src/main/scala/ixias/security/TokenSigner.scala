@@ -35,12 +35,15 @@ case class TokenSigner(reader: KeyczarReader) {
   def verify(signedToken: String): Try[String] =
     Try {
       val (signature, token) = signedToken.splitAt(signer.digestSize * 2)
-      signer.verify(
-        StringUtils.getBytesUsAscii(token),
-        Hex.decodeHex(signature.toCharArray)
-      ) match {
-        case true  => token
-        case false => throw new java.security.SignatureException
+      if (
+        signer.verify(
+          StringUtils.getBytesUsAscii(token),
+          Hex.decodeHex(signature.toCharArray)
+        )
+      ) {
+        token
+      } else {
+        throw new java.security.SignatureException
       }
     }
 }
@@ -50,7 +53,7 @@ case class TokenSigner(reader: KeyczarReader) {
 object TokenSigner {
 
   /** Creates a TokenSigner. */
-  def apply() = {
+  def apply(): TokenSigner = {
     val config = ConfigFactory.load()
     val secret = config.getString("session.token.secret")
     new TokenSigner(HmacKeyReader(new HmacKey(DigestUtils.sha256(secret))))
