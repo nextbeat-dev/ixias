@@ -13,20 +13,20 @@ import play.api.mvc.Cookie.SameSite
 import java.time.Duration
 import ixias.util.ConfigLoader
 
-case class TokenViaSession(val name: String) extends Token {
+case class TokenViaSession(name: String) extends Token {
   import Token._
 
   private implicit val sameSiteConfigLoader: ConfigLoader[Option[SameSite]] =
     ConfigLoader(_.getString).map(SameSite.parse)
 
   // The configuration
-  def cookieName = config.get[String](s"session.${ name }.cookieName")
-  def maxAge     = config.get[Option[Duration]](s"session.${ name }.maxAge")
-  def path       = config.get[String](s"session.${ name }.path")
-  def domain     = config.get[Option[String]](s"session.${ name }.domain")
-  def secure     = config.get[Boolean](s"session.${ name }.secure")
-  def httpOnly   = config.get[Boolean](s"session.${ name }.httpOnly")
-  def sameSite   = config.get[Option[SameSite]](s"session.${ name }.sameSite")
+  def cookieName: String = config.get[String](s"session.$name.cookieName")
+  def maxAge: Option[Duration]     = config.get[Option[Duration]](s"session.$name.maxAge")
+  def path: String       = config.get[String](s"session.$name.path")
+  def domain: Option[String]     = config.get[Option[String]](s"session.$name.domain")
+  def secure: Boolean     = config.get[Boolean](s"session.$name.secure")
+  def httpOnly: Boolean   = config.get[Boolean](s"session.$name.httpOnly")
+  def sameSite: Option[SameSite]   = config.get[Option[SameSite]](s"session.$name.sameSite")
 
   /** Put a specified security token to storage.
     */

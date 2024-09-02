@@ -20,7 +20,7 @@ trait Token {
   import Token._
 
   /** The configuration */
-  protected val config = Configuration()
+  protected val config: Configuration = Configuration()
 
   /** Put a specified security token to storage */
   def put(token: AuthenticityToken)(result: Result)(implicit request: RequestHeader): Result
@@ -47,11 +47,11 @@ object Token extends Logging {
   val AuthenticityToken = the[Identity[AuthenticityToken]]
 
   /** The object that provides some cryptographic operations */
-  protected lazy val signer = TokenSigner()
+  protected lazy val signer: TokenSigner = TokenSigner()
 
   /** Verifies a given HMAC on a piece of data */
   final def verifyHMAC(signedToken: SignedToken): Option[AuthenticityToken] =
-    signer.verify(SignedToken.unwrap(signedToken)) match {
+    signer.verify(SignedToken.unwrap(signedToken).toString) match {
       case scala.util.Success(v) => Some(AuthenticityToken(v))
       case scala.util.Failure(ex) => {
         logger.warn("Token's HMAC verification failed. %s", ex)
