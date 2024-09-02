@@ -40,7 +40,8 @@ object PBKDF2 {
   /** Compares a given hash with a cleantext password. Also extracts the salt from the hash. */
   def compare(input: String, hash: String): Boolean =
     internals
-      .decode(hash).exists {
+      .decode(hash)
+      .exists {
         case PBKDF2Data(algo, salt, hash, iterations) =>
           internals.compare(hash, internals.hash(input, salt, iterations, hash.length, algo))
       }
@@ -106,11 +107,12 @@ object PBKDF2 {
 
       // Calaculate hash value.
       val range = 1 to (length.toFloat / 20).ceil.toInt
-      range.iterator.flatMap(size => {
-          var loop = 1
+      range.iterator
+        .flatMap(size => {
+          var loop  = 1
           val hmac1 = mac.doFinal(salt ++ bytes(size))
-          var hmac = hmac1
-          val buff = IntBuffer.allocate(hmac1.length / 4).put(ByteBuffer.wrap(hmac1).asIntBuffer).array.clone
+          var hmac  = hmac1
+          val buff  = IntBuffer.allocate(hmac1.length / 4).put(ByteBuffer.wrap(hmac1).asIntBuffer).array.clone
           while (loop < iterations) {
             hmac = mac.doFinal(hmac)
             xor(buff, hmac)

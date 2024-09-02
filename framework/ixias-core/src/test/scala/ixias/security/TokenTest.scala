@@ -11,14 +11,14 @@ class TokenTest extends FunSuite {
 
   test("RandomPINCode should generate a token of the correct length") {
     val length = 6
-    val token = RandomPINCode.next(length)
+    val token  = RandomPINCode.next(length)
     assertEquals(token.length, length)
     assert(token.forall(_.isDigit))
   }
 
   test("RandomStringToken should generate a token of the correct length") {
     val length = 10
-    val token = RandomStringToken.next(length)
+    val token  = RandomStringToken.next(length)
     assertEquals(token.length, length)
     assert(token.forall(_.isLetterOrDigit))
   }

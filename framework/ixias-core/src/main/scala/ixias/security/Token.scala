@@ -19,8 +19,8 @@ trait Token {
   def next(length: Int): String = generator.next(length)
 
   /** Do not change this unless you understand the security issues behind timing attacks. This method intentionally runs
-   * in constant time if the two strings have the same length.
-   */
+    * in constant time if the two strings have the same length.
+    */
   final def safeEquals(a: String, b: String): Boolean = {
     if (a.length != b.length) {
       false

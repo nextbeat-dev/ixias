@@ -35,10 +35,12 @@ case class TokenSigner(reader: KeyczarReader) {
   def verify(signedToken: String): Try[String] =
     Try {
       val (signature, token) = signedToken.splitAt(signer.digestSize * 2)
-      if (signer.verify(
-        StringUtils.getBytesUsAscii(token),
-        Hex.decodeHex(signature.toCharArray)
-      )) {
+      if (
+        signer.verify(
+          StringUtils.getBytesUsAscii(token),
+          Hex.decodeHex(signature.toCharArray)
+        )
+      ) {
         token
       } else {
         throw new java.security.SignatureException

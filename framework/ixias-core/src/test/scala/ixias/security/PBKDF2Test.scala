@@ -5,7 +5,7 @@ import munit.FunSuite
 class PBKDF2Test extends FunSuite {
 
   val password: String = "test-password"
-  val hash: String = PBKDF2.hash(password)
+  val hash:     String = PBKDF2.hash(password)
 
   test("PBKDF2 should produce a consistent hash for the same input") {
     val hash2 = PBKDF2.hash(password, PBKDF2.extractSalt(hash).get, PBKDF2.extractIterations(hash).get)
