@@ -21,5 +21,5 @@ case class TokenGenerator(
   /** Generate a new token as string
     */
   final def next(length: Int): String =
-    Iterator.continually(random.nextInt(table.size)).map(table).take(length).mkString
+    Iterator.continually(random.nextInt(table.length)).map(table).take(length).mkString
 }
