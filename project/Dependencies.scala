@@ -18,7 +18,7 @@ object Dependencies {
 
   val typesafeConfig = "com.typesafe" % "config" % "1.4.3"
 
-  val slick = "com.typesafe.slick" %% "slick" % "3.5.1"
+  val slick = "com.typesafe.slick" %% "slick" % "3.5.2"
 
   val hikariCP = "com.zaxxer" % "HikariCP" % "5.1.0"
 
