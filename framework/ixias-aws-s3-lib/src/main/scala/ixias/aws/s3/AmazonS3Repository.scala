@@ -37,8 +37,8 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
   private def genPreSignedUrlForAccess(file: File.EmbeddedId): Future[java.net.URL] =
     Future.fromTry(client.generateGetPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForGet))
 
-  private def genPreSignedUrlForUpload(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.generateUploadPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForPut))
+  private def genPreSignedUrlForUpload(file: File): Future[java.net.URL] =
+    Future.fromTry(client.generateUploadPreSignedUrl(file.bucket, file.key, getPresignedUrlTimeoutForPut))
 
   /** Get file object with a pre-signed URL for accessing an Amazon S3 resource.
     */
