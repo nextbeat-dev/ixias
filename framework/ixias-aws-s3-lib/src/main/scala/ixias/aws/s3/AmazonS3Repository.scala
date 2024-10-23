@@ -34,8 +34,8 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
   def get(id: File.Id): Future[Option[EntityEmbeddedId]] =
     slave.run[Option[File]](fileTable.filter(_.id === id).result.headOption)
 
-  private def genPreSignedUrlForAccess(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.generateGetPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForGet))
+  private def genPreSignedUrlForAccess(file: File): Future[java.net.URL] =
+    Future.fromTry(client.generateGetPreSignedUrl(file.bucket, file.key, getPresignedUrlTimeoutForGet))
 
   private def genPreSignedUrlForUpload(file: File): Future[java.net.URL] =
     Future.fromTry(client.generateUploadPreSignedUrl(file.bucket, file.key, getPresignedUrlTimeoutForPut))
