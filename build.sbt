@@ -89,7 +89,7 @@ lazy val ixiasAwsSes = IxiaSProject("ixias-aws-ses", "framework/ixias-aws/ses")
   .dependsOn(ixiasAws)
 
 lazy val ixiasAwsS3Lib = IxiaSProject("ixias-aws-s3-lib", "framework/ixias-aws-s3-lib")
-  .settings(libraryDependencies += aws.cloudfront)
+  .settings(libraryDependencies ++= Seq(aws.cloudfront, munit, connectorJava % Test))
   .dependsOn(ixiasSlick, ixiasAwsS3)
 
 // IxiaS Play Libraries
