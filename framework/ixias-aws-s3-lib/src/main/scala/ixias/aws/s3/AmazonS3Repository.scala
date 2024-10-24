@@ -26,7 +26,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
   def master: Database
   def slave:  Database
 
-  protected val client: AmazonS3Client = AmazonS3Client(dsn)
+  protected lazy val client: AmazonS3Client = AmazonS3Client(dsn)
 
   // --[ Methods ]--------------------------------------------------------------
   /** Get file object.
