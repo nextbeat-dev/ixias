@@ -50,7 +50,7 @@ jobs:
       - name: Setup sbt
         uses: sbt/setup-sbt@v1
 
-      - name: Start up LocalStack and MySQL on Docker
+      - name: Start up LocalStack on Docker
         run: docker compose up -d
 
       - name: Wait for LocalStack to start
@@ -96,7 +96,7 @@ jobs:
       - name: Build project
         run: sbt '++ ${{ matrix.scala }}' test
 
-      - name: Stop LocalStack and MySQL on Docker
+      - name: Stop LocalStack on Docker
         run: docker compose down
 
       - name: Compress target directories
