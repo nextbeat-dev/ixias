@@ -52,11 +52,11 @@ object Workflows {
 
   val dockerRun: WorkflowStep.Run = WorkflowStep.Run(
     commands = List("docker compose up -d"),
-    name     = Some("Start up LocalStack on Docker")
+    name     = Some("Start up LocalStack and MySQL on Docker")
   )
 
   val dockerStop: WorkflowStep.Run = WorkflowStep.Run(
     commands = List("docker compose down"),
-    name     = Some("Stop LocalStack on Docker")
+    name     = Some("Stop LocalStack and MySQL on Docker")
   )
 }
