@@ -13,7 +13,14 @@ import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
-ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun, waitForLocalStackContainerStart, waitForMySQLContainerStart, settingsSns, settingsS3, settingsSES)
+ThisBuild / githubWorkflowBuildPreamble ++= List(
+  dockerRun,
+  waitForLocalStackContainerStart,
+  waitForMySQLContainerStart,
+  settingsSns,
+  settingsS3,
+  settingsSES
+)
 ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
