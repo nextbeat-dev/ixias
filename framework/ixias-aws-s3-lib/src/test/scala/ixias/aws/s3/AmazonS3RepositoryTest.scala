@@ -30,8 +30,8 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
   hikariConfigSlave.validate()
   val dataSourceSlave = new HikariDataSource(hikariConfigSlave)
   // Database
-  val master = DatabaseBuilder.fromHikariDataSource(dataSourceMaster)
-  val slave  = DatabaseBuilder.fromHikariDataSource(dataSourceSlave)
+  override val master = DatabaseBuilder.fromHikariDataSource(dataSourceMaster)
+  override val slave  = DatabaseBuilder.fromHikariDataSource(dataSourceSlave)
 
   // --[ Properties ]---------------------------------------------------------------
   implicit def ec:  ExecutionContext = ExecutionContext.global
@@ -89,7 +89,7 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
     assert(oldFileOpt.isDefined)
 
     val updatedFile = oldFileOpt.get.map(_.copy(typedef = jpeg))
-    val _oldFileOpt = await(update(updatedFile, localFile))
+    await(update(updatedFile, localFile))
 
     val updatedFileOpt = await(get(fileId))
     assert(updatedFileOpt.fold(false)(_.v.typedef == jpeg))
@@ -116,7 +116,7 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
     assert(oldFileOpt.isDefined)
 
     val updatedFile = oldFileOpt.get.map(_.copy(imageSize = imageSize))
-    val _oldFileOpt = await(update(updatedFile, localFile))
+    await(update(updatedFile, localFile))
 
     val updatedFileOpt = await(get(fileId))
     assert(updatedFileOpt.fold(false)(_.v.imageSize == imageSize))
