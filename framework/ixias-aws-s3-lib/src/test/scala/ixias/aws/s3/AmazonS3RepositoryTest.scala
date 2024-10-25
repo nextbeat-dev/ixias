@@ -1,5 +1,6 @@
 package ixias.aws.s3
 
+import java.nio.file.Paths
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 
@@ -8,8 +9,6 @@ import munit.FunSuite
 
 import ixias.slick.builder.{ DatabaseBuilder, HikariConfigBuilder }
 import ixias.aws.s3.model.File
-
-import java.nio.file.Paths
 
 /** Before running the tests, create an S3 bucket in LocalStack. */
 class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
@@ -23,16 +22,16 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
   val hikariConfigBuilderMaster = HikariConfigBuilder.default(dataSourceNameMaster)
   val hikariConfigMaster        = hikariConfigBuilderMaster.build()
   hikariConfigMaster.validate()
-  val dataSourceMaster          = new HikariDataSource(hikariConfigMaster)
+  val dataSourceMaster = new HikariDataSource(hikariConfigMaster)
   // slave
   val dataSourceNameSlave      = ixias.slick.model.DataSourceName("aws.s3://slave/dummy_bucket")
   val hikariConfigBuilderSlave = HikariConfigBuilder.default(dataSourceNameSlave)
   val hikariConfigSlave        = hikariConfigBuilderSlave.build()
   hikariConfigSlave.validate()
-  val dataSourceSlave          = new HikariDataSource(hikariConfigSlave)
+  val dataSourceSlave = new HikariDataSource(hikariConfigSlave)
   // Database
-  val master                   = DatabaseBuilder.fromHikariDataSource(dataSourceMaster)
-  val slave                    = DatabaseBuilder.fromHikariDataSource(dataSourceSlave)
+  val master = DatabaseBuilder.fromHikariDataSource(dataSourceMaster)
+  val slave  = DatabaseBuilder.fromHikariDataSource(dataSourceSlave)
 
   // --[ Properties ]---------------------------------------------------------------
   implicit def ec:  ExecutionContext = ExecutionContext.global
@@ -43,8 +42,9 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
   private val currentPath = path.toAbsolutePath
   private val localFile   = new java.io.File(s"$currentPath/src/test/resources/file/Test.txt")
 
-  private val fileWithNoId: File#WithNoId = File("key", "iamge/png", None).getOrElse(throw new Exception("Failed to create a File object."))
-  private var fileId:       File.Id       = File.Id(0L)
+  private val fileWithNoId: File#WithNoId =
+    File("key", "iamge/png", None).getOrElse(throw new Exception("Failed to create a File object."))
+  private var fileId: File.Id = File.Id(0L)
 
   // --[ Test ]--------------------------------------------------------------------
   test("AmazonS3Repository add Success") {
