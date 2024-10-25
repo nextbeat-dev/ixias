@@ -12,7 +12,6 @@ import ixias.aws.s3.model.File
 import java.nio.file.Paths
 
 /** Before running the tests, create an S3 bucket in LocalStack. */
-@munit.IgnoreSuite
 class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
 
   // --[ Utility ]-----------------------------------------------------------------
