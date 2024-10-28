@@ -50,13 +50,20 @@ jobs:
       - name: Setup sbt
         uses: sbt/setup-sbt@v1
 
-      - name: Start up LocalStack on Docker
+      - name: Start up LocalStack and MySQL on Docker
         run: docker compose up -d
 
       - name: Wait for LocalStack to start
         run: |
           set -x
           until [ "$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)" = 'healthy' ]; do
+            sleep 10s
+          done
+
+      - name: Wait for MySQL to start
+        run: |
+          set -x
+          until [ "$(docker inspect --format='{{.State.Health.Status}}' mysql_ixias)" = 'healthy' ]; do
             sleep 10s
           done
 
@@ -89,7 +96,7 @@ jobs:
       - name: Build project
         run: sbt '++ ${{ matrix.scala }}' test
 
-      - name: Stop LocalStack on Docker
+      - name: Stop LocalStack and MySQL on Docker
         run: docker compose down
 
       - name: Compress target directories

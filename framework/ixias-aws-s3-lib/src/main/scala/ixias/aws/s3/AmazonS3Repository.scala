@@ -26,7 +26,7 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
   def master: Database
   def slave:  Database
 
-  protected val client: AmazonS3Client = AmazonS3Client(dsn)
+  protected lazy val client: AmazonS3Client = AmazonS3Client(dsn)
 
   // --[ Methods ]--------------------------------------------------------------
   /** Get file object.
@@ -34,11 +34,11 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
   def get(id: File.Id): Future[Option[EntityEmbeddedId]] =
     slave.run[Option[File]](fileTable.filter(_.id === id).result.headOption)
 
-  private def genPreSignedUrlForAccess(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.generateGetPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForGet))
+  private def genPreSignedUrlForAccess(file: File): Future[java.net.URL] =
+    Future.fromTry(client.generateGetPreSignedUrl(file.bucket, file.key, getPresignedUrlTimeoutForGet))
 
-  private def genPreSignedUrlForUpload(file: File.EmbeddedId): Future[java.net.URL] =
-    Future.fromTry(client.generateUploadPreSignedUrl(file.v.bucket, file.v.key, getPresignedUrlTimeoutForPut))
+  private def genPreSignedUrlForUpload(file: File): Future[java.net.URL] =
+    Future.fromTry(client.generateUploadPreSignedUrl(file.bucket, file.key, getPresignedUrlTimeoutForPut))
 
   /** Get file object with a pre-signed URL for accessing an Amazon S3 resource.
     */

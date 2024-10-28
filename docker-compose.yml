@@ -16,6 +16,24 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  mysql:
+    container_name: "${MYSQL_CONTAINER_NAME:-mysql_ixias}"
+    image: mysql:8.0
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: "${TZ:-Asia/Tokyo}"
+    ports:
+      - '3006:3306'
+    volumes:
+      - ./database/data:/docker-entrypoint-initdb.d
+      - ./database/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+
 networks:
   container-link:
     name: docker.internal

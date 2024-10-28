@@ -30,7 +30,7 @@ object Workflows {
     name = Some("Create SES object")
   )
 
-  val waitForContainerStart: WorkflowStep.Run = WorkflowStep.Run(
+  val waitForLocalStackContainerStart: WorkflowStep.Run = WorkflowStep.Run(
     commands = List(
       "set -x",
       "until [ \"$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)\" = 'healthy' ]; do",
@@ -40,13 +40,23 @@ object Workflows {
     name = Some("Wait for LocalStack to start")
   )
 
+  val waitForMySQLContainerStart: WorkflowStep.Run = WorkflowStep.Run(
+    commands = List(
+      "set -x",
+      "until [ \"$(docker inspect --format='{{.State.Health.Status}}' mysql_ixias)\" = 'healthy' ]; do",
+      "  sleep 10s",
+      "done"
+    ),
+    name = Some("Wait for MySQL to start")
+  )
+
   val dockerRun: WorkflowStep.Run = WorkflowStep.Run(
     commands = List("docker compose up -d"),
-    name     = Some("Start up LocalStack on Docker")
+    name     = Some("Start up LocalStack and MySQL on Docker")
   )
 
   val dockerStop: WorkflowStep.Run = WorkflowStep.Run(
     commands = List("docker compose down"),
-    name     = Some("Stop LocalStack on Docker")
+    name     = Some("Stop LocalStack and MySQL on Docker")
   )
 }

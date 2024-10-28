@@ -13,7 +13,14 @@ import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
-ThisBuild / githubWorkflowBuildPreamble ++= List(dockerRun, waitForContainerStart, settingsSns, settingsS3, settingsSES)
+ThisBuild / githubWorkflowBuildPreamble ++= List(
+  dockerRun,
+  waitForLocalStackContainerStart,
+  waitForMySQLContainerStart,
+  settingsSns,
+  settingsS3,
+  settingsSES
+)
 ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
@@ -89,7 +96,7 @@ lazy val ixiasAwsSes = IxiaSProject("ixias-aws-ses", "framework/ixias-aws/ses")
   .dependsOn(ixiasAws)
 
 lazy val ixiasAwsS3Lib = IxiaSProject("ixias-aws-s3-lib", "framework/ixias-aws-s3-lib")
-  .settings(libraryDependencies += aws.cloudfront)
+  .settings(libraryDependencies ++= Seq(aws.cloudfront, munit, connectorJava % Test))
   .dependsOn(ixiasSlick, ixiasAwsS3)
 
 // IxiaS Play Libraries
