@@ -188,7 +188,10 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
 }
 
 case class DBConfReader(dsn: ixias.slick.model.DataSourceName) extends DatabaseConfigReader {
-  lazy val URL:  String = readValue(_.get[Option[String]]("jdbc_url"))(dsn).getOrElse(throw new IllegalArgumentException("No JDBC URL is set."))
-  lazy val USER: String = getUserName(dsn).getOrElse(throw new IllegalArgumentException("No database user name is set."))
-  lazy val PASS: String = getPassword(dsn).getOrElse(throw new IllegalArgumentException("No database password is set."))
+  lazy val URL: String = readValue(_.get[Option[String]]("jdbc_url"))(dsn)
+    .getOrElse(throw new IllegalArgumentException("No JDBC URL is set."))
+  lazy val USER: String = getUserName(dsn)
+    .getOrElse(throw new IllegalArgumentException("No database user name is set."))
+  lazy val PASS: String = getPassword(dsn)
+    .getOrElse(throw new IllegalArgumentException("No database password is set."))
 }
