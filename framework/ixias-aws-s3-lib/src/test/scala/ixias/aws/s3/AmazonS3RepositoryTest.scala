@@ -4,10 +4,11 @@ import java.nio.file.Paths
 import scala.concurrent.{ Await, ExecutionContext, Future }
 import scala.concurrent.duration.Duration
 
-import com.zaxxer.hikari.HikariDataSource
+import com.mysql.cj.jdbc.MysqlDataSource
 import munit.FunSuite
 
-import ixias.slick.builder.{ DatabaseBuilder, HikariConfigBuilder }
+import ixias.slick.builder.DatabaseBuilder
+import ixias.slick.reader.DatabaseConfigReader
 import ixias.aws.s3.model.File
 
 /** Before running the tests, create an S3 bucket in LocalStack. */
@@ -17,21 +18,22 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
   private def await[T](f: Future[T]): T = Await.result(f, Duration.Inf)
 
   // --[ Properties ]---------------------------------------------------------------
-  // master
-  val dataSourceNameMaster      = ixias.slick.model.DataSourceName("aws.s3://master/dummy_bucket")
-  val hikariConfigBuilderMaster = HikariConfigBuilder.default(dataSourceNameMaster)
-  val hikariConfigMaster        = hikariConfigBuilderMaster.build()
-  hikariConfigMaster.validate()
-  val dataSourceMaster = new HikariDataSource(hikariConfigMaster)
-  // slave
-  val dataSourceNameSlave      = ixias.slick.model.DataSourceName("aws.s3://slave/dummy_bucket")
-  val hikariConfigBuilderSlave = HikariConfigBuilder.default(dataSourceNameSlave)
-  val hikariConfigSlave        = hikariConfigBuilderSlave.build()
-  hikariConfigSlave.validate()
-  val dataSourceSlave = new HikariDataSource(hikariConfigSlave)
+  // Database Configuration
+  val dbConfReaderMaster = DBConfReader(ixias.slick.model.DataSourceName("aws.s3://master/dummy_bucket"))
+  val dbConfReaderSlave  = DBConfReader(ixias.slick.model.DataSourceName("aws.s3://slave/dummy_bucket"))
+  // Master
+  val mysqlDSMaster = new MysqlDataSource()
+  mysqlDSMaster.setURL(dbConfReaderMaster.URL)
+  mysqlDSMaster.setUser(dbConfReaderMaster.USER)
+  mysqlDSMaster.setPassword(dbConfReaderMaster.PASS)
+  // Slave
+  val mysqlDSSlave = new MysqlDataSource()
+  mysqlDSSlave.setURL(dbConfReaderSlave.URL)
+  mysqlDSSlave.setUser(dbConfReaderSlave.USER)
+  mysqlDSSlave.setPassword(dbConfReaderSlave.PASS)
   // Database
-  override val master = DatabaseBuilder.fromHikariDataSource(dataSourceMaster)
-  override val slave  = DatabaseBuilder.fromHikariDataSource(dataSourceSlave)
+  override val master = DatabaseBuilder.fromDataSource(mysqlDSMaster)
+  override val slave  = DatabaseBuilder.fromDataSource(mysqlDSSlave)
 
   // --[ Properties ]---------------------------------------------------------------
   implicit def ec:  ExecutionContext = ExecutionContext.global
@@ -183,4 +185,10 @@ class AmazonS3RepositoryTest extends FunSuite with AmazonS3Repository {
       assert(client.load(file.v.bucket, file.v.key).isFailure)
     }
   }
+}
+
+case class DBConfReader(dsn: ixias.slick.model.DataSourceName) extends DatabaseConfigReader {
+  lazy val URL:  String = readValue(_.get[Option[String]]("jdbc_url"))(dsn).getOrElse(throw new IllegalArgumentException("No JDBC URL is set."))
+  lazy val USER: String = getUserName(dsn).getOrElse(throw new IllegalArgumentException("No database user name is set."))
+  lazy val PASS: String = getPassword(dsn).getOrElse(throw new IllegalArgumentException("No database password is set."))
 }
