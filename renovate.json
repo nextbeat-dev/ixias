@@ -13,7 +13,7 @@
   "dependencyDashboard": true,
   "automerge": false,
   "prHourlyLimit": 0,
-  "ignoreDeps": [],
+  "ignoreDeps": ["mysql"],
   "ignorePaths": [],
   "separateMultipleMajor": true,
   "packageRules": [

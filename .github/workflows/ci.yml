@@ -54,6 +54,7 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for LocalStack to start
+        timeout-minutes: 1
         run: |
           set -x
           until [ "$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)" = 'healthy' ]; do
@@ -61,6 +62,7 @@ jobs:
           done
 
       - name: Wait for MySQL to start
+        timeout-minutes: 1
         run: |
           set -x
           until [ "$(docker inspect --format='{{.State.Health.Status}}' mysql_ixias)" = 'healthy' ]; do
