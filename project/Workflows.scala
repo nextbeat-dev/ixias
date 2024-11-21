@@ -1,3 +1,5 @@
+import scala.concurrent.duration._
+
 import sbtghactions._
 
 object Workflows {
@@ -31,6 +33,7 @@ object Workflows {
   )
 
   val waitForLocalStackContainerStart: WorkflowStep.Run = WorkflowStep.Run(
+    timeout = Some(1.minute),
     commands = List(
       "set -x",
       "until [ \"$(docker inspect --format='{{.State.Health.Status}}' localstack_ixias)\" = 'healthy' ]; do",
@@ -41,6 +44,7 @@ object Workflows {
   )
 
   val waitForMySQLContainerStart: WorkflowStep.Run = WorkflowStep.Run(
+    timeout = Some(1.minute),
     commands = List(
       "set -x",
       "until [ \"$(docker inspect --format='{{.State.Health.Status}}' mysql_ixias)\" = 'healthy' ]; do",
