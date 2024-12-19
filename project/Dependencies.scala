@@ -43,7 +43,7 @@ object Dependencies {
 
   val munit = "org.scalameta" %% "munit" % "1.0.3" % Test
 
-  val awsSdkVersion = "2.29.34"
+  val awsSdkVersion = "2.29.37"
   object aws {
     val core       = "software.amazon.awssdk" % "aws-core"   % awsSdkVersion
     val s3         = "software.amazon.awssdk" % "s3"         % awsSdkVersion
