@@ -18,7 +18,8 @@ import java.sql.{ PreparedStatement, ResultSet }
 import slick.ast.BaseTypedType
 import slick.jdbc.{ MySQLProfile => SlickMySQLProfile, JdbcType }
 
-import ixias.slick.lifted._
+import ixias.model.*
+import ixias.slick.lifted.*
 
 trait MySQLProfile extends SlickMySQLProfile {
   self =>
@@ -91,7 +92,7 @@ trait MySQLProfile extends SlickMySQLProfile {
       ctag: reflect.ClassTag[T]
     ): JdbcType[T] with BaseTypedType[T] =
       MappedColumnType.base[T, Short](
-        enum => enum.code,
+        `enum` => `enum`.code,
         code => {
           val clazz =
             Class.forName(ctag.runtimeClass.getName + "$", true, Thread.currentThread().getContextClassLoader())
@@ -123,25 +124,23 @@ trait MySQLProfile extends SlickMySQLProfile {
     }
 
     // --[ Ixias Id ]-------------------------------------------------------------
-    // Long <-> ixias.model.@@[Long, _]
-    implicit def ixiasIdAsLongColumnType[T <: ixias.model.@@[Long, _]](implicit
-      ctag: reflect.ClassTag[T]
-    ): JdbcType[T] with BaseTypedType[T] = {
-      val Id = ixias.model.the[ixias.model.Identity[T]]
+    // Long <-> EntityId.IdLong
+    implicit def ixiasIdAsLongColumnType[T <: EntityId.IdLong](implicit
+                                         ctag: reflect.ClassTag[T]
+                                        ): JdbcType[T] with BaseTypedType[T] = {
       MappedColumnType.base[T, Long](
-        id => id.asInstanceOf[Long],
-        value => Id(value.asInstanceOf[T])
+        id => id.toLong,
+        value => EntityId.IdLong(value).asInstanceOf[T]
       )
     }
 
-    // String <-> ixias.model.@@[String, _]
-    implicit def ixiasIdAsStringColumnType[T <: ixias.model.@@[String, _]](implicit
+    // String <-> EntityId.IdString
+    implicit def ixiasIdAsStringColumnType[T <: EntityId.IdString](implicit
       ctag: reflect.ClassTag[T]
     ): JdbcType[T] with BaseTypedType[T] = {
-      val Id = ixias.model.the[ixias.model.Identity[T]]
       MappedColumnType.base[T, String](
-        id => id.asInstanceOf[String],
-        value => Id(value.asInstanceOf[T])
+        id => id.toString,
+        value => EntityId.IdString(value).asInstanceOf[T]
       )
     }
 

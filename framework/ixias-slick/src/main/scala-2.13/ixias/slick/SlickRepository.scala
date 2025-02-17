@@ -8,11 +8,11 @@
 
 package ixias.slick
 
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.language.implicitConversions
-
 import ixias.model._
 import ixias.slick.lifted._
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 trait SlickRepository[K <: @@[_, _], M <: EntityModel[K]] extends ConverterOps with SlickQueryOps {
   implicit def ec: ExecutionContext
