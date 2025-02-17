@@ -8,16 +8,16 @@
 
 package ixias.play.api.auth.container
 
-import java.time.Duration
-import scala.concurrent.Future
-
 import ixias.model._
 import ixias.play.api.auth.token.Token
 import play.api.mvc.RequestHeader
 
+import java.time.Duration
+import scala.concurrent.Future
+
 /** The container for session's tokens.
   */
-trait Container[K <: @@[_, _]] {
+trait Container[K <: EntityId.Id] {
   import Token._
 
   /** The type of entity id */
