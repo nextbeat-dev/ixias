@@ -126,10 +126,10 @@ trait MySQLProfile extends SlickMySQLProfile {
     // --[ Ixias Id ]-------------------------------------------------------------
     // Long <-> EntityId.IdLong
     implicit def ixiasIdAsLongColumnType[T <: EntityId.IdLong](implicit
-                                         ctag: reflect.ClassTag[T]
-                                        ): JdbcType[T] with BaseTypedType[T] = {
+      ctag: reflect.ClassTag[T]
+    ): JdbcType[T] with BaseTypedType[T] = {
       MappedColumnType.base[T, Long](
-        id => id.toLong,
+        _.toLong,
         value => EntityId.IdLong(value).asInstanceOf[T]
       )
     }
@@ -139,7 +139,7 @@ trait MySQLProfile extends SlickMySQLProfile {
       ctag: reflect.ClassTag[T]
     ): JdbcType[T] with BaseTypedType[T] = {
       MappedColumnType.base[T, String](
-        id => id.toString,
+        _.toString,
         value => EntityId.IdString(value).asInstanceOf[T]
       )
     }

@@ -20,3 +20,5 @@ trait EntityModel:
   /** Wrap domain model in `Entity` datatype */
   def toWithNoId:   EntityWithNoId[this.type]   = EntityWithNoId(this)
   def toEmbeddedId: EntityEmbeddedId[this.type] = EntityEmbeddedId(this)
+
+

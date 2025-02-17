@@ -8,22 +8,20 @@
 
 package ixias.aws.s3.model
 
-import java.net.{ URL, URI }
-import java.time.ZonedDateTime
-import java.util.concurrent.TimeUnit
-
-import scala.concurrent.duration.FiniteDuration
-import scala.language.implicitConversions
-
-import ixias.util.Enum
 import ixias.aws.DataSourceName
 import ixias.aws.s3.AmazonS3Config
-
+import ixias.util.Enum
 import software.amazon.awssdk.core.Protocol
-import software.amazon.awssdk.utils.DateUtils
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities
-import software.amazon.awssdk.services.cloudfront.model._
 import software.amazon.awssdk.services.cloudfront.internal.utils.SigningUtils.loadPrivateKey
+import software.amazon.awssdk.services.cloudfront.model._
+import software.amazon.awssdk.utils.DateUtils
+
+import java.net.{URI, URL}
+import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
+import scala.language.implicitConversions
 
 /** The file resource definition to provide clients with a URL to display the image
   */

@@ -14,6 +14,8 @@ package ixias.model
  */
 sealed abstract class Entity[+M <: EntityModel]:
 
+  type Self[+M0 <: EntityModel]
+
   /** @param v  the wrapped data of the domain model */
   val v: M
 
@@ -29,6 +31,9 @@ sealed abstract class Entity[+M <: EntityModel]:
    */
   def hasId: Boolean
 
+  /** Builds a new `Entity` by applying a function to values. */
+  def map[M2 <: EntityModel](f: M => M2): Self[M2]
+
 /**
  * Entity class which doesn't have an identity
  *
@@ -36,9 +41,13 @@ sealed abstract class Entity[+M <: EntityModel]:
  * @param  v  the wrapped data of the domain model
  */
 case class EntityWithNoId[+M <: EntityModel](v: M) extends Entity[M]:
+  type Self[+M0 <: EntityModel] = EntityWithNoId[M0]
+
   @deprecated("unsupported operation", "1.0.0")
   def id    = throw new UnsupportedOperationException
   def hasId = false
+
+  override def map[M2 <: EntityModel](f: M => M2): Self[M2] = EntityWithNoId(f(v))
 
 /**
  * Entity class which has an identity
@@ -47,5 +56,10 @@ case class EntityWithNoId[+M <: EntityModel](v: M) extends Entity[M]:
  * @param  v  the wrapped data of the domain model
  */
 case class EntityEmbeddedId[+M <: EntityModel](v: M) extends Entity[M]:
+
+  type Self[+M0 <: EntityModel] = EntityEmbeddedId[M0]
+
   def id    = v.id.get
   def hasId = true
+
+  override def map[M2 <: EntityModel](f: M => M2): Self[M2] = EntityEmbeddedId(f(v))

@@ -8,14 +8,13 @@
 
 package ixias.aws.s3.model
 
-import play.api.libs.json._
-
 import ixias.aws.DataSourceName
+import play.api.libs.json._
 
 /** Clound front URL
   */
 case class CloudFrontUrl(
-  meta:       File#EmbeddedId,
+  meta:       File.EmbeddedId,
   width:      Option[Int]                      = None,
   height:     Option[Int]                      = None,
   responsive: Boolean                          = false,
@@ -50,7 +49,7 @@ object CloudFrontUrl {
       implicit val dsn = data.dsn
       JsObject(
         Seq(
-          Some("fid" -> JsNumber(data.meta.id)),
+          Some("fid" -> JsNumber(BigDecimal(data.meta.id.toLong))),
           Some("src" -> JsString(getSigendCloudFrontUrl(data.meta, data.genUrlSignerRequest.head).toString)),
           data.responsive match {
             case false => None

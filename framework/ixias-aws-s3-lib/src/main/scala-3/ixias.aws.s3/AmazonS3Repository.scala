@@ -8,20 +8,18 @@
 
 package ixias.aws.s3
 
-import scala.concurrent.Future
-
-import software.amazon.awssdk.core.ResponseInputStream
-import software.amazon.awssdk.services.s3.model.GetObjectResponse
-
 import ixias.aws.s3.model.File
 import ixias.aws.s3.persistence.SlickResource
 import ixias.slick.SlickRepository
-
 import ixias.slick.jdbc.MySQLProfile.api._
+import software.amazon.awssdk.core.ResponseInputStream
+import software.amazon.awssdk.services.s3.model.GetObjectResponse
+
+import scala.concurrent.Future
 
 // S3 management repository
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
-trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResource {
+trait AmazonS3Repository extends SlickRepository[File] with SlickResource {
 
   def master: Database
   def slave:  Database
@@ -81,24 +79,24 @@ trait AmazonS3Repository extends SlickRepository[File.Id, File] with SlickResour
 
   /** Save the file information. At the same time upload a specified file to S3.
     */
-  def add(file: File#WithNoId, content: java.io.File): Future[File.Id] =
+  def add(file: File.WithNoId, content: java.io.File): Future[File.Id] =
     for {
       _ <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
-      Some(fid) <- master.run(
+      case Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
-    } yield File.Id(fid)
+    } yield fid
 
   /** Save the file information. However, the file body content has not yet been uploaded to S3. After this method
     * called, upload a file via presigned URL.
     */
-  def addViaPresignedUrl(file: File#WithNoId): Future[(File.Id, String)] =
+  def addViaPresignedUrl(file: File.WithNoId): Future[(File.Id, String)] =
     for {
       url <- genPreSignedUrlForUpload(file.v)
-      Some(fid) <- master.run(
+      case Some(fid) <- master.run(
                      fileTable returning fileTable.map(_.id) += file.v
                    )
-    } yield (File.Id(fid), url.toString)
+    } yield (fid, url.toString)
 
   /** Update the file information. At the same time upload a specified file to S3.
     */

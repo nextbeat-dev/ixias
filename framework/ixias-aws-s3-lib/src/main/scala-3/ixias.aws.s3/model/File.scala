@@ -8,16 +8,14 @@
 
 package ixias.aws.s3.model
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoField._
-
-import scala.util.Try
-
-import software.amazon.awssdk.services.s3.model._
-
-import ixias.model._
 import ixias.aws.DataSourceName
 import ixias.aws.s3.AmazonS3Config
+import ixias.model._
+import software.amazon.awssdk.services.s3.model._
+
+import java.time.LocalDateTime
+import java.time.temporal.ChronoField._
+import scala.util.Try
 
 // The file representation for Amazon S3.
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +29,9 @@ case class File(
   presignedUrl: Option[java.net.URL] = None, // The presigned Url to accessing on Image
   updatedAt:    LocalDateTime        = NOW,  // The Datetime when a data was updated.
   createdAt:    LocalDateTime        = NOW   // The Datetime when a data was created.
-) extends EntityModel[File.Id] {
+) extends EntityModel {
+
+  type Id = File.Id
 
   lazy val httpsUrl = s"${ Protocol.HTTPS.toString }://${ httpsUrn }"
   lazy val httpsUrn = presignedUrl match {
@@ -54,19 +54,20 @@ case class File(
 object File extends AmazonS3Config {
 
   // --[ File ID ]--------------------------------------------------------------
-  val Id = the[Identity[Id]]
-  type Id         = Long @@ File
-  type WithNoId   = Entity.WithNoId[Id, File]
-  type EmbeddedId = Entity.EmbeddedId[Id, File]
+  opaque type Id <: EntityId.IdLong = EntityId.IdLong
+  object Id extends EntityId.IdLongGen[Id]
+
+  type WithNoId   = EntityWithNoId[File]
+  type EmbeddedId = EntityEmbeddedId[File]
 
   // --[ Create a new object ]--------------------------------------------------
   def apply(key: String, typedef: String, size: Option[ImageSize])(implicit
     dns: DataSourceName
-  ): Try[Entity.WithNoId[File.Id, File]] =
+  ): Try[WithNoId] =
     for {
       region <- getAWSRegion
       bucket <- getBucketName
-    } yield Entity.WithNoId[File.Id, File](
+    } yield EntityWithNoId[File](
       new File(None, region.id(), bucket, key, typedef, size)
     )
 
