@@ -21,7 +21,7 @@ trait Token {
   /** Do not change this unless you understand the security issues behind timing attacks. This method intentionally runs
     * in constant time if the two strings have the same length.
     */
-  final def safeEquals(a: String, b: String) = {
+  final def safeEquals(a: String, b: String): Boolean = {
     if (a.length != b.length) {
       false
     } else {
@@ -39,7 +39,7 @@ trait Token {
 object RandomPINCode extends Token {
 
   /** The token provider */
-  protected val generator = TokenGenerator(
+  protected val generator: TokenGenerator = TokenGenerator(
     table = "1234567890"
   )
 }
@@ -49,7 +49,5 @@ object RandomPINCode extends Token {
 object RandomStringToken extends Token {
 
   /** The token provider */
-  protected val generator = TokenGenerator(
-    table = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-  )
+  protected val generator: TokenGenerator = TokenGenerator()
 }

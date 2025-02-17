@@ -36,7 +36,7 @@ class KeyReader(
 object HmacKeyReader {
 
   /** Creates a HmacKeyReader. */
-  def apply(key: HmacKey) = {
+  def apply(key: HmacKey): KeyReader = {
     val version  = new KeyVersion(0, KeyStatus.PRIMARY, false)
     val metadata = new KeyMetadata("Imported from HMAC", KeyPurpose.SIGN_AND_VERIFY, DefaultKeyType.HMAC_SHA1)
     metadata.addVersion(version)
@@ -49,7 +49,7 @@ object HmacKeyReader {
 object AesKeyReader {
 
   /** Creates a AesKeyReader. */
-  def apply(key: AesKey) = {
+  def apply(key: AesKey): KeyReader = {
     val version  = new KeyVersion(0, KeyStatus.PRIMARY, false)
     val metadata = new KeyMetadata("Imported from AES", KeyPurpose.DECRYPT_AND_ENCRYPT, DefaultKeyType.AES)
     metadata.addVersion(version)

@@ -8,7 +8,7 @@
 ```scala
 libraryDependencies ++= Seq(
   "$org$" %% "ixias-slick" % "$version$",
-  "mysql" % "mysql-connector-java" % "8.3.0"
+  "com.mysql" % "mysql-connector-j" % "8.3.0"
 )
 ```
 @@@

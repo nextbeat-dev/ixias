@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_ixias}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4571:4571"
+    environment:
+      - TMPDIR=/private$TMPDIR
+      - DATA_DIR=/tmp/localstack/data
+      - SERVICES=lambda,sns,dynamodb,s3,ses #検証したいサービスを記載
+      - DEFAULT_REGION=ap-northeast-1
+    networks:
+      - container-link
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mysql:
+    container_name: "${MYSQL_CONTAINER_NAME:-mysql_ixias}"
+    image: mysql:8.0
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: "${TZ:-Asia/Tokyo}"
+    ports:
+      - '3006:3306'
+    volumes:
+      - ./database/data:/docker-entrypoint-initdb.d
+      - ./database/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 1
+
+networks:
+  container-link:
+    name: docker.internal

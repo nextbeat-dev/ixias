@@ -9,9 +9,19 @@ import ScalaVersions._
 import JavaVersions._
 import Dependencies._
 import BuildSettings._
+import Workflows._
 
 ThisBuild / crossScalaVersions         := Seq(scala213, scala3)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
+ThisBuild / githubWorkflowBuildPreamble ++= List(
+  dockerRun,
+  waitForLocalStackContainerStart,
+  waitForMySQLContainerStart,
+  settingsSns,
+  settingsS3,
+  settingsSES
+)
+ThisBuild / githubWorkflowBuildPostamble += dockerStop
 
 ThisBuild / githubWorkflowAddedJobs ++= Seq(
   WorkflowJob(
@@ -45,9 +55,8 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       uapScala,
       commonsCodec,
       slf4jApi,
-      connectorJava  % Test,
-      logbackClassic % Test
-    ) ++ cats ++ specs2
+      munit
+    ) ++ cats
   )
 
 lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
@@ -70,18 +79,25 @@ lazy val ixiasMail = IxiaSProject("ixias-mail", "framework/ixias-mail")
   )
   .dependsOn(ixiasCore)
 
-lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws-sns")
-  .settings(libraryDependencies += aws.sns)
+lazy val ixiasAws = IxiaSProject("ixias-aws-core", "framework/ixias-aws/core")
+  .settings(libraryDependencies += aws.core)
   .dependsOn(ixiasCore)
 
-lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws-s3")
-  .settings(
-    libraryDependencies ++= Seq(
-      aws.s3,
-      aws.cloudfront
-    )
-  )
-  .dependsOn(ixiasSlick)
+lazy val ixiasAwsSns = IxiaSProject("ixias-aws-sns", "framework/ixias-aws/sns")
+  .settings(libraryDependencies ++= Seq(aws.sns, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsS3 = IxiaSProject("ixias-aws-s3", "framework/ixias-aws/s3")
+  .settings(libraryDependencies ++= Seq(aws.s3, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsSes = IxiaSProject("ixias-aws-ses", "framework/ixias-aws/ses")
+  .settings(libraryDependencies ++= Seq(aws.ses, munit))
+  .dependsOn(ixiasAws)
+
+lazy val ixiasAwsS3Lib = IxiaSProject("ixias-aws-s3-lib", "framework/ixias-aws-s3-lib")
+  .settings(libraryDependencies ++= Seq(aws.cloudfront, munit, connectorJava % Test))
+  .dependsOn(ixiasSlick, ixiasAwsS3)
 
 // IxiaS Play Libraries
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,7 +106,7 @@ lazy val ixiasPlayCore = IxiaSProject("ixias-play-core", "framework/ixias-play-c
   .dependsOn(ixiasCore)
 
 lazy val ixiasPlayAuth = IxiaSProject("ixias-play-auth", "framework/ixias-play-auth")
-  .settings(libraryDependencies += play)
+  .settings(libraryDependencies ++= Seq(play, munit))
   .dependsOn(ixiasCore, ixiasPlayCore)
 
 lazy val docs = (project in file("docs"))
@@ -101,9 +117,10 @@ lazy val docs = (project in file("docs"))
     mdocIn         := baseDirectory.value / "src" / "main" / "mdoc",
     paradoxTheme   := Some(builtinParadoxTheme("generic")),
     paradoxProperties ++= Map(
-      "org"          -> organization.value,
-      "scalaVersion" -> scalaVersion.value,
-      "version"      -> version.value.takeWhile(_ != '+')
+      "org"           -> organization.value,
+      "scalaVersion"  -> scalaVersion.value,
+      "awsSDKVersion" -> awsSdkVersion,
+      "version"       -> version.value.takeWhile(_ != '+')
     ),
     Compile / paradox / sourceDirectory := mdocOut.value,
     Compile / paradoxRoots              := List("index.html"),
@@ -122,8 +139,11 @@ lazy val ixias = IxiaSProject("ixias", ".")
     ixiasCore,
     ixiasSlick,
     ixiasMail,
+    ixiasAws,
     ixiasAwsSns,
     ixiasAwsS3,
+    ixiasAwsSes,
+    ixiasAwsS3Lib,
     ixiasPlayCore,
     ixiasPlayAuth,
     docs
