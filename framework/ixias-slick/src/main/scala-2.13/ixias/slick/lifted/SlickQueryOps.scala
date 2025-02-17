@@ -9,8 +9,8 @@
 package ixias.slick.lifted
 
 import ixias.model.Cursor
-import slick.ast.{Library, TypedType}
-import slick.lifted.{FunctionSymbolExtensionMethods, Query, Rep}
+import slick.ast.{ Library, TypedType }
+import slick.lifted.{ FunctionSymbolExtensionMethods, Query, Rep }
 
 import scala.language.implicitConversions
 

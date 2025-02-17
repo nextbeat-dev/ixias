@@ -8,7 +8,7 @@
 
 package ixias.security
 
-import ixias.util.{Configuration, Enum}
+import ixias.util.{ Configuration, Enum }
 
 /** Evaluate the complexity of a given string
   */

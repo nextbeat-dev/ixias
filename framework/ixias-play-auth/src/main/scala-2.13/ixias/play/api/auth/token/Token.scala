@@ -10,8 +10,8 @@ package ixias.play.api.auth.token
 
 import ixias.model._
 import ixias.security.TokenSigner
-import ixias.util.{Configuration, Logging}
-import play.api.mvc.{RequestHeader, Result}
+import ixias.util.{ Configuration, Logging }
+import play.api.mvc.{ RequestHeader, Result }
 
 // The security token
 //~~~~~~~~~~~~~~~~~~~~

@@ -8,14 +8,14 @@
 
 package ixias.play.api.auth.mvc
 
-import ixias.model.{@@, Entity, EntityModel, IdStatus}
+import ixias.model.{ @@, Entity, EntityModel, IdStatus }
 import ixias.play.api.auth.container.Container
 import ixias.play.api.auth.token.Token
 import ixias.play.api.mvc.Errors._
 import ixias.util.Logging
 import play.api.libs.typedmap.TypedKey
-import play.api.mvc.{RequestHeader, Result}
-import play.api.{Environment, Mode}
+import play.api.mvc.{ RequestHeader, Result }
+import play.api.{ Environment, Mode }
 
 import java.time.Duration
 import scala.concurrent.Future

@@ -8,10 +8,10 @@
 
 package ixias.play.api.mvc
 
-import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import cats.data.{ NonEmptyList, Validated, ValidatedNel }
 import ixias.util.Logging
 import play.api.libs.typedmap.TypedKey
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{ RequestHeader, Result }
 
 import scala.language.implicitConversions
 import scala.reflect.runtime.universe._
