@@ -10,6 +10,8 @@ package ixias.play.api.mvc.binder
 
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
+import ixias.model.EntityId
+
 /** Binder utility function for ID implemented in Tagged-Type
   *
   * <Usage > type UserId = Long @@ UserModel implicit val pathBindForUserId = pathBindableBoxId[UserId] implicit val
@@ -18,16 +20,15 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 trait IdBindable extends Box {
 
   // -- [ PathBindable ] -------------------------------------------------------
-  /** PathBindable: ixias.model.@@[Long, _]
+  /** PathBindable: ixias.model.EntityId.Id
     */
-  def pathBindableBoxId[T <: ixias.model.@@[_, _]](implicit ctag: reflect.ClassTag[T]): PathBindable[Box[T]] = {
-    val Id = ixias.model.the[ixias.model.Identity[T]]
+  def pathBindableBoxId[T <: EntityId.Id](implicit ctag: reflect.ClassTag[T]): PathBindable[Box[T]] = {
     new PathBindable.Parsing[Box[T]](
       (s: String) => {
         val id = ctag.runtimeClass match {
-          case x if classOf[Int].isAssignableFrom(x)    => Id(s.toInt.asInstanceOf[T])
-          case x if classOf[Long].isAssignableFrom(x)   => Id(s.toLong.asInstanceOf[T])
-          case x if classOf[String].isAssignableFrom(x) => Id(s.asInstanceOf[T])
+          case x if classOf[Int].isAssignableFrom(x)    => EntityId.IdLong(s.toInt).asInstanceOf[T]
+          case x if classOf[Long].isAssignableFrom(x)   => EntityId.IdLong(s.toLong).asInstanceOf[T]
+          case x if classOf[String].isAssignableFrom(x) => EntityId.IdString(s).asInstanceOf[T]
           case _ =>
             throw new IllegalArgumentException(
               "Unsupported type of id-value: %s".format(ctag.runtimeClass)
@@ -35,26 +36,25 @@ trait IdBindable extends Box {
         }
         () => id
       },
-      (v: Box[T]) => Id.unwrap(v).toString,
+      (v: Box[T]) => v.toString,
       (key: String, e: Exception) => {
-        "Cannot parse parameter %s as ixias.model.@@[_, _]\n %s".format(key, e)
+        "Cannot parse parameter %s as ixias.model.EntityId.Id\n %s".format(key, e)
       }
     )
   }
 
   // -- [ QueryStringBindable ] ------------------------------------------------
-  /** For ixias.model.@@[_, _]
+  /** For ixias.model.EntityId.Id
     */
-  def queryStringBindableBoxId[T <: ixias.model.@@[_, _]](implicit
+  def queryStringBindableBoxId[T <: EntityId.Id](implicit
     ctag: reflect.ClassTag[T]
   ): QueryStringBindable[Box[T]] = {
-    val Id = ixias.model.the[ixias.model.Identity[T]]
     new QueryStringBindable.Parsing[Box[T]](
       (s: String) => {
         val id = ctag.runtimeClass match {
-          case x if classOf[Int].isAssignableFrom(x)    => Id(s.toInt.asInstanceOf[T])
-          case x if classOf[Long].isAssignableFrom(x)   => Id(s.toLong.asInstanceOf[T])
-          case x if classOf[String].isAssignableFrom(x) => Id(s.asInstanceOf[T])
+          case x if classOf[Int].isAssignableFrom(x)    => EntityId.IdLong(s.toInt).asInstanceOf[T]
+          case x if classOf[Long].isAssignableFrom(x)   => EntityId.IdLong(s.toLong).asInstanceOf[T]
+          case x if classOf[String].isAssignableFrom(x) => EntityId.IdString(s).asInstanceOf[T]
           case _ =>
             throw new IllegalArgumentException(
               "Unsupported type of id-value: %s".format(ctag.runtimeClass)
@@ -62,19 +62,18 @@ trait IdBindable extends Box {
         }
         () => id
       },
-      (v: Box[T]) => Id.unwrap(v).toString,
+      (v: Box[T]) => v.toString(),
       (key: String, e: Exception) => {
-        "Cannot parse parameter %s as ixias.model.@@[_, _]\n %s".format(key, e)
+        "Cannot parse parameter %s as ixias.model.EntityId.Id\n %s".format(key, e)
       }
     )
   }
 
-  /** For ixias.model.@@[_, _]
+  /** For ixias.model.EntityId.Id
     */
-  def queryStringBindableBoxCsvId[T <: ixias.model.@@[_, _]](implicit
+  def queryStringBindableBoxCsvId[T <: EntityId.Id](implicit
     ctag: reflect.ClassTag[T]
   ): QueryStringBindable[BoxCsv[T]] = {
-    val Id = ixias.model.the[ixias.model.Identity[T]]
     new QueryStringBindable.Parsing[BoxCsv[T]](
       (s: String) => {
         val ids: Seq[T] = s
@@ -82,9 +81,9 @@ trait IdBindable extends Box {
           .toIndexedSeq
           .map(tok =>
             ctag.runtimeClass match {
-              case x if classOf[Int].isAssignableFrom(x)    => Id(tok.toInt.asInstanceOf[T])
-              case x if classOf[Long].isAssignableFrom(x)   => Id(tok.toLong.asInstanceOf[T])
-              case x if classOf[String].isAssignableFrom(x) => Id(tok.asInstanceOf[T])
+              case x if classOf[Int].isAssignableFrom(x)    => EntityId.IdLong(tok.toInt).asInstanceOf[T]
+              case x if classOf[Long].isAssignableFrom(x)   => EntityId.IdLong(tok.toLong).asInstanceOf[T]
+              case x if classOf[String].isAssignableFrom(x) => EntityId.IdString(tok).asInstanceOf[T]
               case _ =>
                 throw new IllegalArgumentException(
                   "Unsupported type of id-value: %s".format(ctag.runtimeClass)
@@ -93,9 +92,9 @@ trait IdBindable extends Box {
           )
         () => ids
       },
-      (v: BoxCsv[T]) => v.map(id => Id.unwrap(id).toString).mkString(","),
+      (v: BoxCsv[T]) => v().map(_.toString).mkString(","),
       (key: String, e: Exception) => {
-        "Cannot parse parameter %s as ixias.model.@@[_, _]\n %s".format(key, e)
+        "Cannot parse parameter %s as ixias.model.EntityId.Id\n %s".format(key, e)
       }
     )
   }

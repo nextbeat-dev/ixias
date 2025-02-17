@@ -14,7 +14,7 @@ import play.api.libs.typedmap.TypedKey
 import play.api.mvc.{RequestHeader, Result}
 
 import scala.language.implicitConversions
-import scala.reflect.runtime.universe._
+import scala.quoted.{Quotes, Type}
 
 // Helper to get header attrs
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,14 +23,14 @@ object RequestHeaderAttrHelper extends Logging {
 
   /** Retrieves and validate a value of the specified key.
     */
-  def getValue[T](key: TypedKey[T])(implicit rh: RequestHeader, tag: TypeTag[T]): ValidatedNel[String, T] =
+  def getValue[T](key: TypedKey[T])(using rh: RequestHeader, tpe: Type[T], q: Quotes): ValidatedNel[String, T] =
     rh.attrs.get(key) match {
       case Some(v) => Validated.Valid(v)
       case None => {
         Validated.Invalid(
           NonEmptyList.of(
             "The value under the specified key was not found. Entity type is "
-              + tag.tpe.toString
+              + Type.show[T]
           )
         )
       }
@@ -48,49 +48,53 @@ object RequestHeaderAttrHelper extends Logging {
     }
 
   /** case Tuple1 */
-  def get[T1](a1: TypedKey[T1])(implicit rh: RequestHeader, tag1: TypeTag[T1]): Either[Result, T1] =
+  def get[T1](a1: TypedKey[T1])(using rh: RequestHeader, tpe1: Type[T1], q: Quotes): Either[Result, T1] =
     getValue(a1)
 
   /** case Tuple2 */
   import cats.implicits._
-  def get[T1, T2](a1: TypedKey[T1], a2: TypedKey[T2])(implicit
+  def get[T1, T2](a1: TypedKey[T1], a2: TypedKey[T2])(using
     rh:   RequestHeader,
-    tag1: TypeTag[T1],
-    tag2: TypeTag[T2]
+    tpe1: Type[T1],
+    tpe2: Type[T2],
+    q:    Quotes
   ): Either[Result, (T1, T2)] =
     (getValue(a1), getValue(a2))
       .mapN((_, _))
 
   /** case Tuple3 */
-  def get[T1, T2, T3](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3])(implicit
+  def get[T1, T2, T3](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3])(using
     rh:   RequestHeader,
-    tag1: TypeTag[T1],
-    tag2: TypeTag[T2],
-    tag3: TypeTag[T3]
+    tpe1: Type[T1],
+    tpe2: Type[T2],
+    tpe3: Type[T3],
+    q:    Quotes
   ): Either[Result, (T1, T2, T3)] =
     (getValue(a1), getValue(a2), getValue(a3))
       .mapN((_, _, _))
 
   /** case Tuple4 */
-  def get[T1, T2, T3, T4](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4])(implicit
+  def get[T1, T2, T3, T4](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4])(using
     rh:   RequestHeader,
-    tag1: TypeTag[T1],
-    tag2: TypeTag[T2],
-    tag3: TypeTag[T3],
-    tag4: TypeTag[T4]
+    tpe1: Type[T1],
+    tpe2: Type[T2],
+    tpe3: Type[T3],
+    tpe4: Type[T4],
+    q:    Quotes
   ): Either[Result, (T1, T2, T3, T4)] =
     (getValue(a1), getValue(a2), getValue(a3), getValue(a4))
       .mapN((_, _, _, _))
 
   /** case Tuple5 */
   def get[T1, T2, T3, T4, T5](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4], a5: TypedKey[T5])(
-    implicit
+    using
     rh:   RequestHeader,
-    tag1: TypeTag[T1],
-    tag2: TypeTag[T2],
-    tag3: TypeTag[T3],
-    tag4: TypeTag[T4],
-    tag5: TypeTag[T5]
+    tpe1: Type[T1],
+    tpe2: Type[T2],
+    tpe3: Type[T3],
+    tpe4: Type[T4],
+    tpe5: Type[T5],
+    q:    Quotes
   ): Either[Result, (T1, T2, T3, T4, T5)] =
     (getValue(a1), getValue(a2), getValue(a3), getValue(a4), getValue(a5))
       .mapN((_, _, _, _, _))
