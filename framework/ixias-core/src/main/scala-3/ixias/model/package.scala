@@ -9,6 +9,7 @@
 package ixias
 
 package object model {
+
   /** The current time */
   def NOW = java.time.LocalDateTime.now()
 }

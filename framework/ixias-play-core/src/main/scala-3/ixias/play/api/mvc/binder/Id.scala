@@ -8,7 +8,7 @@
 
 package ixias.play.api.mvc.binder
 
-import play.api.mvc.{PathBindable, QueryStringBindable}
+import play.api.mvc.{ PathBindable, QueryStringBindable }
 
 import ixias.model.EntityId
 

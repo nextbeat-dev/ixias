@@ -18,16 +18,18 @@ trait EnumStatus:
 trait EnumStatusGen[S <: EnumStatus]:
 
   /** Get all values of enum types.
-   *
-   * This method is automatically implemented when standard enumeration type is defined.
-   */
+    *
+    * This method is automatically implemented when standard enumeration type is defined.
+    */
   def values: Array[S]
 
   /** Create `EnumStatus` by its code
-   *
-   * @param  code  short value that represents the enum
-   * @return  an enum value specified by `code`. If an enum value is not found, throw error.
-   */
+    *
+    * @param code
+    *   short value that represents the enum
+    * @return
+    *   an enum value specified by `code`. If an enum value is not found, throw error.
+    */
   def findByCode(code: Short): S = values.find(_.code == code).get
 
 /** Base trait for enum bit flag types which has long value */
@@ -38,9 +40,9 @@ trait EnumBitFlags:
 trait EnumBitFlagsGen[S <: EnumBitFlags]:
 
   /** Get all values of enum types.
-   *
-   * This method is automatically implemented when standard enumeration type is defined.
-   */
+    *
+    * This method is automatically implemented when standard enumeration type is defined.
+    */
   def values: Array[S]
 
   /** Get bitset objects from numeric bitset. */

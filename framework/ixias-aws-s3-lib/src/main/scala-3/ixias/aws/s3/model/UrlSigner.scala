@@ -16,7 +16,7 @@ import software.amazon.awssdk.services.cloudfront.internal.utils.SigningUtils.lo
 import software.amazon.awssdk.services.cloudfront.model._
 import software.amazon.awssdk.utils.DateUtils
 
-import java.net.{URI, URL}
+import java.net.{ URI, URL }
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration

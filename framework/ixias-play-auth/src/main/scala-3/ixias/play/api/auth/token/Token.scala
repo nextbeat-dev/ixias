@@ -9,8 +9,8 @@
 package ixias.play.api.auth.token
 
 import ixias.security.TokenSigner
-import ixias.util.{Configuration, Logging}
-import play.api.mvc.{RequestHeader, Result}
+import ixias.util.{ Configuration, Logging }
+import play.api.mvc.{ RequestHeader, Result }
 
 // The security token
 //~~~~~~~~~~~~~~~~~~~~
@@ -34,17 +34,17 @@ trait Token {
 //~~~~~~~~~~~~~~~~~~
 object Token extends Logging {
 
-  opaque type SignedToken = String
+  opaque type SignedToken       = String
   opaque type AuthenticityToken = String
 
   object SignedToken {
-    def apply(value: String): SignedToken = value
-    def unwrap(token: SignedToken): String = token
+    def apply(value:  String):      SignedToken = value
+    def unwrap(token: SignedToken): String      = token
   }
 
   object AuthenticityToken {
-    def apply(value: String): AuthenticityToken = value
-    def unwrap(token: AuthenticityToken): String = token
+    def apply(value:  String):            AuthenticityToken = value
+    def unwrap(token: AuthenticityToken): String            = token
   }
 
   /** The object that provides some cryptographic operations */

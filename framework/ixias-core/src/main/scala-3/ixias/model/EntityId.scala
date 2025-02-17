@@ -19,10 +19,12 @@ object EntityId:
   object IdLong:
 
     /** Create Id from primitive value
-     *
-     * @param id  the unsigned long number
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   the unsigned long number
+      * @return
+      *   Id of the entity
+      */
     def apply(id: Long): IdLong =
       require(id > -1L, "Error: Id should not be a negative number.")
       id
@@ -34,10 +36,12 @@ object EntityId:
   trait IdLongGen[K <: IdLong]:
 
     /** Create Id from primitive value
-     *
-     * @param id  the unsigned long number
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   the unsigned long number
+      * @return
+      *   Id of the entity
+      */
     def apply(id: Long): K = IdLong(id).asInstanceOf[K]
 
   // --[ Opaque type: Id as String value ]---------------------------------------
@@ -45,10 +49,12 @@ object EntityId:
   object IdString:
 
     /** Create Id from primitive value
-     *
-     * @param id  string
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   string
+      * @return
+      *   Id of the entity
+      */
     def apply(id: String): IdString =
       require(id.nonEmpty, "Error: Id must not be an empty string.")
       id
@@ -60,10 +66,12 @@ object EntityId:
   trait IdStringGen[K <: IdString]:
 
     /** Create Id from primitive value
-     *
-     * @param id  string
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   string
+      * @return
+      *   Id of the entity
+      */
     def apply(id: String): K = IdString(id).asInstanceOf[K]
 
   // --[ Opaque type: Id as UUID value ]-----------------------------------------
@@ -71,10 +79,12 @@ object EntityId:
   object UUID:
 
     /** Create Id from primitive value
-     *
-     * @param id  UUID
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   UUID
+      * @return
+      *   Id of the entity
+      */
     def apply(id: java.util.UUID): UUID =
       id
 
@@ -87,15 +97,19 @@ object EntityId:
   trait UUIDGen[K <: UUID]:
 
     /** Create Id from primitive value
-     *
-     * @param id  UUID
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   UUID
+      * @return
+      *   Id of the entity
+      */
     def apply(id: java.util.UUID): K = UUID(id).asInstanceOf[K]
 
     /** Create Id from string
-     *
-     * @param id  string
-     * @return Id of the entity
-     */
+      *
+      * @param id
+      *   string
+      * @return
+      *   Id of the entity
+      */
     def apply(id: String): K = UUID(java.util.UUID.fromString(id)).asInstanceOf[K]

@@ -39,20 +39,18 @@ trait JsonEnvReads extends EnvReads {
 
   /** Deserializer for ixias.util.EnumStatus
     */
-  def enumReads[E <: EnumStatus](gen: EnumStatusGen[E]): Reads[E] =
-  {
+  def enumReads[E <: EnumStatus](gen: EnumStatusGen[E]): Reads[E] = {
     case JsNumber(n) if n.isValidShort => JsSuccess(gen.findByCode(n.toShort))
-    case JsNumber(n) => JsError("error.expected.enum.short")
-    case _ => JsError("error.expected.enum.jsnumber")
+    case JsNumber(n)                   => JsError("error.expected.enum.short")
+    case _                             => JsError("error.expected.enum.jsnumber")
   }
 
   /** Deserializer for ixias.util.EnumBitFlags
     */
-  def enumReads[E <: EnumBitFlags](gen: EnumBitFlagsGen[E]): Reads[Seq[E]] =
-  {
+  def enumReads[E <: EnumBitFlags](gen: EnumBitFlagsGen[E]): Reads[Seq[E]] = {
     case JsNumber(n) if n.isValidLong => JsSuccess(gen(n.toLong))
-    case JsNumber(n) => JsError("error.expected.enum.long")
-    case _ => JsError("error.expected.enum.jsnumber")
+    case JsNumber(n)                  => JsError("error.expected.enum.long")
+    case _                            => JsError("error.expected.enum.jsnumber")
   }
 
   /** Deserializer for ixias.util.EnumBitFlags

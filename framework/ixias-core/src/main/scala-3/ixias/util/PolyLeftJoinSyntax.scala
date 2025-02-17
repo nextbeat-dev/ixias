@@ -17,7 +17,7 @@ trait Poly2:
 /** Recursively fold a Tuple from left to right using a Poly2 operation. */
 inline def foldLeft[T <: Tuple, A, P <: Poly2](t: T, acc: A, p: P): Any =
   inline t match
-    case EmptyTuple    => acc
+    case EmptyTuple => acc
     case head *: tail =>
       val next = p.apply(acc, head)
       foldLeft(tail, next, p)

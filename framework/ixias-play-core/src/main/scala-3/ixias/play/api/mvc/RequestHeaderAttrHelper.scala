@@ -8,13 +8,13 @@
 
 package ixias.play.api.mvc
 
-import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import cats.data.{ NonEmptyList, Validated, ValidatedNel }
 import ixias.util.Logging
 import play.api.libs.typedmap.TypedKey
-import play.api.mvc.{RequestHeader, Result}
+import play.api.mvc.{ RequestHeader, Result }
 
 import scala.language.implicitConversions
-import scala.quoted.{Quotes, Type}
+import scala.quoted.{ Quotes, Type }
 
 // Helper to get header attrs
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +23,7 @@ object RequestHeaderAttrHelper extends Logging {
 
   /** Retrieves and validate a value of the specified key.
     */
-  def getValue[T](key: TypedKey[T])(using rh: RequestHeader, tpe: Type[T], q: Quotes): ValidatedNel[String, T] =
+  def getValue[T](key: TypedKey[T])(implicit rh: RequestHeader, tpe: Type[T], q: Quotes): ValidatedNel[String, T] =
     rh.attrs.get(key) match {
       case Some(v) => Validated.Valid(v)
       case None => {
@@ -48,12 +48,12 @@ object RequestHeaderAttrHelper extends Logging {
     }
 
   /** case Tuple1 */
-  def get[T1](a1: TypedKey[T1])(using rh: RequestHeader, tpe1: Type[T1], q: Quotes): Either[Result, T1] =
+  def get[T1](a1: TypedKey[T1])(implicit rh: RequestHeader, tpe1: Type[T1], q: Quotes): Either[Result, T1] =
     getValue(a1)
 
   /** case Tuple2 */
   import cats.implicits._
-  def get[T1, T2](a1: TypedKey[T1], a2: TypedKey[T2])(using
+  def get[T1, T2](a1: TypedKey[T1], a2: TypedKey[T2])(implicit
     rh:   RequestHeader,
     tpe1: Type[T1],
     tpe2: Type[T2],
@@ -63,7 +63,7 @@ object RequestHeaderAttrHelper extends Logging {
       .mapN((_, _))
 
   /** case Tuple3 */
-  def get[T1, T2, T3](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3])(using
+  def get[T1, T2, T3](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3])(implicit
     rh:   RequestHeader,
     tpe1: Type[T1],
     tpe2: Type[T2],
@@ -74,7 +74,7 @@ object RequestHeaderAttrHelper extends Logging {
       .mapN((_, _, _))
 
   /** case Tuple4 */
-  def get[T1, T2, T3, T4](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4])(using
+  def get[T1, T2, T3, T4](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4])(implicit
     rh:   RequestHeader,
     tpe1: Type[T1],
     tpe2: Type[T2],
@@ -87,7 +87,7 @@ object RequestHeaderAttrHelper extends Logging {
 
   /** case Tuple5 */
   def get[T1, T2, T3, T4, T5](a1: TypedKey[T1], a2: TypedKey[T2], a3: TypedKey[T3], a4: TypedKey[T4], a5: TypedKey[T5])(
-    using
+    implicit
     rh:   RequestHeader,
     tpe1: Type[T1],
     tpe2: Type[T2],

@@ -11,7 +11,7 @@ package ixias.slick
 import ixias.model._
 import ixias.slick.lifted._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.language.implicitConversions
 
 trait SlickRepository[M <: EntityModel] extends ConverterOps with SlickQueryOps {

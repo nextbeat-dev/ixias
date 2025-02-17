@@ -9,9 +9,10 @@
 package ixias.model
 
 /** Wrapper class for domain model.
- *
- *  @tparam M  the type of a domain model
- */
+  *
+  * @tparam M
+  *   the type of a domain model
+  */
 sealed abstract class Entity[+M <: EntityModel]:
 
   type Self[+M0 <: EntityModel]
@@ -20,26 +21,29 @@ sealed abstract class Entity[+M <: EntityModel]:
   val v: M
 
   /** Get idnetity of this entity.
-   *
-   *  @return  id of this entity if it has.
-   */
+    *
+    * @return
+    *   id of this entity if it has.
+    */
   def id: v.Id
 
   /** Get whether this entity has an identity.
-   *
-   *  @return  whether to have an identity.
-   */
+    *
+    * @return
+    *   whether to have an identity.
+    */
   def hasId: Boolean
 
   /** Builds a new `Entity` by applying a function to values. */
   def map[M2 <: EntityModel](f: M => M2): Self[M2]
 
-/**
- * Entity class which doesn't have an identity
- *
- * @tparam M  the type of a domain model
- * @param  v  the wrapped data of the domain model
- */
+/** Entity class which doesn't have an identity
+  *
+  * @tparam M
+  *   the type of a domain model
+  * @param v
+  *   the wrapped data of the domain model
+  */
 case class EntityWithNoId[+M <: EntityModel](v: M) extends Entity[M]:
   type Self[+M0 <: EntityModel] = EntityWithNoId[M0]
 
@@ -49,12 +53,13 @@ case class EntityWithNoId[+M <: EntityModel](v: M) extends Entity[M]:
 
   override def map[M2 <: EntityModel](f: M => M2): Self[M2] = EntityWithNoId(f(v))
 
-/**
- * Entity class which has an identity
- *
- * @tparam M  the type of a domain model
- * @param  v  the wrapped data of the domain model
- */
+/** Entity class which has an identity
+  *
+  * @tparam M
+  *   the type of a domain model
+  * @param v
+  *   the wrapped data of the domain model
+  */
 case class EntityEmbeddedId[+M <: EntityModel](v: M) extends Entity[M]:
 
   type Self[+M0 <: EntityModel] = EntityEmbeddedId[M0]

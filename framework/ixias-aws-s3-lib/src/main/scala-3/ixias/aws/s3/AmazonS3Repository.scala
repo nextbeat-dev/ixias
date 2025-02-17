@@ -83,8 +83,8 @@ trait AmazonS3Repository extends SlickRepository[File] with SlickResource {
     for {
       _ <- Future.fromTry(client.upload(file.v.bucket, file.v.key, content))
       case Some(fid) <- master.run(
-                     fileTable returning fileTable.map(_.id) += file.v
-                   )
+                          fileTable returning fileTable.map(_.id) += file.v
+                        )
     } yield fid
 
   /** Save the file information. However, the file body content has not yet been uploaded to S3. After this method
@@ -94,8 +94,8 @@ trait AmazonS3Repository extends SlickRepository[File] with SlickResource {
     for {
       url <- genPreSignedUrlForUpload(file.v)
       case Some(fid) <- master.run(
-                     fileTable returning fileTable.map(_.id) += file.v
-                   )
+                          fileTable returning fileTable.map(_.id) += file.v
+                        )
     } yield (fid, url.toString)
 
   /** Update the file information. At the same time upload a specified file to S3.

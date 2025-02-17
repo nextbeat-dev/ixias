@@ -10,8 +10,8 @@ package ixias.slick.lifted
 
 import scala.language.implicitConversions
 
-import slick.ast.{Library, TypedType}
-import slick.lifted.{FunctionSymbolExtensionMethods, Query, Rep}
+import slick.ast.{ Library, TypedType }
+import slick.lifted.{ FunctionSymbolExtensionMethods, Query, Rep }
 
 import ixias.model.*
 

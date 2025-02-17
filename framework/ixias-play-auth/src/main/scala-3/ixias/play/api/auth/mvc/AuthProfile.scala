@@ -14,8 +14,8 @@ import ixias.play.api.auth.token.Token
 import ixias.play.api.mvc.Errors._
 import ixias.util.Logging
 import play.api.libs.typedmap.TypedKey
-import play.api.mvc.{RequestHeader, Result}
-import play.api.{Environment, Mode}
+import play.api.mvc.{ RequestHeader, Result }
+import play.api.{ Environment, Mode }
 
 import java.time.Duration
 import scala.concurrent.Future
@@ -23,10 +23,10 @@ import scala.concurrent.Future
 trait AuthProfile[Id0 <: EntityId.Id, M <: EntityModel { type Id = Id0 }, A] extends Logging {
   import Token.*
 
-  type Id = Id0
-  type Auth       = M                             // The authenticated resource.
+  type Id         = Id0
+  type Auth       = M         // The authenticated resource.
   type AuthEntity = Entity[M] // The entity which is containing authenticated resource.
-  type Authority  = A                             // The type of authoriy
+  type Authority  = A         // The type of authoriy
 
   /** Keys to request attributes. */
   object RequestAttrKey {
@@ -150,9 +150,9 @@ trait AuthProfile[Id0 <: EntityId.Id, M <: EntityModel { type Id = Id0 }, A] ext
     extractAuthToken match {
       case Some(token) => {
         (for {
-          case Some(id)   <- datastore.read(token)
+          case Some(id) <- datastore.read(token)
           case Some(auth) <- resolve(id)
-          _          <- datastore.setTimeout(token, sessionTimeout)
+          _ <- datastore.setTimeout(token, sessionTimeout)
         } yield {
           Some(auth) -> tokenAccessor.put(token) _
         }) recover {
@@ -183,7 +183,7 @@ trait AuthProfile[Id0 <: EntityId.Id, M <: EntityModel { type Id = Id0 }, A] ext
   )(implicit rh: RequestHeader): Future[Either[Result, (AuthEntity, Result => Result)]] =
     (for {
       case Some((auth, updater)) <- authenticate.map(_.toOption)
-      authorized            <- authorize(auth, authority)
+      authorized <- authorize(auth, authority)
     } yield authorized match {
       case true  => Right(auth -> updater)
       case false => Left(authorizationFailed(auth, authority))
