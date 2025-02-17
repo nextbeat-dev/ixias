@@ -8,7 +8,7 @@
 
 package ixias.security
 
-import ixias.util.{ Enum, Configuration }
+import ixias.util.*
 
 /** Evaluate the complexity of a given string
   */
@@ -52,14 +52,12 @@ object StringComplexityCheck {
 
   /** Complecity level
     */
-  sealed abstract class ComplexityLevel(val text: String) extends Enum
-  object ComplexityLevel extends Enum.Of[ComplexityLevel] {
-    case object IS_VERY_WEAK   extends ComplexityLevel(text = "VERY_WEAK")
-    case object IS_WEAK        extends ComplexityLevel(text = "WEAK")
-    case object IS_GOOD        extends ComplexityLevel(text = "GOOD")
-    case object IS_STRONG      extends ComplexityLevel(text = "STRONG")
-    case object IS_VERY_STRONG extends ComplexityLevel(text = "VERY_STRONG")
-  }
+  enum ComplexityLevel(val text: String):
+    case IS_VERY_WEAK   extends ComplexityLevel(text = "VERY_WEAK")
+    case IS_WEAK        extends ComplexityLevel(text = "WEAK")
+    case IS_GOOD        extends ComplexityLevel(text = "GOOD")
+    case IS_STRONG      extends ComplexityLevel(text = "STRONG")
+    case IS_VERY_STRONG extends ComplexityLevel(text = "VERY_STRONG")
 
   // --[ Check pattern ]--------------------------------------------------------
   /** The pattern of charactor type

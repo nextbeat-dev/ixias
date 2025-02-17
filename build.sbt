@@ -48,7 +48,6 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
   )
   .settings(
     libraryDependencies ++= Seq(
-      shapeless,
       typesafeConfig,
       playJson,
       keyczar,
@@ -56,7 +55,12 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       commonsCodec,
       slf4jApi,
       munit
-    ) ++ cats
+    ) ++ cats ++ {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((3, _)) => Seq(shapeless3)
+        case _            => Seq(shapeless)
+      }
+    }
   )
 
 lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")

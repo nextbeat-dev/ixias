@@ -8,9 +8,9 @@
 
 package ixias.util
 
-import shapeless.{ HList, LabelledGeneric, Poly2 }
 import shapeless.ops.hlist._
 import shapeless.ops.record._
+import shapeless.{HList, LabelledGeneric, Poly2}
 
 /** Merger: model to model with using `LabelledGeneric`
   */

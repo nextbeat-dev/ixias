@@ -20,14 +20,15 @@ object BuildSettings {
   private val release = branch == "master" || branch.startsWith("release")
 
   private val baseScalaSettings: Seq[String] = Seq(
-    "-deprecation",          // Emit warning and location for usages of deprecated APIs.
-    "-feature",              // Emit warning and location for usages of features that should be imported explicitly.
-    "-unchecked",            // Enable additional warnings where generated code depends on assumptions.
-    "-Xfatal-warnings",      // Fail the compilation if there are any warnings.
-    "-Xlint:-unused,_",      // Enable recommended additional warnings.
-    "-Ywarn-dead-code",      // Warn when dead code is identified.
-    "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-    "-Ywarn-numeric-widen"   // Warn when numerics are widened.
+    "-Xfatal-warnings",
+    "-deprecation",
+    "-feature",
+    "-unchecked",
+    "-encoding",
+    "utf8",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:implicitConversions"
   )
 
   /** These settings are used by all projects. */

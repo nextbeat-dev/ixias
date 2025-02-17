@@ -8,8 +8,8 @@
 
 package ixias.util
 
-import shapeless.{ HList, Poly2 }
 import shapeless.ops.hlist.LeftFolder
+import shapeless.{HList, Poly2}
 
 /** Polymorphic left join operation
   */
