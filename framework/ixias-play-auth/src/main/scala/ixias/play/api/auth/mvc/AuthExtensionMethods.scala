@@ -8,8 +8,8 @@
 
 package ixias.play.api.auth.mvc
 
-import play.api.mvc._
 import ixias.play.api.mvc.BaseExtensionMethods
+import play.api.mvc._
 
 trait AuthExtensionMethods extends BaseExtensionMethods { self: BaseControllerHelpers =>
 
