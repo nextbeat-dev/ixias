@@ -48,7 +48,7 @@ object BuildSettings {
       val path = if (release) "releases" else "snapshots"
       Some("Nextbeat snapshots" at "s3://maven.nextbeat.net.s3-ap-northeast-1.amazonaws.com/" + path)
     },
-    publishConfiguration := publishConfiguration.value.withOverwrite(true),
+    publishConfiguration      := publishConfiguration.value.withOverwrite(true),
     publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
     releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
