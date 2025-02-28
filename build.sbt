@@ -11,7 +11,7 @@ import Dependencies._
 import BuildSettings._
 import Workflows._
 
-ThisBuild / crossScalaVersions         := Seq(scala213)
+ThisBuild / crossScalaVersions         := Seq(scala213, scala3, scala36)
 ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.temurin(java11), JavaSpec.temurin(java17))
 ThisBuild / githubWorkflowBuildPreamble ++= List(
   dockerRun,
@@ -48,7 +48,6 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
   )
   .settings(
     libraryDependencies ++= Seq(
-      shapeless,
       typesafeConfig,
       playJson,
       keyczar,
@@ -56,7 +55,12 @@ lazy val ixiasCore = IxiaSProject("ixias-core", "framework/ixias-core")
       commonsCodec,
       slf4jApi,
       munit
-    ) ++ cats
+    ) ++ cats ++ {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((3, _)) => Seq(shapeless3)
+        case _            => Seq(shapeless)
+      }
+    }
   )
 
 lazy val ixiasSlick = IxiaSProject("ixias-slick", "framework/ixias-slick")
