@@ -28,7 +28,7 @@ object Dependencies {
 
   val commonsCodec = "commons-codec" % "commons-codec" % "1.18.0"
 
-  val slf4jApi = "org.slf4j" % "slf4j-api" % "2.0.16"
+  val slf4jApi = "org.slf4j" % "slf4j-api" % "2.0.17"
 
   val guice = "com.google.inject" % "guice" % "6.0.0"
 
