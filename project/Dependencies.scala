@@ -24,7 +24,7 @@ object Dependencies {
 
   val keyczar = "org.keyczar" % "keyczar" % "0.71h"
 
-  val uapScala = "org.uaparser" %% "uap-scala" % "0.18.0"
+  val uapScala = "org.uaparser" %% "uap-scala" % "0.19.0"
 
   val commonsCodec = "commons-codec" % "commons-codec" % "1.18.0"
 
