@@ -41,7 +41,7 @@ object Dependencies {
     "cats-core"
   ).map("org.typelevel" %% _ % "2.10.0")
 
-  val munit = "org.scalameta" %% "munit" % "1.1.0" % Test
+  val munit = "org.scalameta" %% "munit" % "1.1.1" % Test
 
   val awsSdkVersion = "2.31.50"
   object aws {
