@@ -16,7 +16,7 @@ object Dependencies {
 
   val shapeless = "com.chuusai" %% "shapeless" % "2.3.13"
 
-  val typesafeConfig = "com.typesafe" % "config" % "1.4.3"
+  val typesafeConfig = "com.typesafe" % "config" % "1.4.5"
 
   val slick = "com.typesafe.slick" %% "slick" % "3.6.1"
 
