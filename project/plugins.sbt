@@ -7,7 +7,7 @@
 
 addSbtPlugin("com.github.gseitz"  % "sbt-release"        % "1.0.13")
 addSbtPlugin("com.frugalmechanic" % "fm-sbt-s3-resolver" % "0.23.0")
-addSbtPlugin("com.github.sbt"     % "sbt-github-actions" % "0.25.0")
+addSbtPlugin("com.github.sbt"     % "sbt-github-actions" % "0.28.0")
 addSbtPlugin("com.github.sbt"     % "sbt-site-paradox"   % "1.7.0")
 addSbtPlugin("com.github.sbt"     % "sbt-ghpages"        % "0.8.0")
 addSbtPlugin("org.scalameta"      % "sbt-mdoc"           % "2.7.2")
