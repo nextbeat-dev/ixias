@@ -101,7 +101,7 @@ abstract class ShadeRepository[K <: @@[_, _], M <: EntityModel[K]](implicit ttag
       } yield ()
     } recoverWith {
       case _: NoSuchElementException
-         | _: java.io.InvalidClassException => Future.successful(Unit)
+         | _: java.io.InvalidClassException => Future.successful(())
     }
 
   /** Deletes a key from the cache store. */

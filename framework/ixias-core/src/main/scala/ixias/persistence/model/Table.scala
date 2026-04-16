@@ -10,6 +10,7 @@ package ixias.persistence.model
 
 import ixias.persistence.lifted._
 import slick.jdbc.JdbcProfile
+import java.time.LocalDateTime
 
 trait Table[R, P <: JdbcProfile] { self =>
 
@@ -58,9 +59,26 @@ trait Table[R, P <: JdbcProfile] { self =>
       with SlickColumnTypeOps[P]
       with SlickRepOps[P] {
     lazy val driver = self.driver
+
+    // Slick's MySQL LocalDateTime mapping uses VARCHAR/ISO parsing, but this codebase
+    // persists DATETIME columns and expects java.sql.Timestamp semantics.
+    override implicit val localDateTimeColumnType: driver.columnTypes.LocalDateTimeJdbcType =
+      new driver.columnTypes.LocalDateTimeJdbcType {
+        override def sqlType: Int = java.sql.Types.TIMESTAMP
+        override def setValue(v: LocalDateTime, p: java.sql.PreparedStatement, idx: Int): Unit =
+          p.setTimestamp(idx, if (v == null) null else java.sql.Timestamp.valueOf(v))
+        override def getValue(r: java.sql.ResultSet, idx: Int): LocalDateTime =
+          r.getTimestamp(idx) match {
+            case null      => null
+            case timestamp => timestamp.toLocalDateTime
+          }
+        override def updateValue(v: LocalDateTime, r: java.sql.ResultSet, idx: Int): Unit =
+          r.updateTimestamp(idx, if (v == null) null else java.sql.Timestamp.valueOf(v))
+        override def valueToSQLLiteral(value: LocalDateTime): String =
+          s"'${java.sql.Timestamp.valueOf(value)}'"
+      }
   }
   trait APIUnsafe extends API with SlickRepUnsafeOps[P]
   val api:       API       = new API       {}
   val apiUnsafe: APIUnsafe = new APIUnsafe {}
 }
-

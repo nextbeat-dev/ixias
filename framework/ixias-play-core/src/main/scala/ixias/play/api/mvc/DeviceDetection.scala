@@ -43,7 +43,7 @@ class DeviceDetectionBuilderImpl(
     request.headers.get("User-Agent") match {
       case None     => block(request)
       case Some(ua) => block {
-        val client = Parser.get.parse(ua)
+        val client = Parser.default.parse(ua)
         request
           .addAttr(DeviceDetectionAttrKey.OS,        client.os)
           .addAttr(DeviceDetectionAttrKey.Device,    client.device)
