@@ -27,8 +27,13 @@ trait BasicDatabaseConfig {
   protected val CF_HOSTSPEC_SCHEMA   = "schema"
   protected val CF_HOSTSPEC_READONLY = "readonly"
 
-  /** The configuration */
-  protected val config = Configuration()
+  /** The configuration.
+    *
+    * Keep this dynamic so tests that rewrite system properties before loading
+    * DB settings (for example Testcontainers-assigned ports) do not retain a
+    * stale resolved config from object initialization time.
+    */
+  protected def config: Configuration = Configuration()
 
   // --[ Configuration ]--------------------------------------------------------
   /**

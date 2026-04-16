@@ -8,7 +8,8 @@
 
 package ixias.play.api.mvc
 
-import play.api.data.{ Form, Mapping }
+import play.api.data.{ Form, FormBinding, Mapping }
+import play.api.data.FormBinding.Implicits.formBinding
 import play.api.mvc.{ Request, Result }
 import play.api.mvc.Results.BadRequest
 import play.api.i18n.MessagesProvider
@@ -38,7 +39,7 @@ object FormHelper extends FormHelper {
     req:      Request[_],
     provider: MessagesProvider
   ): Either[Result, T] =
-    Form(mapping).bindFromRequest().fold(
+    Form(mapping).bindFromRequest()(req, formBinding).fold(
       f => Left(BadRequest(f.errorsAsJson)),
       v => Right(v)
     )

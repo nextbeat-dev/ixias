@@ -19,6 +19,10 @@ class SlickJdbcUrlBuilderForMySQL extends SlickJdbcUrlBuilder with BasicDatabase
   // --[ Properties ]-----------------------------------------------------------
   val FMT_URL_DEFALT      = """jdbc:mysql://%s/%s"""
   val FMT_URL_LOADBALANCE = """jdbc:mysql:loadbalance://%s/%s"""
+  private val LOCAL_OPTIONS = "?allowPublicKeyRetrieval=true&useSSL=false"
+
+  private def withLocalOptions(url: String): String =
+    if (sys.props.get("env").contains("dev")) url + LOCAL_OPTIONS else url
 
   // --[ Methods ]--------------------------------------------------------------
   /**
@@ -29,7 +33,7 @@ class SlickJdbcUrlBuilderForMySQL extends SlickJdbcUrlBuilder with BasicDatabase
       hosts    <- getHosts
       database <- getDatabaseName
     } yield hosts.size match {
-      case 1 => FMT_URL_DEFALT.format(hosts.head, database)
-      case _ => FMT_URL_LOADBALANCE.format(hosts.mkString(","), database)
+      case 1 => withLocalOptions(FMT_URL_DEFALT.format(hosts.head, database))
+      case _ => withLocalOptions(FMT_URL_LOADBALANCE.format(hosts.mkString(","), database))
     }
 }

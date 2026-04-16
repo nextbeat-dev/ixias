@@ -95,6 +95,6 @@ case class QldbResultTransformer(self: QldbResult) extends AnyVal {
     import collection.JavaConverters._
     val list = new java.util.ArrayList[IonValue]()
     self.iterator().forEachRemaining(v => list.add(v))
-    Seq(list.asScala: _*)
+    list.asScala.toSeq
   }
 }
